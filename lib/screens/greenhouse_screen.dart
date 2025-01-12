@@ -7,8 +7,9 @@ import 'package:plant_game/plant_game.dart';
 import '../components/pot_component.dart';
 
 class GreenhouseScreen extends Component with HasGameRef<PlantGame> {
-  late SpriteComponent background;
+  //late SpriteComponent background;
   late final List<List<PotSprite>> gardenPots = [];
+  late final iconList;
 
   @override
   Future<void> onLoad() async {
@@ -16,8 +17,15 @@ class GreenhouseScreen extends Component with HasGameRef<PlantGame> {
     final background = RectangleComponent(
       size: gameRef.size, // Match the screen size
       paint: Paint()
-        ..color = const Color.fromARGB(255, 185, 129, 163), // Light grey color
+        ..color = const Color.fromARGB(255, 83, 88, 126), // Light grey color
     );
+
+    final shopIcon = await gameRef.loadSprite('shop_icon.png');
+    final bagIcon = await gameRef.loadSprite('bag_icon.png');
+    final potIcon = await gameRef.loadSprite('pot_icon.png');
+    final upgradeIcon = await gameRef.loadSprite('upgrade_icon.png');
+    final settingsIcon = await gameRef.loadSprite('settings_icon.png');
+    iconList = [shopIcon, bagIcon, potIcon, upgradeIcon, settingsIcon];
 
     // Add the background to the screen
     add(background);
@@ -68,15 +76,9 @@ class GreenhouseScreen extends Component with HasGameRef<PlantGame> {
     final navBar = RectangleComponent(
       size: Vector2(screenSize.x, navBarHeight),
       position: Vector2(0, screenSize.y - navBarHeight),
-      paint: Paint()..color = const Color.fromARGB(255, 77, 163, 78), // Dark grey color
+      paint: Paint()
+        ..color = const Color.fromARGB(255, 151, 151, 158), // Dark grey color
     );
-
-    final shopIcon = await gameRef.loadSprite('shop_icon.png');
-    final bagIcon = await gameRef.loadSprite('bag_icon.png');
-    final potIcon = await gameRef.loadSprite('pot_icon.png');
-    final upgradeIcon = await gameRef.loadSprite('upgrade_icon.png');
-    final settingsIcon = await gameRef.loadSprite('settings_icon.png');
-    final iconList = [shopIcon, bagIcon, potIcon, upgradeIcon, settingsIcon];
 
     // Add buttons or icons as children
     final buttonSize = Vector2(navBarHeight * 0.8,
@@ -85,14 +87,14 @@ class GreenhouseScreen extends Component with HasGameRef<PlantGame> {
 
     for (int i = 0; i < 5; i++) {
       final button = SpriteButtonComponent(
-        button: shopIcon, // Button image
-        buttonDown: shopIcon,
+        button: iconList[i], // Button image
+        buttonDown: iconList[i],
         size: buttonSize,
-        position: Vector2(spacing + i * (buttonSize.x + spacing),
-            navBar.y + (navBarHeight - buttonSize.y) / 2),
-        // onPressed: () {
-        //   print("Button $i pressed");
-        // },
+        position: Vector2(spacing + i * (buttonSize.x + spacing), 
+          (navBarHeight - buttonSize.y) / 2),
+        onPressed: () {
+          print("Button $i pressed");
+        },
       );
       navBar.add(button);
     }
