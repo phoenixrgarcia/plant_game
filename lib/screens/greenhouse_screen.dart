@@ -70,7 +70,7 @@ class GreenhouseScreen extends Component with HasGameRef<PlantGame> {
 
   Future<void> addNavigationBar() async {
     final screenSize = gameRef.size;
-    final double navBarHeight = screenSize.y * 0.1; // 10% of screen height
+    final double navBarHeight = screenSize.y * 0.07; // 10% of screen height
 
     // Create the background bar
     final navBar = RectangleComponent(

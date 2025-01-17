@@ -1,7 +1,9 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-class TickTimer extends PositionComponent {
+import '../plant_game.dart';
+
+class TickTimer extends PositionComponent with HasGameRef<PlantGame> {
   double progress = 0.0; // Current progress (0.0 to 1.0)
   double tickRate; // Time (in seconds) for a full tick
   int ticks = 0; // Tick counter
@@ -53,5 +55,6 @@ class TickTimer extends PositionComponent {
   void onTick() {
     // Handle tick event (e.g., currency increment, gameplay update)
     print("Tick occurred! Total ticks: $ticks");
+    gameRef.addMoney(1);
   }
 }
