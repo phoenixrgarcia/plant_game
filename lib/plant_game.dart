@@ -1,7 +1,8 @@
+import 'package:flame/camera.dart';
 import 'package:flame/game.dart';
 import 'package:flame/flame.dart';
 
-import 'screens/greenhouse_screen.dart';
+import 'worlds/greenhouse_world.dart';
 import 'components/tick_timer.dart';
 
 class PlantGame extends FlameGame {
@@ -15,10 +16,20 @@ class PlantGame extends FlameGame {
   Future<void> onLoad() async {
     super.onLoad();
 
+    final world = GreenhouseWorld();
+    add(world);
+
+    camera = CameraComponent.withFixedResolution(
+      width: size.x,
+      height: size.y,
+      world: world,
+    );
+    add(camera);
+
     router = RouterComponent(
-      initialRoute: 'greenhouse',
+      initialRoute: 'greenhouseWorld',
       routes: {
-        'greenhouse': Route(() => GreenhouseScreen() .. priority = 0),
+        'greenhouseWorld': WorldRoute(() => GreenhouseWorld()),
         //'menu': Route(() => MenuScreen()),
         //'shop': Route(() => ShopScreen()),
         //'planting': Route(() => PlantingScreen()),
@@ -30,7 +41,7 @@ class PlantGame extends FlameGame {
     tickTimer = TickTimer(tickRate: 5.0) // Adjust tickRate as needed
       ..size = Vector2(size.x * 0.3, size.y * 0.05) // 30% width, 5% height
       ..position = Vector2(size.x * 0.05, size.y * 0.05) // Top-left corner
-      ..priority = 1; 
+      ..priority = 0; 
     add(tickTimer);
   }
 }

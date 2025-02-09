@@ -1,25 +1,29 @@
 import 'package:flame/components.dart';
-import 'package:flame/flame.dart';
+import 'package:flame/events.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_game/plant_game.dart';
 
 import '../components/pot_component.dart';
 
-class GreenhouseScreen extends Component with HasGameRef<PlantGame> {
-  //late SpriteComponent background;
+class GreenhouseWorld extends World 
+    with HasGameRef<PlantGame>, DragCallbacks {
   late final List<List<PotSprite>> gardenPots = [];
   late final iconList;
+  late World world;
+  final double minVisiblePots = 1; // Ensures at least one pot is visible
 
   @override
   Future<void> onLoad() async {
-    // Create and position the background as a light grey rectangle
+    // Setup background
     final background = RectangleComponent(
-      size: gameRef.size, // Match the screen size
-      paint: Paint()
-        ..color = const Color.fromARGB(255, 83, 88, 126), // Light grey color
+      size: gameRef.size, 
+      paint: Paint()..color = const Color.fromARGB(255, 83, 88, 126),
+      anchor: Anchor.center
     );
+    add(background);
 
+    // Load icons for the navigation bar
     final shopIcon = await gameRef.loadSprite('shop_icon.png');
     final bagIcon = await gameRef.loadSprite('bag_icon.png');
     final potIcon = await gameRef.loadSprite('pot_icon.png');
@@ -27,67 +31,54 @@ class GreenhouseScreen extends Component with HasGameRef<PlantGame> {
     final settingsIcon = await gameRef.loadSprite('settings_icon.png');
     iconList = [shopIcon, bagIcon, potIcon, upgradeIcon, settingsIcon];
 
-    // Add the background to the screen
-    add(background);
-
-    // Optionally, add placeholders for garden pots
+    // Add garden pots
     addInitialGardenSpots();
+
+    // Add navigation bar (this remains fixed)
     addNavigationBar();
   }
 
   void addInitialGardenSpots() {
     final Vector2 screenSize = gameRef.size;
-
-    gardenPots.add([]);
     const int rows = 1;
     const int cols = 3;
 
-    // Calculate pot size (1/3 of 80% of the screen width)
+    // Pot size based on screen width
     final double potSize = (screenSize.x * 0.65) / cols;
-
-    // Calculate spacing to center the pots
     final double spacing = (screenSize.x - (cols * potSize)) / (cols + 1);
 
-    for (int row = 0; row < rows; row++) {
-      for (int col = 0; col < cols; col++) {
-        // Calculate position
-        final double x = col * (potSize + spacing) + spacing;
-        final double y =
-            (screenSize.y * 0.5) - (potSize / 2); // Vertically centered
+    gardenPots.add([]);
 
-        // Create a PotComponent
-        final pot = PotSprite(
-          position: Vector2(x, y),
-          size: Vector2(potSize, potSize),
-        );
+    for (int col = 0; col < cols; col++) {
+      final double x = col * (potSize + spacing) + spacing;
+      final double y = (screenSize.y * 0.5) - (potSize / 2);
 
-        // Add to the game and the list
-        add(pot);
-        gardenPots[0].add(pot);
-      }
+      final pot = PotSprite(
+        position: Vector2(x, y),
+        size: Vector2(potSize, potSize),
+      );
+
+      add(pot);
+      gardenPots[0].add(pot);
     }
   }
 
   Future<void> addNavigationBar() async {
     final screenSize = gameRef.size;
-    final double navBarHeight = screenSize.y * 0.1; // 10% of screen height
+    final double navBarHeight = screenSize.y * 0.1;
 
-    // Create the background bar
     final navBar = RectangleComponent(
       size: Vector2(screenSize.x, navBarHeight),
       position: Vector2(0, screenSize.y - navBarHeight),
-      paint: Paint()
-        ..color = const Color.fromARGB(255, 151, 151, 158), // Dark grey color
+      paint: Paint()..color = const Color.fromARGB(255, 151, 151, 158),
     );
 
-    // Add buttons or icons as children
-    final buttonSize = Vector2(navBarHeight * 0.8,
-        navBarHeight * 0.8); // Slightly smaller than bar height
+    final buttonSize = Vector2(navBarHeight * 0.8, navBarHeight * 0.8);
     final double spacing = (screenSize.x - (buttonSize.x * 5)) / 6;
 
     for (int i = 0; i < 5; i++) {
       final button = SpriteButtonComponent(
-        button: iconList[i], // Button image
+        button: iconList[i],
         buttonDown: iconList[i],
         size: buttonSize,
         position: Vector2(spacing + i * (buttonSize.x + spacing), 
@@ -99,6 +90,6 @@ class GreenhouseScreen extends Component with HasGameRef<PlantGame> {
       navBar.add(button);
     }
 
-    add(navBar);
+    add(navBar); // Navigation bar should remain fixed
   }
 }
