@@ -9,4 +9,8 @@
     Make a grid view to see plants
     Tapping on a plant opens a dialogue with plant stats
 
-#
+### Greenhouse page
+    Tapping on a pot opens a dialogue with the plant info
+    Dialogue includes options to remove plant 
+    Include a money display 
+    

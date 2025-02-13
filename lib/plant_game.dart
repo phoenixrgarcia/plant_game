@@ -47,16 +47,10 @@ class PlantGame extends FlameGame with PanDetector {
     final newPosition = this.camera.viewfinder.position - delta;
 
     // Keep the camera within bounds (adjust world size as needed)
-    final minX = -5000.0, minY = -5000.0, maxX = 5000.0, maxY = 5000.0;
-    this.camera.viewfinder.position = Vector2(
+    final minX = -100.0, minY = -100.0, maxX = 100.0, maxY = 100.0;
+    camera.viewfinder.position = Vector2(
       newPosition.x.clamp(minX, maxX),
       newPosition.y.clamp(minY, maxY),
     );
   }
-}
-
-class GameData {
-  int money;
-
-  GameData({this.money = 0});
 }

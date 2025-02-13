@@ -1,36 +1,13 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-
+import 'package:plant_game/components/state/pot_state.dart';
 import '../plant_game.dart';
 
-class PotLogic {
-  bool isOccupied;
-  String? plantType;
-
-  PotLogic({this.isOccupied = false, this.plantType});
-
-  // Plant a specific type of plant in the pot
-  void plant(String plant) {
-    isOccupied = true;
-    plantType = plant;
-  }
-
-  // Remove the plant from the pot
-  void removePlant() {
-    isOccupied = false;
-    plantType = null;
-  }
-
-  // Check if the pot is occupied
-  bool get isPotOccupied => isOccupied;
-}
-
 class PotSprite extends SpriteComponent with HasGameRef<PlantGame> {
-  final PotLogic potLogic;
+  final PotState potState;  // Reference to the PotState
 
-  PotSprite({required Vector2 position, required Vector2 size})
-      : potLogic = PotLogic(),
-        super(position: position, size: size);
+  PotSprite({required this.potState, required Vector2 size}) 
+      : super(position: Vector2(potState.x, potState.y), size: size);
 
   @override
   Future<void> onLoad() async {
@@ -41,9 +18,9 @@ class PotSprite extends SpriteComponent with HasGameRef<PlantGame> {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    if (potLogic.isPotOccupied && potLogic.plantType != null) {
+    if (potState.isOccupied) {
       // Draw the plant sprite on top of the pot if there's a plant
-      final plantSprite = spriteFromPlantType(potLogic.plantType!);
+      final plantSprite = spriteFromPlantType(potState.currentFlower);
       plantSprite.render(canvas);
     }
   }
