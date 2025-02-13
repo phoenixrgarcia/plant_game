@@ -1,13 +1,16 @@
 import 'package:flame/camera.dart';
+import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/flame.dart';
+import 'package:flame/src/components/core/component.dart';
+import 'package:flutter/material.dart';
 
 import 'worlds/greenhouse_world.dart';
-import 'components/tick_timer.dart';
+import 'components/game_ui.dart';
 
-class PlantGame extends FlameGame {
+class PlantGame extends FlameGame with PanDetector {
   late final RouterComponent router;
-  late TickTimer tickTimer;
   //@override bool get debugMode => true; // Enables debug mode
 
   PlantGame() : super();
@@ -15,39 +18,45 @@ class PlantGame extends FlameGame {
   @override
   Future<void> onLoad() async {
     super.onLoad();
-
-    final world = GreenhouseWorld();
-    add(world);
+    final backgroundSprite = await loadSprite('blue_background.jpg');
+    final backgroundComponent = SpriteComponent(
+      sprite: backgroundSprite,
+      size: size, // Match the world size
+    );
 
     camera = CameraComponent.withFixedResolution(
       width: size.x,
       height: size.y,
-      world: world,
     );
-    add(camera);
 
-    router = RouterComponent(
-      initialRoute: 'greenhouseWorld',
-      routes: {
-        'greenhouseWorld': WorldRoute(() => GreenhouseWorld()),
-        //'menu': Route(() => MenuScreen()),
-        //'shop': Route(() => ShopScreen()),
-        //'planting': Route(() => PlantingScreen()),
-      },
+    world = GreenhouseWorld(); // Attach world to FlameGame
+
+    camera.world = world; // Attach world to camera
+    camera.viewfinder.anchor = Anchor.topLeft; // Anchor camera to center
+    camera.backdrop = backgroundComponent; // Set background color
+
+    // Add UI to the camera's viewport (stays fixed on screen)
+    camera.viewport.add(GameUI(size));
+  }
+
+  @override
+  void onPanUpdate(DragUpdateInfo info) {
+    final delta = info.delta.global;
+
+    // Move the camera opposite to the drag direction
+    final newPosition = this.camera.viewfinder.position - delta;
+
+    // Keep the camera within bounds (adjust world size as needed)
+    final minX = -5000.0, minY = -5000.0, maxX = 5000.0, maxY = 5000.0;
+    this.camera.viewfinder.position = Vector2(
+      newPosition.x.clamp(minX, maxX),
+      newPosition.y.clamp(minY, maxY),
     );
-    add(router);
-
-    // Add the timer as a child of the router to keep it above the screens
-    tickTimer = TickTimer(tickRate: 5.0) // Adjust tickRate as needed
-      ..size = Vector2(size.x * 0.3, size.y * 0.05) // 30% width, 5% height
-      ..position = Vector2(size.x * 0.05, size.y * 0.05) // Top-left corner
-      ..priority = 0; 
-    add(tickTimer);
   }
 }
 
 class GameData {
-  int vegetables;
+  int money;
 
-  GameData({this.vegetables = 0});
+  GameData({this.money = 0});
 }
