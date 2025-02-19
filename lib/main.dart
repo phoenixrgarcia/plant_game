@@ -1,8 +1,13 @@
 import 'package:flame/game.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:plant_game/components/UI/nav_bar.dart';
+import 'package:plant_game/components/UI/game_ui.dart';
 import 'package:plant_game/game_state_manager.dart';
 import 'plant_game.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+import 'screens/shop_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized(); // Ensures Flutter is initialized
@@ -11,8 +16,28 @@ void main() async{
   await GameStateManager.init(); // Initialize the manager and open the box
 
   final game = PlantGame();
-  runApp(GameWidget(game: game));
+
+  runApp(
+    MaterialApp(
+      home: Stack(
+        children: [
+          GameWidget(
+            game: game,
+            overlayBuilderMap: {
+              'shop': (_, __) => const ShopScreen(),
+            },
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: NavBarWidget(gameRef: game), // Navbar stays visible
+          ),
+        ],
+      ),
+    ),
+  );
+
 }
+
 /*
   player buys seed packs in the shop 
   player plants seeds 

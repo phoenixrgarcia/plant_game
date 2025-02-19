@@ -4,13 +4,16 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/src/components/core/component.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Route;
+import 'package:plant_game/components/UI/tick_timer.dart';
+import 'package:plant_game/screens/shop_screen.dart';
 
 import 'worlds/greenhouse_world.dart';
-import 'components/game_ui.dart';
+import 'components/UI/game_ui.dart';
 
 class PlantGame extends FlameGame with PanDetector {
   late final RouterComponent router;
+  late final TickTimer tickTimer;
   //@override bool get debugMode => true; // Enables debug mode
 
   PlantGame() : super();
@@ -18,6 +21,7 @@ class PlantGame extends FlameGame with PanDetector {
   @override
   Future<void> onLoad() async {
     super.onLoad();
+
     final backgroundSprite = await loadSprite('blue_background.jpg');
     final backgroundComponent = SpriteComponent(
       sprite: backgroundSprite,
@@ -35,8 +39,12 @@ class PlantGame extends FlameGame with PanDetector {
     camera.viewfinder.anchor = Anchor.topLeft; // Anchor camera to center
     camera.backdrop = backgroundComponent; // Set background color
 
-    // Add UI to the camera's viewport (stays fixed on screen)
-    camera.viewport.add(GameUI(size));
+    tickTimer = TickTimer(tickRate: 5.0)
+      ..size = Vector2(size.x * 0.3, size.y * 0.05)
+      ..position = Vector2(size.x * 0.05, size.y * 0.05)
+      ..priority = 100;
+
+    camera.viewport.add(tickTimer); 
   }
 
   @override
