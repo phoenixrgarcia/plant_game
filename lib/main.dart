@@ -4,12 +4,13 @@ import 'package:flutter/widgets.dart';
 import 'package:plant_game/components/UI/nav_bar.dart';
 import 'package:plant_game/components/UI/game_ui.dart';
 import 'package:plant_game/game_state_manager.dart';
+import 'package:plant_game/screens/inventory_screen.dart';
 import 'plant_game.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'screens/shop_screen.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensures Flutter is initialized
   await Hive.initFlutter();
 
@@ -25,6 +26,9 @@ void main() async{
             game: game,
             overlayBuilderMap: {
               'shop': (_, __) => const ShopScreen(),
+              'inventory': (_, __) => InventoryScreen(
+                    onClose: () => game.overlays.remove('inventory'),
+                  ),
             },
           ),
           Align(
@@ -35,7 +39,6 @@ void main() async{
       ),
     ),
   );
-
 }
 
 /*
