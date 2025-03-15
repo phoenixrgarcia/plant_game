@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+// This screen is a flutter widget instead of a flame component.
+// This screen displays the player's inventory.
+// 
+
 class InventoryScreen extends StatelessWidget {
   final VoidCallback onClose;
   final List<String> items = ["Carrot", "Rose", "Oak Tree"];

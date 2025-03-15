@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// This screen is a flutter widget instead of a flame component.
+// It displays a shop with different categories of items.
+
 class ShopScreen extends StatelessWidget {
   const ShopScreen({super.key});
 

@@ -8,6 +8,8 @@ import 'package:hive/hive.dart';
 
 import '../components/pot_sprite.dart';
 
+// This file containst he game logic for the greenhouse world. It loads the state and populates the pots.
+
 class GreenhouseWorld extends World 
     with HasGameRef<PlantGame> {
   late final List<List<PotSprite>> gardenPots = [];
