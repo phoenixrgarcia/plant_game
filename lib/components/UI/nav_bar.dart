@@ -13,11 +13,35 @@ class NavBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> buttons = [
-      {'icon': 'shop_icon.png', 'action': () => gameRef.overlays.add('shop')},
-      {'icon': 'bag_icon.png', 'action': () => gameRef.overlays.add('inventory')},
+      {
+        'icon': 'shop_icon.png',
+        'action': () {
+          if (gameRef.overlays.isActive('shop')) {
+            gameRef.overlays.remove('shop'); // Close if already open
+          } else {
+            gameRef.overlays.add('shop'); // Open if closed
+          }
+        }
+      },
+      {
+        'icon': 'bag_icon.png',
+        'action': () {
+          if (gameRef.overlays.isActive('inventory')) {
+            gameRef.overlays.remove('inventory'); // Close if already open
+          } else {
+            gameRef.overlays.add('inventory'); // Open if closed
+          }
+        }
+      },
       {'icon': 'pot_icon.png', 'action': () => gameRef.overlays.clear()},
-      {'icon': 'upgrade_icon.png', 'action': () => print("Upgrade button pressed")},
-      {'icon': 'settings_icon.png', 'action': () => print("Settings button pressed")},
+      {
+        'icon': 'upgrade_icon.png',
+        'action': () => print("Upgrade button pressed")
+      },
+      {
+        'icon': 'settings_icon.png',
+        'action': () => print("Settings button pressed")
+      },
     ];
 
     return Container(

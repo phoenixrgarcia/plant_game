@@ -16,6 +16,9 @@ class PlantGame extends FlameGame with PanDetector {
   late final RouterComponent router;
   late final TickTimer tickTimer;
   late final MoneyDisplay moneyDisplay;
+  late final GreenhouseWorld greenhouseWorld;
+
+  final Vector2 potSize = Vector2(80, 80);
   //@override bool get debugMode => true; // Enables debug mode
 
   PlantGame() : super();
@@ -36,6 +39,7 @@ class PlantGame extends FlameGame with PanDetector {
     );
 
     world = GreenhouseWorld(); // Attach world to FlameGame
+    greenhouseWorld = world as GreenhouseWorld;
 
     camera.world = world; // Attach world to camera
     camera.viewfinder.anchor = Anchor.topLeft; // Anchor camera to center
@@ -58,7 +62,7 @@ class PlantGame extends FlameGame with PanDetector {
       ..position = Vector2(size.x * 0.05, size.y * 0.09)
       ..anchor = Anchor.centerLeft
       ..priority = 100;
-    camera.viewport.add(tickTimer); 
+    camera.viewport.add(tickTimer);
 
     // tick timer that represents money the player has
     // part of header bar
@@ -66,7 +70,7 @@ class PlantGame extends FlameGame with PanDetector {
       ..position = Vector2(size.x * 0.90, size.y * 0.09)
       ..anchor = Anchor.centerRight
       ..priority = 100;
-    camera.viewport.add(moneyDisplay); 
+    camera.viewport.add(moneyDisplay);
   }
 
   @override
@@ -76,11 +80,17 @@ class PlantGame extends FlameGame with PanDetector {
     // Move the camera opposite to the drag direction
     final newPosition = camera.viewfinder.position - delta;
 
+    final padding = 20;
     // Keep the camera within bounds (adjust world size as needed)
-    final minX = -100.0, minY = -100.0, maxX = 100.0, maxY = 100.0;
+    final minX = -size.x / 2 + potSize.x * 2 - greenhouseWorld.pots[0].length * potSize.x + padding,  
+        minY = -size.y / 2 + potSize.y * 2,
+        maxX = size.x / 2 - potSize.x * 2 + greenhouseWorld.pots[0].length * potSize.x - padding,
+        maxY = size.y / 2 - potSize.y * 2;
     camera.viewfinder.position = Vector2(
       newPosition.x.clamp(minX, maxX),
       newPosition.y.clamp(minY, maxY),
     );
   }
 }
+
+

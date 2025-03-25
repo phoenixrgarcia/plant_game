@@ -9,7 +9,7 @@ class GameState {
   int money;
 
   @HiveField(1)
-  List<PotState> pots;
+  List<List<PotState>> pots;
 
   GameState({this.money = 0, required this.pots});
 }

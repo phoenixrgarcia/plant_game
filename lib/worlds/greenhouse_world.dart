@@ -10,21 +10,23 @@ import '../components/pot_sprite.dart';
 
 // This file containst he game logic for the greenhouse world. It loads the state and populates the pots.
 
-class GreenhouseWorld extends World 
-    with HasGameRef<PlantGame> {
+class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   late final List<List<PotSprite>> gardenPots = [];
-  late List<PotState> savedPots;
+  late List<List<PotState>> savedPots = [];
+
+  List<List<PotSprite>> get pots => gardenPots;
 
   @override
   Future<void> onLoad() async {
 // Load the saved game state
     var box = GameStateManager.box;
-    var gameState = box.get('currentGameState', defaultValue: GameState(money: 0, pots: []));
+    var gameState = box.get('currentGameState',
+        defaultValue: GameState(money: 0, pots: [[]]));
 
     savedPots = gameState.pots;
 
     // Check if saved pots exist, else create new pots
-    if (savedPots.isEmpty) {
+    if (savedPots[0].isEmpty) {
       addInitialGardenSpots();
     } else {
       addSavedGardenSpots();
@@ -33,14 +35,16 @@ class GreenhouseWorld extends World
 
   // Add pots from saved state
   void addSavedGardenSpots() {
-    for (var potState in savedPots) {
-      final pot = PotSprite(
-        potState: potState,
-        size: Vector2(100, 100),  // Pot size remains fixed
-      );
-
-      add(pot);
-      gardenPots[0].add(pot);
+    for (var potRow in savedPots) {
+      gardenPots.add([]);
+      for (var pot in potRow) {
+        final potSprite = PotSprite(
+          potState: pot,
+          size: Vector2(80, 80),
+        );
+        add(potSprite);
+        gardenPots[gardenPots.length - 1].add(potSprite);
+      }
     }
   }
 
@@ -50,7 +54,7 @@ class GreenhouseWorld extends World
     const int cols = 3;
 
     // Pot size based on screen width
-    final double potSize = (screenSize.x * 0.65) / cols;
+    final double potSize = gameRef.potSize.x;
     final double spacing = (screenSize.x - (cols * potSize)) / (cols + 1);
 
     gardenPots.add([]);
