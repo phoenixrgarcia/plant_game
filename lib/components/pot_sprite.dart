@@ -1,9 +1,10 @@
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_game/components/state/pot_state.dart';
 import '../plant_game.dart';
 
-class PotSprite extends SpriteComponent with HasGameRef<PlantGame> {
+class PotSprite extends SpriteComponent with HasGameRef<PlantGame>, TapCallbacks {
   final PotState potState;  // Reference to the PotState
 
   PotSprite({required this.potState, required Vector2 size}) 
@@ -13,6 +14,27 @@ class PotSprite extends SpriteComponent with HasGameRef<PlantGame> {
   Future<void> onLoad() async {
     // Load the initial pot sprite (this would be a generic pot image)
     sprite = await gameRef.loadSprite('sample_pot.webp');
+  }
+
+  @override
+  bool onTapDown(TapDownEvent event) {
+    moveCameraToPot();
+    gameRef.overlays.add('inventory');
+    
+    return true; // Event handled
+  }
+
+  void moveCameraToPot() {
+    final camera = gameRef.camera;
+
+    // Calculate new camera position to center the pot at the top
+    final newCameraPosition = Vector2(
+      position.x - gameRef.size.x * .5 + size.y / 2, // Keep X position the same
+      position.y - gameRef.size.y * .2 + size.y / 2, // Move Y so pot is at the top
+    );
+
+    // Move the camera smoothly
+    camera.moveTo(newCameraPosition, speed: 500);
   }
 
   @override

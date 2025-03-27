@@ -20,7 +20,7 @@ class InventoryScreen extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           child: Container(
             height: MediaQuery.of(context).size.height *
-                0.4, // Takes up 40% of the screen
+                0.7, // Takes up 40% of the screen
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
