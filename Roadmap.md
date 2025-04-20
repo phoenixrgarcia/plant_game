@@ -61,6 +61,22 @@
         2. Dragonfruit
         3. Pomegranate
 
+### Flowers
+1. Tier 1 (bottom)
+    1. Crocus
+    2. Daisy
+    3. Tulip
+
+2. Tier 2
+    1. Lavender
+    2. Rose
+    3. Poppy
+
+3. Tier 3 (top)
+    1. Lotus
+    2. Sunflower
+    3. Wisteria
+
 ### Trees thoughts
     Tiers tentative
 
