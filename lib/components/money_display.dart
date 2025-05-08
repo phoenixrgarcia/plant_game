@@ -13,7 +13,7 @@ class MoneyDisplay extends TextComponent with HasGameRef<PlantGame> {
   Future<void> onLoad() async {
     super.onLoad();
     var box = GameStateManager.box;
-    gameState = box.get('currentGameState', defaultValue: GameState(money: 0, pots: []));
+    gameState = box.get('currentGameState', defaultValue: GameState(money: 0, pots: [[]], plantInventory: []));
 
     text = 'Money: ${gameState.money}';
     textRenderer = TextPaint(

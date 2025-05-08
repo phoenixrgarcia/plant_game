@@ -7,17 +7,15 @@ class Crop extends Plant {
     required int sellPrice,
     required int incomeRate,
     required String spritePath,
+    Function()? onHarvest,
+    Function()? onTick,
   }) : super(
           name: name,
           growthTime: growthTime,
           sellPrice: sellPrice,
           incomeRate: incomeRate,
           spritePath: spritePath,
+          onHarvest: onHarvest,
+          onTick: onTick,
         );
-
-  @override
-  void onHarvest() {
-    super.onHarvest();
-    // Maybe crops regrow or give seeds?
-  }
 }

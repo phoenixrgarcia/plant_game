@@ -19,10 +19,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   @override
   Future<void> onLoad() async {
 // Load the saved game state
-    var box = GameStateManager.box;
-    var gameState = box.get('currentGameState',
-        defaultValue: GameState(money: 0, pots: [[]]));
-
+    var gameState = GameStateManager.currentState;
     savedPots = gameState.pots;
 
     // Check if saved pots exist, else create new pots

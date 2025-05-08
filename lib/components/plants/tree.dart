@@ -7,16 +7,15 @@ class Tree extends Plant {
     required int sellPrice,
     required int incomeRate,
     required String spritePath,
+    Function()? onHarvest,
+    Function()? onTick,
   }) : super(
           name: name,
           growthTime: growthTime,
           sellPrice: sellPrice,
           incomeRate: incomeRate,
           spritePath: spritePath,
+          onHarvest: onHarvest,
+          onTick: onTick,
         );
-
-  @override
-  void onTick() {
-    // Trees generate income periodically
-  }
 }

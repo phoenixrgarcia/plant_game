@@ -1,3 +1,6 @@
+# Where to pick up next time
+Have the game plant the plant when focusing a pot and clicking plant on a plant. 
+
 # Things to do
 ### Shop page
     Make list view of different levels of seeds

@@ -34,6 +34,7 @@ void main() async {
               'shop': (_, __) => const ShopScreen(),
               'inventory': (_, __) => InventoryScreen(
                     onClose: () => game.overlays.remove('inventory'),
+                    plantInventory: GameStateManager.currentState.plantInventory,
                   ),
             },
           ),

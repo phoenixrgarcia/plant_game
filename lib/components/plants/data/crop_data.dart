@@ -7,6 +7,8 @@ final List<Crop> cropData = [
     sellPrice: 15,
     incomeRate: 2,
     spritePath: 'assets/images/tomato.png',
+    onHarvest: () => print('Tomato harvested!'),
+    onTick: () => print('Tomato ticked!'),
   ),
   Crop(
     name: 'Carrot',
@@ -14,5 +16,7 @@ final List<Crop> cropData = [
     sellPrice: 20,
     incomeRate: 3,
     spritePath: 'assets/images/carrot.png',
+    onHarvest: () => print('Carrot harvested!'),
+    onTick: () => print('Carrot ticked!'),
   ),
 ];
