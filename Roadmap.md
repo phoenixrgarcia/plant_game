@@ -15,7 +15,7 @@ Have the game plant the plant when focusing a pot and clicking plant on a plant.
     Dialogue includes options to remove plant 
     Include a money display 
 
-# Content Brainstorming 
+# Content Brainstorming
 ### Garden thoughts
     Flowers are plants that don't generate a lot, but harvest for a lot
     Crops are plants that generate a lot, and harvest for little

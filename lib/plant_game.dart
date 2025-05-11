@@ -12,7 +12,7 @@ import 'worlds/greenhouse_world.dart';
 // The camera is used to pan around the game world.
 // This file contains logic for viewing the world, while the game logic is inside greenhouse_world.dart
 
-class PlantGame extends FlameGame with PanDetector {
+class PlantGame extends FlameGame with PanDetector, TapCallbacks {
   late final RouterComponent router;
   late final TickTimer tickTimer;
   late final MoneyDisplay moneyDisplay;
@@ -42,7 +42,7 @@ class PlantGame extends FlameGame with PanDetector {
     greenhouseWorld = world as GreenhouseWorld;
 
     camera.world = world; // Attach world to camera
-    camera.viewfinder.anchor = Anchor.topLeft; // Anchor camera to center
+    camera.viewfinder.anchor = Anchor.topLeft; // Anchor camera to topLeft
     camera.backdrop = backgroundComponent; // Set background color
 
     // header bar, which is background for header bar components. Extract this to a component later?
@@ -82,15 +82,28 @@ class PlantGame extends FlameGame with PanDetector {
 
     final padding = 20;
     // Keep the camera within bounds (adjust world size as needed)
-    final minX = -size.x / 2 + potSize.x * 2 - greenhouseWorld.pots[0].length * potSize.x + padding,  
+    final minX = -size.x / 2 +
+            potSize.x * 2 -
+            greenhouseWorld.pots[0].length * potSize.x +
+            padding,
         minY = -size.y / 2 + potSize.y * 2,
-        maxX = size.x / 2 - potSize.x * 2 + greenhouseWorld.pots[0].length * potSize.x - padding,
+        maxX = size.x / 2 -
+            potSize.x * 2 +
+            greenhouseWorld.pots[0].length * potSize.x -
+            padding,
         maxY = size.y / 2 - potSize.y * 2;
     camera.viewfinder.position = Vector2(
       newPosition.x.clamp(minX, maxX),
       newPosition.y.clamp(minY, maxY),
     );
   }
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    super.onTapUp(event);
+    greenhouseWorld.deselectPot();
+    overlays.remove('inventory');
+  }
+
+  
 }
-
-

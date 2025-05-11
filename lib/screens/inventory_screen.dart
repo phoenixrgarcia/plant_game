@@ -1,33 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:plant_game/components/plants/data/inventory_entry.dart';
 
-// This screen is a flutter widget instead of a flame component.
-// This screen displays the player's inventory.
-//
+import '../components/plants/data/inventory_list_item.dart';
 
-class InventoryScreen extends StatelessWidget {
+class InventoryScreen extends StatefulWidget {
   final VoidCallback onClose;
+  final void Function(InventoryEntry entry) onPlant;
   final List<InventoryEntry> plantInventory;
 
-  InventoryScreen({super.key, required this.onClose, required this.plantInventory});
+  const InventoryScreen({
+    super.key,
+    required this.onClose,
+    required this.plantInventory,
+    required this.onPlant,
+  });
+
+  @override
+  State<InventoryScreen> createState() => InventoryScreenState();
+}
+
+class InventoryScreenState extends State<InventoryScreen> {
+  late List<InventoryEntry> _plantInventory;
+
+  @override
+  void initState() {
+    super.initState();
+    _plantInventory = widget.plantInventory;
+  }
+
+  void updateInventory(List<InventoryEntry> newInventory) {
+    setState(() {
+      _plantInventory = newInventory;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // This makes the rest of the screen transparent and pass-through
         IgnorePointer(
           ignoring: true,
           child: Container(
             color: Colors.transparent,
           ),
         ),
-
-        // Inventory panel that blocks touches only in this area
         Align(
           alignment: Alignment.bottomCenter,
           child: Material(
-            // Needed for Material widgets like ListTile
             color: Colors.transparent,
             child: Container(
               height: MediaQuery.of(context).size.height * 0.6,
@@ -38,7 +57,6 @@ class InventoryScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  // Header
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Row(
@@ -51,21 +69,18 @@ class InventoryScreen extends StatelessWidget {
                         ),
                         IconButton(
                           icon: const Icon(Icons.close),
-                          onPressed: onClose,
+                          onPressed: widget.onClose,
                         ),
                       ],
                     ),
                   ),
-
-                  // Inventory List
                   Expanded(
                     child: ListView.builder(
-                      itemCount: plantInventory.length,
+                      itemCount: _plantInventory.length,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          leading: const Icon(Icons.shopping_bag),
-                          title: Text(plantInventory[index].plant.name),
-                          subtitle: Text("Quantity: ${plantInventory[index].quantity}"),
+                        return InventoryListItem(
+                          entry: _plantInventory[index],
+                          onPlant: widget.onPlant,
                         );
                       },
                     ),

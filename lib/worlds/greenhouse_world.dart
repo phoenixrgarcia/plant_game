@@ -6,6 +6,7 @@ import 'package:plant_game/game_state_manager.dart';
 import 'package:plant_game/plant_game.dart';
 import 'package:hive/hive.dart';
 
+import '../components/plants/data/inventory_entry.dart';
 import '../components/pot_sprite.dart';
 
 // This file containst he game logic for the greenhouse world. It loads the state and populates the pots.
@@ -13,6 +14,8 @@ import '../components/pot_sprite.dart';
 class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   late final List<List<PotSprite>> gardenPots = [];
   late List<List<PotState>> savedPots = [];
+
+  PotSprite? selectedPot;
 
   List<List<PotSprite>> get pots => gardenPots;
 
@@ -67,6 +70,46 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
       add(pot);
       gardenPots[0].add(pot);
+    }
+
+    for (var potRow in gardenPots) {
+      for (var pot in potRow) {
+        savedPots[0].add(pot.potState);
+      }
+    }
+
+    final updatedState = GameState(
+      money: GameStateManager.currentState.money,
+      pots: savedPots,
+      plantInventory: GameStateManager.currentState.plantInventory,
+    );
+
+    GameStateManager.saveState(updatedState);
+
+  }
+
+  void selectPot(PotSprite pot) {
+    selectedPot = pot;
+    // Additional logic for selecting a pot
+  }
+
+  void deselectPot() {
+    selectedPot = null;
+    // Additional logic for deselecting a pot
+  }
+
+  void plant(InventoryEntry entry) {
+    if (selectedPot != null && entry.quantity > 0 && selectedPot!.potState.isOccupied == false) {
+      selectedPot!.potState.plant(entry);
+      var state = GameStateManager.currentState;
+      state.plantInventory.where((e) => e.plant == entry.plant).first.quantity -= 1;
+
+      savedPots[0][gardenPots[0].indexOf(selectedPot!)] = selectedPot!.potState;
+      state.pots = savedPots;
+      selectedPot = null; // Deselect after planting
+      GameStateManager.saveState(state); // Save the game state after planting
+    } else {
+      print("Issue planting the plant.");
     }
   }
 }

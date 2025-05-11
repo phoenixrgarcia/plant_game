@@ -22,6 +22,9 @@ void main() async {
 
   final game = PlantGame();
 
+  // Create a GlobalKey to access the InventoryScreen's state
+  final GlobalKey<InventoryScreenState> inventoryScreenKey = GlobalKey<InventoryScreenState>();
+
   // Runs the app. Add different overlays here. Overlays should be things that display on top of the 'game'
   // game is the greenhouse world.
   runApp(
@@ -33,8 +36,19 @@ void main() async {
             overlayBuilderMap: {
               'shop': (_, __) => const ShopScreen(),
               'inventory': (_, __) => InventoryScreen(
+                    key: inventoryScreenKey, // Assign the GlobalKey here
                     onClose: () => game.overlays.remove('inventory'),
                     plantInventory: GameStateManager.currentState.plantInventory,
+                    onPlant: (entry) {
+                      // Perform the planting action
+                      game.greenhouseWorld.plant(entry);
+                      print("Planted ${entry.plant.name}");
+
+                      // Update the inventory after planting
+                      inventoryScreenKey.currentState?.updateInventory(
+                        GameStateManager.currentState.plantInventory,
+                      );
+                    },
                   ),
             },
           ),
