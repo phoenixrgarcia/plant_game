@@ -2,12 +2,10 @@ import 'package:hive/hive.dart';
 import 'package:plant_game/components/plants/data/inventory_entry.dart';
 import 'package:plant_game/components/state/pot_state.dart';
 
-import '../plants/plant.dart';
-
 part 'game_state.g.dart';
 
 @HiveType(typeId: 0)
-class GameState {
+class GameState extends HiveObject{
   @HiveField(0)
   int money;
 

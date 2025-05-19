@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_game/components/plants/data/inventory_entry.dart';
 
-import '../components/plants/data/inventory_list_item.dart';
+import '../components/UI/inventory_list_item.dart';
 
 class InventoryScreen extends StatefulWidget {
   final VoidCallback onClose;

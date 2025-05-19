@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
+import 'package:plant_game/components/plants/data/plant_data.dart';
 import 'package:plant_game/components/plants/data/inventory_entry.dart';
 import 'package:plant_game/components/state/pot_state.dart';
 import '../plant_game.dart';
@@ -8,6 +9,9 @@ import '../plant_game.dart';
 class PotSprite extends SpriteComponent
     with HasGameRef<PlantGame>, TapCallbacks {
   final PotState potState; // Reference to the PotState
+
+  Sprite? plantSprite;
+  String? currentSpritePath;
 
   PotSprite({required this.potState, required Vector2 size})
       : super(position: Vector2(potState.x, potState.y), size: size);
@@ -47,23 +51,15 @@ class PotSprite extends SpriteComponent
 
   @override
   void render(Canvas canvas) {
+    super.render(canvas);
+    
     if (gameRef.greenhouseWorld.selectedPot == this) {
       renderSelectedPot(canvas);
     }
 
-    super.render(canvas);
-    if (potState.isOccupied) {
-      // Draw the plant sprite on top of the pot if there's a plant
-      final plantSprite = spriteFromPlantType();
-      plantSprite.render(canvas);
+    if (plantSprite != null) {
+      plantSprite!.render(canvas, size: size);
     }
-  }
-
-  // Helper function to get the appropriate plant sprite based on the type
-  SpriteComponent spriteFromPlantType() {
-    return SpriteComponent()
-      ..sprite = Sprite(gameRef.images.fromCache(potState.currentPlant!.spritePath))
-      ..position = position;
   }
 
   void renderSelectedPot(Canvas canvas) {
@@ -81,5 +77,20 @@ class PotSprite extends SpriteComponent
 
     //canvas.drawRect(rect, paint);
     canvas.drawCircle(Offset(size.x / 2, size.y / 2), size.x * .6, glowPaint);
+  }
+
+  Future<void> updatePlantSprite() async {
+    if (potState.isOccupied) {
+      final plantData = PlantData.getById(potState.currentPlant!.plantDataName)!;
+
+      // Check if spritePath changed (e.g. due to growth)
+      if (plantData.spritePath != currentSpritePath) {
+        plantSprite = Sprite(gameRef.images.fromCache(plantData.spritePath));
+        currentSpritePath = plantData.spritePath;
+      }
+    } else {
+      plantSprite = null;
+      currentSpritePath = null;
+    }
   }
 }

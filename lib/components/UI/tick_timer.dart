@@ -52,7 +52,6 @@ class TickTimer extends PositionComponent with HasGameRef<PlantGame> {
   }
 
   void onTick() {
-    // Handle tick event (e.g., currency increment, gameplay update)
-    print("Tick occurred! Total ticks: $ticks");
+    gameRef.greenhouseWorld.tick();
   }
 }

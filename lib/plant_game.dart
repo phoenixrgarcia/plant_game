@@ -27,6 +27,14 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
   Future<void> onLoad() async {
     super.onLoad();
 
+    // Preload images into the cache
+    await images.loadAll([
+      'tomato.png',
+      'carrot.png',
+      'rose.png',
+      'oak_tree.jpg',
+    ]);
+
     final backgroundSprite = await loadSprite('blue_background.jpg');
     final backgroundComponent = SpriteComponent(
       sprite: backgroundSprite,

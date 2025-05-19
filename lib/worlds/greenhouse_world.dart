@@ -101,8 +101,9 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   void plant(InventoryEntry entry) {
     if (selectedPot != null && entry.quantity > 0 && selectedPot!.potState.isOccupied == false) {
       selectedPot!.potState.plant(entry);
+      selectedPot?.updatePlantSprite();
       var state = GameStateManager.currentState;
-      state.plantInventory.where((e) => e.plant == entry.plant).first.quantity -= 1;
+      state.plantInventory.where((e) => e.plantDataName == entry.plantDataName).first.quantity -= 1;
 
       savedPots[0][gardenPots[0].indexOf(selectedPot!)] = selectedPot!.potState;
       state.pots = savedPots;
@@ -112,4 +113,13 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
       print("Issue planting the plant.");
     }
   }
+  
+  void tick(){
+    for(var potRow in pots){
+      for(var pot in potRow){
+        
+      }
+    }
+  }
+
 }

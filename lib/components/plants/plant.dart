@@ -6,17 +6,30 @@ abstract class Plant {
   final int growthTime;
   final int sellPrice;
   final int incomeRate;
+  final String imagePath;
   final String spritePath;
-  final void Function()? onHarvest;
-  final void Function()? onTick;
 
   Plant({
     required this.name,
     required this.growthTime,
     required this.sellPrice,
     required this.incomeRate,
+    required this.imagePath,
     required this.spritePath,
-    this.onHarvest,
-    this.onTick,
   });
+
+  void onHarvest() {
+    print("$name harvested for $sellPrice coins");
+  }
+
+  void onTick() {
+    // Increment age
+    //currentAge++;
+      // Generate income periodically
+      print("$name generated $incomeRate coins");
+    } 
+
+  Future<Sprite> loadSprite(Images images) async {
+    return Sprite(images.fromCache(spritePath));
+  }
 }

@@ -1,35 +1,25 @@
 import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:plant_game/components/plants/data/plant_data.dart';
 import 'package:plant_game/components/plants/plant.dart';
 
-abstract class PlantInstance {
-  final Plant plantData;
-  int currentAge = 0;
+part 'plant_instance.g.dart';
+
+@HiveType(typeId: 3)
+class PlantInstance extends HiveObject{
+  @HiveField(0)
+  final String plantDataName;
+
+  @HiveField(1)
+  int currentAge;
 
   PlantInstance({
-    required this.plantData,
+    required this.plantDataName, this.currentAge = 0
   });
 
-  bool get isFullyGrown => currentAge >= plantData.growthTime;
+  Plant get plantData => PlantData.getById(plantDataName)!;
 
-  void onHarvest() {
-    plantData.onHarvest?.call();
-    print("$plantData.name harvested for $plantData.sellPrice coins");
-  }
+  bool get isFullyGrown => currentAge >= PlantData.getById(plantDataName)!.growthTime;
 
-  void onTick() {
-    // Increment age
-    currentAge++;
-
-    plantData.onTick?.call();
-
-    if (isFullyGrown) {
-      // Generate income periodically
-      print("$plantData.name generated $plantData.incomeRate coins");
-    } 
-  }
-
-  Future<Sprite> loadSprite(Images images) async {
-    return Sprite(images.fromCache(plantData.spritePath));
-  }
 }
