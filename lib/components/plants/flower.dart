@@ -6,6 +6,7 @@ class Flower extends Plant {
     required int growthTime,
     required int sellPrice,
     required int incomeRate,
+    required int rarity,
     required String imagePath,
     required String spritePath,
   }) : super(
@@ -13,6 +14,7 @@ class Flower extends Plant {
           growthTime: growthTime,
           sellPrice: sellPrice,
           incomeRate: incomeRate,
+          rarity: rarity,
           imagePath: imagePath,
           spritePath: spritePath,
         );

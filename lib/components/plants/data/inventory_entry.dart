@@ -1,7 +1,4 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:plant_game/components/plants/plant_instance.dart';
-
-import '../plant.dart';
 
 part 'inventory_entry.g.dart';
 
@@ -13,5 +10,8 @@ class InventoryEntry extends HiveObject{
   @HiveField(1)
   int quantity;
 
-  InventoryEntry({required this.plantDataName, required this.quantity});
+  @HiveField(2)
+  int tier;
+
+  InventoryEntry({required this.plantDataName, required this.quantity, required this.tier});
 }

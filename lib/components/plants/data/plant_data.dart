@@ -1,5 +1,6 @@
 import '../crop.dart';
 import '../plant.dart';
+import 'dart:math';
 
 class PlantData{
   static final Map<String, Crop> _crops = {
@@ -8,6 +9,7 @@ class PlantData{
       growthTime: 10,
       sellPrice: 15,
       incomeRate: 2,
+      rarity: 50,
       imagePath: 'assets/images/tomato.png',
       spritePath: 'tomato.png',
       // onHarvest: () => print('Tomato harvested!'),
@@ -18,6 +20,7 @@ class PlantData{
       growthTime: 15,
       sellPrice: 20,
       incomeRate: 3,
+      rarity: 20,
       imagePath: 'assets/images/carrot.png',
       spritePath: 'carrot.png',
       // onHarvest: () => print('Carrot harvested!'),
@@ -31,5 +34,20 @@ class PlantData{
     _crops[id] = plant;
   }
 
-  static List<Plant> get all => _crops.values.toList();
+  static Plant getWeightedRandom() {
+    // Implement weighted random selection based on rarity
+    final random = Random();
+    int totalRarity = _crops.values.fold(0, (sum, crop) => sum + crop.rarity);
+    int randomValue = (totalRarity * random.nextDouble()).toInt(); // Example: 50% chance
+    for (var crop in _crops.values) {
+      if (randomValue < crop.rarity) {
+        return crop;
+      }
+      randomValue -= crop.rarity;
+    }
+    return _crops.values.first; // Fallback
+  }
+
+  static List<Plant> get allCrops => _crops.values.toList();
+
 }
