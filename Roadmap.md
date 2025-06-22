@@ -96,3 +96,11 @@ Have the game plant the plant when focusing a pot and clicking plant on a plant.
     1. Diamond Tree
     2. Redwood Tree
     3. Pando Tree
+
+# Future ideas
+Seasonal or Weather Effects: Some plants could grow faster or generate more income depending on the in-game season or weather patterns.
+Plant Mutation: Rare occurrences where plants evolve into special versions with unique traits.
+Automated Gardeners: Players can buy or unlock helpers that automatically water plants or harvest them.
+Crossbreeding: Allow players to combine plants for hybrid effects and potential income boosts.
+Events or Challenges: Special limited-time events where players can grow unique plants for extra rewards.
+Dynamic Prestige Bonuses: Instead of just unlocking zen plants, prestige points could be used to enhance the core mechanics—maybe increasing growth rates or boosting passive income.

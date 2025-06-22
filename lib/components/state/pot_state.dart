@@ -2,8 +2,6 @@ import 'package:hive/hive.dart';
 import 'package:plant_game/components/plants/data/inventory_entry.dart';
 import 'package:plant_game/components/plants/plant_instance.dart';
 
-import '../plants/plant.dart';
-
 part 'pot_state.g.dart';
 
 // PotState class to store data about each pot and its logic
