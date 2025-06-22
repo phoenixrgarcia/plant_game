@@ -19,17 +19,20 @@ class PlantInstanceAdapter extends TypeAdapter<PlantInstance> {
     return PlantInstance(
       plantDataName: fields[0] as String,
       currentAge: fields[1] as int,
+      tier: fields[2] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, PlantInstance obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.plantDataName)
       ..writeByte(1)
-      ..write(obj.currentAge);
+      ..write(obj.currentAge)
+      ..writeByte(2)
+      ..write(obj.tier);
   }
 
   @override

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 // It displays a shop with different categories of items.
 
 class ShopScreen extends StatelessWidget {
-  const ShopScreen({super.key});
+  final void Function(String itemName, int price) onBuy;
+
+  const ShopScreen({super.key, required this.onBuy});
 
   @override
   Widget build(BuildContext context) {
@@ -15,17 +17,17 @@ class ShopScreen extends StatelessWidget {
           title: const Text("Shop"),
           bottom: const TabBar(
             tabs: [
-              Tab(text: "Vegetables"),
+              Tab(text: "Crops"),
               Tab(text: "Flowers"),
               Tab(text: "Trees"),
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            ShopTab(category: "Vegetables"),
-            ShopTab(category: "Flowers"),
-            ShopTab(category: "Trees"),
+            ShopTab(category: "Crops", onBuy: onBuy,),
+            ShopTab(category: "Flowers", onBuy: onBuy,),
+            ShopTab(category: "Trees", onBuy: onBuy,),
           ],
         ),
       ),
@@ -35,8 +37,9 @@ class ShopScreen extends StatelessWidget {
 
 class ShopTab extends StatelessWidget {
   final String category;
+  final void Function(String itemName, int price) onBuy;
 
-  const ShopTab({super.key, required this.category});
+  const ShopTab({super.key, required this.category, required this.onBuy});
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +57,7 @@ class ShopTab extends StatelessWidget {
             subtitle: Text("\$${item["price"]}"),
             trailing: ElevatedButton(
               onPressed: () {
-                // Handle purchase logic here
-                print("Buying ${item["name"]}");
+                onBuy(item["name"], item["price"]);
               },
               child: const Text("Buy"),
             ),
@@ -66,23 +68,25 @@ class ShopTab extends StatelessWidget {
   }
 }
 
+/// TODO: eventually, these will have to be replaced with something like ShopEntry. This will allow the shop price to increase every time. This will also allow the rarities of specific plants to change as well. 
 /// Function to return items based on the category
 List<Map<String, dynamic>> getItemsForCategory(String category) {
   switch (category) {
-    case "Vegetables":
+    case "Crops":
       return [
-        {"name": "Carrot", "price": 10, "image": "assets/images/carrot.png"},
-        {"name": "Tomato", "price": 15, "image": "assets/images/tomato.png"},
+        {"name": "Basic Crop Seed", "price": 10, "image": "assets/images/carrot.png"},
+        {"name": "Rare Crop Seed", "price": 15, "image": "assets/images/tomato.png"},
+        {"name": "Mythic Crop Seed", "price": 15, "image": "assets/images/tomato.png"},
       ];
     case "Flowers":
       return [
-        {"name": "Rose", "price": 20, "image": "assets/images/rose.png"},
-        {"name": "Tulip", "price": 25, "image": "assets/images/tulip.jpg"},
+        {"name": "Basic Flower Seed", "price": 20, "image": "assets/images/rose.png"},
+        {"name": "Rare Flower Seed", "price": 25, "image": "assets/images/tulip.jpg"},
       ];
     case "Trees":
       return [
-        {"name": "Oak Tree", "price": 50, "image": "assets/images/oak_tree.jpg"},
-        {"name": "Pine Tree", "price": 60, "image": "assets/images/pine_tree.png"},
+        {"name": "Basic Tree Seed", "price": 50, "image": "assets/images/oak_tree.jpg"},
+        {"name": "Rare Tree Seed", "price": 60, "image": "assets/images/pine_tree.png"},
       ];
     default:
       return [];

@@ -51,12 +51,12 @@ class PotSprite extends SpriteComponent
 
   @override
   void render(Canvas canvas) {
-    super.render(canvas);
-    
     if (gameRef.greenhouseWorld.selectedPot == this) {
       renderSelectedPot(canvas);
     }
 
+    super.render(canvas);
+    
     if (plantSprite != null) {
       plantSprite!.render(canvas, size: size);
     }
@@ -66,14 +66,6 @@ class PotSprite extends SpriteComponent
     final glowPaint = Paint()
       ..color = Colors.yellowAccent.withOpacity(0.6)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-
-    // Adjust the rectangle to account for the anchor
-    final rect = Rect.fromLTWH(
-      0,
-      0,
-      size.x,
-      size.y,
-    );
 
     //canvas.drawRect(rect, paint);
     canvas.drawCircle(Offset(size.x / 2, size.y / 2), size.x * .6, glowPaint);

@@ -6,6 +6,7 @@ abstract class Plant {
   final int growthTime;
   final int sellPrice;
   final int incomeRate;
+  final int rarity;
   final String imagePath;
   final String spritePath;
 
@@ -14,6 +15,7 @@ abstract class Plant {
     required this.growthTime,
     required this.sellPrice,
     required this.incomeRate,
+    required this.rarity,
     required this.imagePath,
     required this.spritePath,
   });

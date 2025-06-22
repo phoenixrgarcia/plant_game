@@ -1,5 +1,3 @@
-import 'package:flame/cache.dart';
-import 'package:flame/components.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plant_game/components/plants/data/plant_data.dart';
 import 'package:plant_game/components/plants/plant.dart';
@@ -14,8 +12,11 @@ class PlantInstance extends HiveObject{
   @HiveField(1)
   int currentAge;
 
+  @HiveField(2)
+  int tier;
+
   PlantInstance({
-    required this.plantDataName, this.currentAge = 0
+    required this.plantDataName, this.currentAge = 0, required this.tier,
   });
 
   Plant get plantData => PlantData.getById(plantDataName)!;

@@ -20,11 +20,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensures Flutter is initialized
   await Hive.initFlutter();
 
+
   await GameStateManager.init(); // Initialize the manager and open the box
 
   // To be deleted
   if(true){
-    var state = GameState(pots: [[]], plantInventory: [InventoryEntry(plantDataName: 'tomato', quantity: 1)]);
+    var state = GameState(pots: [[]], plantInventory: [InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 1)]);
     GameStateManager.saveState(state);
   }
 
@@ -43,7 +44,9 @@ void main() async {
           GameWidget(
             game: game,
             overlayBuilderMap: {
-              'shop': (_, __) => const ShopScreen(),
+              'shop': (_, __) => ShopScreen(
+                onBuy: handleShopBuy,
+              ),
               'inventory': (_, __) => InventoryScreen(
                     key: inventoryScreenKey, // Assign the GlobalKey here
                     onClose: () {
@@ -73,4 +76,8 @@ void main() async {
       ),
     ),
   );
+}
+
+void handleShopBuy(String itemName, int price) {
+  // TODO
 }

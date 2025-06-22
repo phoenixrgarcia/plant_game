@@ -1,5 +1,6 @@
 # Where to pick up next time
-Have the game plant the plant when focusing a pot and clicking plant on a plant. 
+Create ShopEntry, attach to hive object, and pass that info to the onBuy function
+Create the on buy function to get a random rarity and plant, subtract the money, and then add to the inventory
 
 # Things to do
 ### Shop page

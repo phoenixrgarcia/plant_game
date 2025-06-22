@@ -16,7 +16,7 @@ class InventoryListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Image.asset(plantData.imagePath, width: 40),
-      title: Text(plantData.name),
+      title: Text("Tier ${entry.tier} ${plantData.name}"),
       subtitle: Text('Quantity: ${entry.quantity}'),
       trailing: ElevatedButton(onPressed: () => onPlant(entry), child: const Text('Plant')),
     );

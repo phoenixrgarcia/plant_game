@@ -22,7 +22,6 @@ class GameStateManager {
     if (!Hive.isAdapterRegistered(3)) {
       Hive.registerAdapter(PlantInstanceAdapter());
     }
-
     _box = await Hive.openBox<GameState>('gameState');
   }
 
@@ -35,7 +34,7 @@ class GameStateManager {
 
   static GameState get currentState {
     return box.get('currentGameState') ??
-        GameState(money: 0, pots: [[]], plantInventory: [InventoryEntry(plantDataName: 'tomato', quantity: 1)]); // Default fallback
+        GameState(money: 0, pots: [[]], plantInventory: [InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 1)]); // Default fallback
   }
 
   static void saveState(GameState state) {
