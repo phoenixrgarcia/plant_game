@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/widgets.dart';
 import 'package:plant_game/components/state/game_state.dart';
 import 'package:plant_game/components/state/pot_state.dart';
 import 'package:plant_game/game_state_manager.dart';
@@ -15,7 +16,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   late final List<List<PotSprite>> gardenPots = [];
   late List<List<PotState>> savedPots = [];
 
-  PotSprite? selectedPot;
+  ValueNotifier<PotSprite?> selectedPot = ValueNotifier(null);
 
   List<List<PotSprite>> get pots => gardenPots;
 
@@ -89,25 +90,25 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   }
 
   void selectPot(PotSprite pot) {
-    selectedPot = pot;
+    selectedPot.value = pot;
     // Additional logic for selecting a pot
   }
 
   void deselectPot() {
-    selectedPot = null;
+    selectedPot.value = null;
     // Additional logic for deselecting a pot
   }
 
   void plant(InventoryEntry entry) {
-    if (selectedPot != null && entry.quantity > 0 && selectedPot!.potState.isOccupied == false) {
-      selectedPot!.potState.plant(entry);
-      selectedPot?.updatePlantSprite();
+    if (selectedPot.value != null && entry.quantity > 0 && selectedPot.value!.potState.isOccupied == false) {
+      selectedPot.value!.potState.plant(entry);
+      selectedPot.value?.updatePlantSprite();
       var state = GameStateManager.currentState;
       state.plantInventory.where((e) => e.plantDataName == entry.plantDataName).first.quantity -= 1;
 
-      savedPots[0][gardenPots[0].indexOf(selectedPot!)] = selectedPot!.potState;
+      savedPots[0][gardenPots[0].indexOf(selectedPot.value!)] = selectedPot.value!.potState;
       state.pots = savedPots;
-      selectedPot = null; // Deselect after planting
+      selectedPot.value = null; // Deselect after planting
       GameStateManager.saveState(state); // Save the game state after planting
     } else {
       print("Issue planting the plant.");
@@ -115,9 +116,18 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   }
   
   void tick(){
+    // Iterate through all pots and call their tick method
+    
+    //a list to store the multiplication values for each pot, that is NxM the same size as gardenPots
+    List<List<double>> multValues = List.generate(gardenPots.length, (i) => List.filled(gardenPots[i].length, 1.0));
+
     for(var potRow in pots){
       for(var pot in potRow){
         
+        if(pot.potState.currentPlant != null) {
+          // Call the tick method on the plant instance
+          pot.potState.currentPlant!.incrementAge();
+        }
       }
     }
   }

@@ -65,6 +65,7 @@ void main() async {
                         GameStateManager.currentState.plantInventory,
                       );
                     },
+                    selectedPotNotifier: game.greenhouseWorld.selectedPot,
                   ),
             },
           ),

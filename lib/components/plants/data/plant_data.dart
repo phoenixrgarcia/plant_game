@@ -18,7 +18,7 @@ class PlantData{
     'carrot': Crop(
       name: 'Carrot',
       growthTime: 15,
-      sellPrice: 20,
+      sellPrice: 25,
       incomeRate: 3,
       rarity: 20,
       imagePath: 'assets/images/carrot.png',

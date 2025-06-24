@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:plant_game/components/plants/data/inventory_entry.dart';
 
 import '../components/UI/inventory_list_item.dart';
+import '../components/pot_sprite.dart';
 
 class InventoryScreen extends StatefulWidget {
   final VoidCallback onClose;
   final void Function(InventoryEntry entry) onPlant;
   final List<InventoryEntry> plantInventory;
+  final ValueNotifier<PotSprite?> selectedPotNotifier;
 
   const InventoryScreen({
     super.key,
     required this.onClose,
     required this.plantInventory,
     required this.onPlant,
+    required this.selectedPotNotifier,
   });
 
   @override
@@ -75,12 +78,19 @@ class InventoryScreenState extends State<InventoryScreen> {
                     ),
                   ),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: _plantInventory.length,
-                      itemBuilder: (context, index) {
-                        return InventoryListItem(
-                          entry: _plantInventory[index],
-                          onPlant: widget.onPlant,
+                    child: ValueListenableBuilder<PotSprite?>(
+                      valueListenable: widget.selectedPotNotifier,
+                      builder: (context, selectedPot, _) {
+                        final canPlant = selectedPot != null && selectedPot.potState.isOccupied == false;
+                        return ListView.builder(
+                          itemCount: _plantInventory.length,
+                          itemBuilder: (context, index) {
+                            return InventoryListItem(
+                              entry: _plantInventory[index],
+                              onPlant: widget.onPlant,
+                              canPlant: canPlant,
+                            );
+                          },
                         );
                       },
                     ),

@@ -23,4 +23,8 @@ class PlantInstance extends HiveObject{
 
   bool get isFullyGrown => currentAge >= PlantData.getById(plantDataName)!.growthTime;
 
+  void incrementAge() {
+    currentAge++;
+  }
+
 }
