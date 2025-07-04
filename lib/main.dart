@@ -21,12 +21,11 @@ void main() async {
   await Hive.initFlutter();
 
 
-  await GameStateManager.init(); // Initialize the manager and open the box
+  await GameStateManager().init(); // Initialize the manager and open the box
 
   // To be deleted
   if(true){
-    var state = GameState(pots: [[]], plantInventory: [InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 1)]);
-    GameStateManager.saveState(state);
+    GameStateManager().clear();M
   }
 
   final game = PlantGame();
