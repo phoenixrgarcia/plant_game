@@ -4,8 +4,9 @@ import 'package:plant_game/components/plants/data/inventory_entry.dart';
 import 'package:plant_game/components/plants/plant_instance.dart';
 import 'package:plant_game/components/state/game_state.dart';
 import 'package:plant_game/components/state/pot_state.dart';
+import 'package:flutter/foundation.dart';
 
-class GameStateManager {
+class GameStateManager extends ChangeNotifier {
   // Singleton boilerplate
   static final GameStateManager _instance = GameStateManager._internal();
   factory GameStateManager() => _instance;
@@ -34,7 +35,7 @@ class GameStateManager {
     _currentState = _box!.get(_key) ??
         GameState(
           money: 0,
-          pots: [[]],
+          pots: [[PotState(row: 0, col: 0)]],
           plantInventory: [
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 1),
           ],
@@ -53,6 +54,7 @@ class GameStateManager {
   Future<void> update(GameState newState) async {
     _currentState = newState;
     await save();
+    notifyListeners(); // Notify listeners of state change
   }
 
   /// Clears game state from disk (used for reset)
@@ -68,10 +70,12 @@ class GameStateManager {
   /// Example mutator for money
   void addMoney(int amount) {
     _currentState.money += amount;
+    notifyListeners(); // Notify listeners of state change
   }
 
   /// Example mutator for planting in a pot
   void plantInPot(int x, int y, PlantInstance plant) {
-    _currentState.pots[x][y].currentPlant = plant;
+    // TODO
+    //_currentState.pots[x][y].currentPlant = plant;
   }
 }

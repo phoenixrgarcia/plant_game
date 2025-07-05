@@ -13,8 +13,8 @@ class PotSprite extends SpriteComponent
   Sprite? plantSprite;
   String? currentSpritePath;
 
-  PotSprite({required this.potState, required Vector2 size})
-      : super(position: Vector2(potState.x, potState.y), size: size);
+  PotSprite({required this.potState, required Vector2 size, required Vector2 position})
+      : super(position: position, size: size);
 
   @override
   Future<void> onLoad() async {
@@ -85,4 +85,5 @@ class PotSprite extends SpriteComponent
       currentSpritePath = null;
     }
   }
+  
 }

@@ -5,6 +5,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:plant_game/components/UI/tick_timer.dart';
 import 'package:plant_game/components/money_display.dart';
+import 'package:plant_game/game_state_manager.dart';
 
 import 'worlds/greenhouse_world.dart';
 
@@ -13,15 +14,17 @@ import 'worlds/greenhouse_world.dart';
 // This file contains logic for viewing the world, while the game logic is inside greenhouse_world.dart
 
 class PlantGame extends FlameGame with PanDetector, TapCallbacks {
+  final GameStateManager gameStateManager;
   late final RouterComponent router;
   late final TickTimer tickTimer;
   late final MoneyDisplay moneyDisplay;
   late final GreenhouseWorld greenhouseWorld;
+  
 
   final Vector2 potSize = Vector2(80, 80);
   //@override bool get debugMode => true; // Enables debug mode
 
-  PlantGame() : super();
+  PlantGame({required this.gameStateManager}) : super();
 
   @override
   Future<void> onLoad() async {
@@ -46,7 +49,7 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
       height: size.y,
     );
 
-    world = GreenhouseWorld(); // Attach world to FlameGame
+    world = GreenhouseWorld(gameStateManager: gameStateManager); // Attach world to FlameGame
     greenhouseWorld = world as GreenhouseWorld;
 
     camera.world = world; // Attach world to camera
@@ -72,13 +75,7 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
       ..priority = 100;
     camera.viewport.add(tickTimer);
 
-    // tick timer that represents money the player has
-    // part of header bar
-    moneyDisplay = MoneyDisplay()
-      ..position = Vector2(size.x * 0.90, size.y * 0.09)
-      ..anchor = Anchor.centerRight
-      ..priority = 100;
-    camera.viewport.add(moneyDisplay);
+    overlays.add('money');
   }
 
   @override

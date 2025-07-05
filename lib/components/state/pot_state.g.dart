@@ -17,8 +17,8 @@ class PotStateAdapter extends TypeAdapter<PotState> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PotState(
-      x: fields[0] as double,
-      y: fields[1] as double,
+      row: fields[0] as int,
+      col: fields[1] as int,
       currentPlant: fields[2] as PlantInstance?,
     );
   }
@@ -28,9 +28,9 @@ class PotStateAdapter extends TypeAdapter<PotState> {
     writer
       ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.x)
+      ..write(obj.row)
       ..writeByte(1)
-      ..write(obj.y)
+      ..write(obj.col)
       ..writeByte(2)
       ..write(obj.currentPlant);
   }

@@ -1,35 +1,22 @@
-import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'package:plant_game/game_state_manager.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../game_state_provider.dart';
 
-import '../plant_game.dart';
-import 'state/game_state.dart';
-
-class MoneyDisplay extends TextComponent with HasGameRef<PlantGame> {
-  MoneyDisplay() : super(priority: 10);
-  dynamic gameState;
+class MoneyDisplay extends ConsumerWidget {
+  const MoneyDisplay({super.key});
 
   @override
-  Future<void> onLoad() async {
-    super.onLoad();
-    var box = GameStateManager.box;
-    gameState = box.get('currentGameState', defaultValue: GameState(money: 0, pots: [[]], plantInventory: []));
+  Widget build(BuildContext context, WidgetRef ref) {
+    final money = ref.watch(
+      gameStateManagerProvider.select((manager) => manager.state.money),
+    );
 
-    text = 'Money: ${gameState.money}';
-    textRenderer = TextPaint(
+    return Text(
+      'Money: $money',
       style: const TextStyle(
         fontSize: 24,
         color: Colors.white,
       ),
     );
-
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-
-    // Update the displayed currency
-    text = 'Money: ${gameState.money}';
   }
 }

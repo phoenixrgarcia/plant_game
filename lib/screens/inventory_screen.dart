@@ -1,44 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:plant_game/components/plants/data/inventory_entry.dart';
 
 import '../components/UI/inventory_list_item.dart';
 import '../components/pot_sprite.dart';
+import '../game_state_provider.dart';
 
-class InventoryScreen extends StatefulWidget {
+class InventoryScreen extends ConsumerWidget {
   final VoidCallback onClose;
-  final void Function(InventoryEntry entry) onPlant;
-  final List<InventoryEntry> plantInventory;
   final ValueNotifier<PotSprite?> selectedPotNotifier;
 
   const InventoryScreen({
     super.key,
     required this.onClose,
-    required this.plantInventory,
-    required this.onPlant,
     required this.selectedPotNotifier,
   });
 
   @override
-  State<InventoryScreen> createState() => InventoryScreenState();
-}
-
-class InventoryScreenState extends State<InventoryScreen> {
-  late List<InventoryEntry> _plantInventory;
-
-  @override
-  void initState() {
-    super.initState();
-    _plantInventory = widget.plantInventory;
-  }
-
-  void updateInventory(List<InventoryEntry> newInventory) {
-    setState(() {
-      _plantInventory = newInventory;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gameStateManager = ref.watch(gameStateManagerProvider);
+    final plantInventory = gameStateManager.state.plantInventory;
     return Stack(
       children: [
         IgnorePointer(
@@ -72,23 +53,24 @@ class InventoryScreenState extends State<InventoryScreen> {
                         ),
                         IconButton(
                           icon: const Icon(Icons.close),
-                          onPressed: widget.onClose,
+                          onPressed: onClose,
                         ),
                       ],
                     ),
                   ),
                   Expanded(
                     child: ValueListenableBuilder<PotSprite?>(
-                      valueListenable: widget.selectedPotNotifier,
+                      valueListenable: selectedPotNotifier,
                       builder: (context, selectedPot, _) {
                         final canPlant = selectedPot != null && selectedPot.potState.isOccupied == false;
                         return ListView.builder(
-                          itemCount: _plantInventory.length,
+                          itemCount: plantInventory.length,
                           itemBuilder: (context, index) {
                             return InventoryListItem(
-                              entry: _plantInventory[index],
-                              onPlant: widget.onPlant,
+                              entry: plantInventory[index],
                               canPlant: canPlant,
+                              potRow: selectedPot?.potState.row,
+                              potCol: selectedPot?.potState.col,
                             );
                           },
                         );

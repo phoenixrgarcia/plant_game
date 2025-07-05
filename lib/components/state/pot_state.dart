@@ -7,18 +7,19 @@ part 'pot_state.g.dart';
 // PotState class to store data about each pot and its logic
 @HiveType(typeId: 1)
 class PotState extends HiveObject {
+
   @HiveField(0)
-  double x;  // X position of the pot
+  int row;  // Row index of the pot in the grid
 
   @HiveField(1)
-  double y;  // Y position of the pot
+  int col;  // Column index of the pot in the grid
 
   @HiveField(2)
   PlantInstance? currentPlant;  // The specific instance data for the plant in the pot 
 
   PotState({
-    required this.x,
-    required this.y,
+    required this.row,
+    required this.col,
     this.currentPlant,  
   });
 
