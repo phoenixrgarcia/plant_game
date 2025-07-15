@@ -26,8 +26,8 @@ void main() async {
   if (true) {
     GameStateManager().clear();
   }
-  await Hive.deleteBoxFromDisk(
-      'gameState'); // Reset the box (do this only once after a breaking change)
+  await Hive.deleteBoxFromDisk('gameState');
+
   await GameStateManager().init(); // Initialize the manager and open the box
 
   final container = ProviderContainer();

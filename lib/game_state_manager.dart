@@ -74,8 +74,18 @@ class GameStateManager extends ChangeNotifier {
   }
 
   /// Example mutator for planting in a pot
-  void plantInPot(int x, int y, PlantInstance plant) {
-    // TODO
-    //_currentState.pots[x][y].currentPlant = plant;
+  void plantInPot(int row, int col, PlantInstance plant) {
+    if (row < 0 || col < 0 || row >= _currentState.pots.length || col >= _currentState.pots[row].length) {
+      throw Exception("Invalid pot coordinates: ($row, $col)");
+    }
+
+    final pot = _currentState.pots[col][row];
+    if (pot.isOccupied) {
+      throw Exception("Pot at ($row, $col) is occupied.");
+    }
+
+    pot.currentPlant = plant;
+    save(); // Save state after mutating
+    notifyListeners(); // Notify listeners of state change
   }
 }
