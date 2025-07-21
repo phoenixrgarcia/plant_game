@@ -8,7 +8,7 @@ import '../plant_game.dart';
 
 class PotSprite extends SpriteComponent
     with HasGameRef<PlantGame>, TapCallbacks {
-  final PotState potState; // Reference to the PotState
+  PotState potState; // Reference to the PotState
 
   Sprite? plantSprite;
   String? currentSpritePath;

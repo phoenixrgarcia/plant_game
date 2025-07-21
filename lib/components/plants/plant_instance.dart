@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:plant_game/components/plants/data/plant_data.dart';
 import 'package:plant_game/components/plants/plant.dart';
+import 'package:plant_game/components/state/pot_state.dart';
 
 part 'plant_instance.g.dart';
 
@@ -25,6 +26,14 @@ class PlantInstance extends HiveObject{
 
   void incrementAge() {
     currentAge++;
+  }
+
+  void mutateMultValues(List<List<double>> multValues, List<List<PotState>> potStates) {
+    final plantData = PlantData.getById(plantDataName);
+    if (plantData != null) {
+      // TODO, extend plant class to have a mutateMultValues method
+      //plantData.mutateMultValues(multValues, potStates, tier);
+    }
   }
 
 }

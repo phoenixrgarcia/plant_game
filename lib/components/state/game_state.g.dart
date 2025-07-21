@@ -17,7 +17,7 @@ class GameStateAdapter extends TypeAdapter<GameState> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return GameState(
-      money: fields[0] as int,
+      money: fields[0] as double,
       pots: (fields[1] as List)
           .map((dynamic e) => (e as List).cast<PotState>())
           .toList(),

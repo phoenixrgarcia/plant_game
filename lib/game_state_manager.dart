@@ -43,6 +43,7 @@ class GameStateManager extends ChangeNotifier {
   }
 
   /// Saves the current state to Hive
+  /// Call when, planting plant, harvesting, or changing inventory. 
   Future<void> save() async {
     if (_box == null) {
       throw Exception("GameStateManager not initialized.");
@@ -68,9 +69,10 @@ class GameStateManager extends ChangeNotifier {
   }
 
   /// Example mutator for money
-  void addMoney(int amount) {
+  /// Probably dont actually use this, since money is frequently updated. 
+  void mutateMoney(double amount) {
     _currentState.money += amount;
-    notifyListeners(); // Notify listeners of state change
+    notifyListeners(); // Notify listeners of state change // comment this out? 
   }
 
   /// Example mutator for planting in a pot
@@ -87,5 +89,19 @@ class GameStateManager extends ChangeNotifier {
     pot.currentPlant = plant;
     save(); // Save state after mutating
     notifyListeners(); // Notify listeners of state change
+  }
+
+  void removeFromInventory(InventoryEntry entry) {
+    final index = _currentState.plantInventory.indexWhere((e) => e.plantDataName == entry.plantDataName && e.tier == entry.tier);
+    if (index != -1) {
+      _currentState.plantInventory[index].quantity -= entry.quantity;
+      if (_currentState.plantInventory[index].quantity <= 0) {
+        _currentState.plantInventory.removeAt(index);
+      }
+      save(); // Save state after mutating
+      notifyListeners(); // Notify listeners of state change
+    } else {
+      throw Exception("Entry not found in inventory: ${entry.plantDataName}");
+    }
   }
 }

@@ -15,7 +15,7 @@ import '../components/pot_sprite.dart';
 class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   final GameStateManager gameStateManager;
   late final List<List<PotSprite>> gardenPots = [];
-  late List<List<PotState>> savedPots = [];
+  late List<List<PotState>> potStates = [];
 
   ValueNotifier<PotSprite?> selectedPot = ValueNotifier(null);
 
@@ -33,6 +33,9 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
   // Add pots from saved state
   void setGardenPots() {
+    potStates = gameStateManager.state.pots;
+    gardenPots.clear();
+
     for (var potRow in gameStateManager.state.pots) {
       gardenPots.add([]);
       for (var pot in potRow) {
@@ -47,47 +50,6 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     }
   }
 
-  // TODO remove this
-  // void addInitialGardenSpots() {
-  //   final Vector2 screenSize = gameRef.size;
-  //   const int rows = 1;
-  //   const int cols = 3;
-
-  //   // Pot size based on screen width
-  //   final double potSize = gameRef.potSize.x;
-  //   final double spacing = (screenSize.x - (cols * potSize)) / (cols + 1);
-
-  //   gardenPots.add([]);
-
-  //   for (int col = 0; col < cols; col++) {
-  //     final double x = col * (potSize + spacing) + spacing;
-  //     final double y = (screenSize.y * 0.5) - (potSize / 2);
-
-  //     final pot = PotSprite(
-  //       potState: PotState(x: x, y: y),
-  //       size: Vector2(potSize, potSize),
-  //     );
-
-  //     add(pot);
-  //     gardenPots[0].add(pot);
-  //   }
-
-  //   for (var potRow in gardenPots) {
-  //     for (var pot in potRow) {
-  //       savedPots[0].add(pot.potState);
-  //     }
-  //   }
-
-  //   final updatedState = GameState(
-  //     money: GameStateManager.currentState.money,
-  //     pots: savedPots,
-  //     plantInventory: GameStateManager.currentState.plantInventory,
-  //   );
-
-  //   GameStateManager.saveState(updatedState);
-
-  // }
-
   void selectPot(PotSprite pot) {
     selectedPot.value = pot;
     // Additional logic for selecting a pot
@@ -98,34 +60,14 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     // Additional logic for deselecting a pot
   }
 
-  // void plant(InventoryEntry entry) {
-  //   if (selectedPot.value != null &&
-  //       entry.quantity > 0 &&
-  //       selectedPot.value!.potState.isOccupied == false) {
-  //     selectedPot.value!.potState.plant(entry);
-  //     selectedPot.value?.updatePlantSprite();
-  //     var state = GameStateManager.currentState;
-  //     state.plantInventory
-  //         .where((e) => e.plantDataName == entry.plantDataName)
-  //         .first
-  //         .quantity -= 1;
-
-  //     savedPots[0][gardenPots[0].indexOf(selectedPot.value!)] =
-  //         selectedPot.value!.potState;
-  //     state.pots = savedPots;
-  //     selectedPot.value = null; // Deselect after planting
-  //     GameStateManager.saveState(state); // Save the game state after planting
-  //   } else {
-  //     print("Issue planting the plant.");
-  //   }
-  // }
-
   void tick() {
     // Iterate through all pots and call their tick method
-
+    // Doing this in this order to follow PEMDAS logic
     //a list to store the multiplication values for each pot, that is NxM the same size as gardenPots
     List<List<double>> multValues = List.generate(
         gardenPots.length, (i) => List.filled(gardenPots[i].length, 1.0));
+
+    double deltaMoney = 0; // Reset delta money for this tick
 
     for (var potRow in pots) {
       for (var pot in potRow) {
@@ -135,8 +77,36 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
         }
       }
     }
+
+    // Iterate through each pot and apply the multimutation values
+    for(var potRow in potStates) {
+      for (var pot in potRow) {
+        if (pot.currentPlant != null) {
+          pot.currentPlant!.mutateMultValues(multValues, potStates);
+        }
+      }
+    }
+
+    for(var potRow in gardenPots) {
+      for (var pot in potRow) {
+        if (pot.potState.currentPlant != null) {
+          // If the plant is fully grown, we can harvest it
+          if (pot.potState.currentPlant!.isFullyGrown) {
+            // Add money for harvesting
+            deltaMoney += pot.potState.currentPlant!.plantData.incomeRate * multValues[pot.potState.col][pot.potState.row];
+          }
+        }
+      }
+    }
+
+    // Update the game state with the new money value
+    if (deltaMoney != 0) {
+      gameStateManager.mutateMoney(deltaMoney);
+    }
+
   }
 
+  //Helper function to calculate the position of a pot based on its row and column
   Vector2 calculatePotPosition(int row, int col) {
     final Vector2 screenSize = gameRef.size;
     final double potSize = gameRef.potSize.x;
@@ -150,6 +120,15 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   }
 
   void _onGameStateChanged() {
+    // Update the game state based on changes in the GameStateManager
+    for (var potRow in gardenPots) {
+      for (var pot in potRow) {
+        // Update each pot's state if needed
+        final savedPot = gameStateManager.state.pots[pot.potState.col][pot.potState.row];
+        pot.potState = savedPot;
+        pot.updatePlantSprite(); // Update the sprite if the plant has changed
+      }
+    }
     // Update your Flame components here, e.g.:
     // - Update pot sprites if pots changed
     // - Update UI overlays if money changed

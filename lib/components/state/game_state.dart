@@ -7,7 +7,7 @@ part 'game_state.g.dart';
 @HiveType(typeId: 0)
 class GameState extends HiveObject{
   @HiveField(0)
-  int money;
+  double money;
 
   @HiveField(1)
   List<List<PotState>> pots;

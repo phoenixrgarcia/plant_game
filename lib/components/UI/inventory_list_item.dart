@@ -39,6 +39,7 @@ class InventoryListItem extends ConsumerWidget {
                   tier: entry.tier,
                 );
                 manager.plantInPot(potRow!, potCol!, plantInstance);
+                manager.removeFromInventory(entry);
               },
               child: const Text('Plant'),
             )
