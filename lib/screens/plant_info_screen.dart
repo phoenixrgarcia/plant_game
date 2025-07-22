@@ -6,11 +6,11 @@ import '../components/UI/inventory_list_item.dart';
 import '../components/pot_sprite.dart';
 import '../game_state_provider.dart';
 
-class InventoryScreen extends ConsumerWidget {
+class PlantInfoScreen extends ConsumerWidget {
   final VoidCallback onClose;
   final ValueNotifier<PotSprite?> selectedPotNotifier;
 
-  const InventoryScreen({
+  const PlantInfoScreen({
     super.key,
     required this.onClose,
     required this.selectedPotNotifier,
@@ -28,21 +28,24 @@ class InventoryScreen extends ConsumerWidget {
             color: Colors.transparent,
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.13, // Adjust this value to account for the headerbar height in plant_game
+          left: 0,
+          right: 0,
           child: Material(
             color: Colors.transparent,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.6,
+              height: MediaQuery.of(context).size.height * 0.55,
               padding: EdgeInsetsDirectional.only(
-                bottom: 60 // Adjust this value to account for the NavBar height
+                top: MediaQuery.of(context).size.height * 0.05 // Adjust this value to account for the game_ui height
               ),
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
                 boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black26)],
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -50,7 +53,7 @@ class InventoryScreen extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          "Inventory",
+                          "Plant Data",
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
@@ -61,26 +64,7 @@ class InventoryScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: ValueListenableBuilder<PotSprite?>(
-                      valueListenable: selectedPotNotifier,
-                      builder: (context, selectedPot, _) {
-                        final canPlant = selectedPot != null && selectedPot.potState.isOccupied == false;
-                        return ListView.builder(
-                          itemCount: plantInventory.length,
-                          itemBuilder: (context, index) {
-                            return InventoryListItem(
-                              entry: plantInventory[index],
-                              canPlant: canPlant,
-                              potRow: selectedPot?.potState.row,
-                              potCol: selectedPot?.potState.col,
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
+                ]
               ),
             ),
           ),

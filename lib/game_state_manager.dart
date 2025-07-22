@@ -38,6 +38,15 @@ class GameStateManager extends ChangeNotifier {
           pots: [[PotState(row: 0, col: 0)]],
           plantInventory: [
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 1),
+            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 2),
+            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 3),
+            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 4),
+            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 5),
+            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 6),
+            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 7),
+            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 8),
+            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 9),
+            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 10),
           ],
         );
   }

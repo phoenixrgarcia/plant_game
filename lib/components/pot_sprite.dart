@@ -13,7 +13,16 @@ class PotSprite extends SpriteComponent
   Sprite? plantSprite;
   String? currentSpritePath;
 
-  PotSprite({required this.potState, required Vector2 size, required Vector2 position})
+  //Here we are using Offset to store a fraction value for x and y coordinates.
+  Map<String, Offset> targetPotPositions = {
+    'top': const Offset(.5, .3),
+    'bottom': const Offset(.5, .75),
+  };
+
+  PotSprite(
+      {required this.potState,
+      required Vector2 size,
+      required Vector2 position})
       : super(position: position, size: size);
 
   @override
@@ -24,39 +33,47 @@ class PotSprite extends SpriteComponent
 
   @override
   bool onTapDown(TapDownEvent event) {
-    moveCameraToPot();
     gameRef.greenhouseWorld.selectPot(this);
 
-    // I should add logic here. If the pot is empty, I should open the inventory and allow the user to plant a seed.
-    // If the pot is occupied, I should open some menu about plant info.
-    gameRef.overlays.add('inventory');
+    if (!potState.isOccupied) {
+      moveCameraToPot("top");
+      gameRef.overlays.add('inventory');
+    } else {
+      moveCameraToPot("bottom");
+      gameRef.overlays.add('plant_info');
+    }
 
     return true; // Event handled
   }
 
-  void moveCameraToPot() {
+  void moveCameraToPot(String targetPosition) {
     final camera = gameRef.camera;
+    final xPositionFraction = targetPotPositions[targetPosition]!.dx;
+    final yPositionFraction = targetPotPositions[targetPosition]!.dy;
 
     // Calculate new camera position to center the pot at the top
     final newCameraPosition = Vector2(
-      position.x - gameRef.size.x * .5 + size.y / 2, // Keep X position the same
+      position.x -
+          gameRef.size.x * xPositionFraction +
+          size.y / 2, // Keep X position the same
+
       position.y -
-          gameRef.size.y * .2 +
+          gameRef.size.y * yPositionFraction +
           size.y / 2, // Move Y so pot is at the top
     );
 
     // Move the camera smoothly
-    camera.moveTo(newCameraPosition, speed: 500);
+    camera.moveTo(newCameraPosition, speed: 1000);
   }
 
   @override
   void render(Canvas canvas) {
-    if (gameRef.greenhouseWorld.selectedPot == this) {
+    if (gameRef.greenhouseWorld.selectedPot.value == this) {
       renderSelectedPot(canvas);
     }
 
     super.render(canvas);
-    
+
     if (plantSprite != null) {
       plantSprite!.render(canvas, size: size);
     }
@@ -73,11 +90,13 @@ class PotSprite extends SpriteComponent
 
   Future<void> updatePlantSprite() async {
     if (potState.isOccupied) {
-      final plantData = PlantData.getById(potState.currentPlant!.plantDataName)!;
+      final plantData =
+          PlantData.getById(potState.currentPlant!.plantDataName)!;
 
       // Check if spritePath changed (e.g. due to growth)
       if (plantData.spritePath != currentSpritePath) {
-        plantSprite = Sprite(gameRef.images.fromCache(plantData.spritePath));
+        plantSprite = Sprite(gameRef.images.fromCache(plantData.spritePath))
+          ..srcPosition = Vector2(0, 0 /*gameRef.potSize.y * 50/ 2*/);
         currentSpritePath = plantData.spritePath;
       }
     } else {
@@ -85,5 +104,4 @@ class PotSprite extends SpriteComponent
       currentSpritePath = null;
     }
   }
-  
 }
