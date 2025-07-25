@@ -9,6 +9,8 @@ class Crop extends Plant {
     required int rarity,
     required String imagePath,
     required String spritePath,
+    String? description,
+    String? specialProperties,
   }) : super(
           name: name,
           growthTime: growthTime,
@@ -17,5 +19,7 @@ class Crop extends Plant {
           rarity: rarity,
           imagePath: imagePath,
           spritePath: spritePath,
+          description: description,
+          specialProperties: specialProperties,
         );
 }

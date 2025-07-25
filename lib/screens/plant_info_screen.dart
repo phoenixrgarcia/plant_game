@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:plant_game/components/plants/data/inventory_entry.dart';
+import 'package:plant_game/components/plants/data/plant_data.dart';
 
 import '../components/UI/inventory_list_item.dart';
 import '../components/pot_sprite.dart';
@@ -47,6 +48,57 @@ class PlantInfoScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  ValueListenableBuilder<PotSprite?>(
+                    valueListenable: selectedPotNotifier,
+                    builder: (context, selectedPot, _) {
+                      final plant = selectedPot?.potState.currentPlant;
+                      if (plant == null) {
+                        return const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Text(
+                            "No plant selected.",
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
+                        );
+                      }
+                      final plantData = PlantData.getById(plant.plantDataName);
+                      return Card(
+                        elevation: 4,
+                        margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                plantData?.name ?? plant.plantDataName,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text("Tier: ${plant.tier}", style: const TextStyle(fontSize: 16)),
+                              Text("Age: ${plant.currentAge} ticks", style: const TextStyle(fontSize: 16)),
+                              Text("Harvest Value: \$${plantData?.sellPrice ?? 'N/A'}", style: const TextStyle(fontSize: 16)),
+                              Text("Income Rate: \$${plantData?.incomeRate ?? 'N/A'}/tick", style: const TextStyle(fontSize: 16)),
+                              if (true/*plantData?.specialProperties != null && plantData!.specialProperties.isNotEmpty*/)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    "Special: ${plantData?.specialProperties ?? 'None'}",
+                                    style: const TextStyle(fontSize: 15, color: Colors.deepPurple),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                     child: Row(
@@ -64,7 +116,8 @@ class PlantInfoScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                ]
+                  // Stylish plant info card
+                ],
               ),
             ),
           ),

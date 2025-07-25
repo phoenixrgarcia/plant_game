@@ -14,6 +14,8 @@ class PlantData{
       spritePath: 'tomato.png',
       // onHarvest: () => print('Tomato harvested!'),
       // onTick: () => print('Tomato ticked!'),
+      description: 'A juicy red fruit, perfect for salads and sauces.',
+      specialProperties: "Does nothing special",
     ),
     'carrot': Crop(
       name: 'Carrot',

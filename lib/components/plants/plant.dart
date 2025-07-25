@@ -9,6 +9,8 @@ abstract class Plant {
   final int rarity;
   final String imagePath;
   final String spritePath;
+  final String? description;
+  final String? specialProperties;
 
   Plant({
     required this.name,
@@ -18,6 +20,8 @@ abstract class Plant {
     required this.rarity,
     required this.imagePath,
     required this.spritePath,
+    this.description,
+    this.specialProperties,
   });
 
   void onHarvest() {
