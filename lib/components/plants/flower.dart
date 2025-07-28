@@ -3,9 +3,9 @@ import 'plant.dart';
 class Flower extends Plant {
   Flower({
     required String name,
-    required int growthTime,
-    required int sellPrice,
-    required int incomeRate,
+    required double growthTime,
+    required double sellPrice,
+    required double incomeRate,
     required int rarity,
     required String imagePath,
     required String spritePath,

@@ -20,7 +20,6 @@ class PlantInfoScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final gameStateManager = ref.watch(gameStateManagerProvider);
-    final plantInventory = gameStateManager.state.plantInventory;
     return Stack(
       children: [
         IgnorePointer(
@@ -30,7 +29,8 @@ class PlantInfoScreen extends ConsumerWidget {
           ),
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height * 0.13, // Adjust this value to account for the headerbar height in plant_game
+          top: MediaQuery.of(context).size.height *
+              0.13, // Adjust this value to account for the headerbar height in plant_game
           left: 0,
           right: 0,
           child: Material(
@@ -38,11 +38,13 @@ class PlantInfoScreen extends ConsumerWidget {
             child: Container(
               height: MediaQuery.of(context).size.height * 0.55,
               padding: EdgeInsetsDirectional.only(
-                top: MediaQuery.of(context).size.height * 0.05 // Adjust this value to account for the game_ui height
-              ),
+                  top: MediaQuery.of(context).size.height *
+                      0.05 // Adjust this value to account for the game_ui height
+                  ),
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(20)),
                 boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black26)],
               ),
               child: Column(
@@ -64,7 +66,8 @@ class PlantInfoScreen extends ConsumerWidget {
                       final plantData = PlantData.getById(plant.plantDataName);
                       return Card(
                         elevation: 4,
-                        margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -81,16 +84,23 @@ class PlantInfoScreen extends ConsumerWidget {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              Text("Tier: ${plant.tier}", style: const TextStyle(fontSize: 16)),
-                              Text("Age: ${plant.currentAge} ticks", style: const TextStyle(fontSize: 16)),
-                              Text("Harvest Value: \$${plantData?.sellPrice ?? 'N/A'}", style: const TextStyle(fontSize: 16)),
-                              Text("Income Rate: \$${plantData?.incomeRate ?? 'N/A'}/tick", style: const TextStyle(fontSize: 16)),
-                              if (true/*plantData?.specialProperties != null && plantData!.specialProperties.isNotEmpty*/)
+                              Text("Tier: ${plant.tier}",
+                                  style: const TextStyle(fontSize: 16)),
+                              Text("Age: ${plant.currentAge} ticks",
+                                  style: const TextStyle(fontSize: 16)),
+                              Text(
+                                  "Harvest Value: \$${plantData?.sellPrice ?? 'N/A'}",
+                                  style: const TextStyle(fontSize: 16)),
+                              Text(
+                                  "Income Rate: \$${plantData?.incomeRate ?? 'N/A'}/tick",
+                                  style: const TextStyle(fontSize: 16)),
+                              if (true /*plantData?.specialProperties != null && plantData!.specialProperties.isNotEmpty*/)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 8),
                                   child: Text(
                                     "Special: ${plantData?.specialProperties ?? 'None'}",
-                                    style: const TextStyle(fontSize: 15, color: Colors.deepPurple),
+                                    style: const TextStyle(
+                                        fontSize: 15, color: Colors.deepPurple),
                                   ),
                                 ),
                             ],
@@ -109,6 +119,56 @@ class PlantInfoScreen extends ConsumerWidget {
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
+                        ValueListenableBuilder<PotSprite?>(
+                          valueListenable: selectedPotNotifier,
+                          builder: (context, selectedPot, _) {
+                            final plant = selectedPot?.potState.currentPlant;
+                            if (plant == null) {
+                              // No plant selected, return empty widget
+                              return const SizedBox.shrink();
+                            }
+                            final plantData =
+                                PlantData.getById(plant.plantDataName);
+                            return ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                              ),
+                              onPressed: () async {
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Harvest Plant?'),
+                                    content: Text(
+                                        'Harvest this plant for \$${plantData?.sellPrice ?? 'N/A'}?'),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, false),
+                                          child: const Text('Cancel')),
+                                      ElevatedButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, true),
+                                          child: const Text('Harvest')),
+                                    ],
+                                  ),
+                                );
+                                if (confirmed == true) {
+                                  gameStateManager.harvestPlant(
+                                      selectedPot!.potState.row,
+                                      selectedPot.potState.col);
+                                  onClose(); // Close the plant info screen
+                                }
+                              },
+                              child: Text(
+                                  'Harvest \$${plantData?.sellPrice ?? 'N/A'}'),
+                            );
+                          },
+                        ),
                         IconButton(
                           icon: const Icon(Icons.close),
                           onPressed: onClose,
@@ -116,7 +176,6 @@ class PlantInfoScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  // Stylish plant info card
                 ],
               ),
             ),

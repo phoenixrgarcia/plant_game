@@ -3,9 +3,9 @@ import 'package:flame/components.dart';
 
 abstract class Plant {
   final String name;
-  final int growthTime;
-  final int sellPrice;
-  final int incomeRate;
+  final double growthTime;
+  final double sellPrice;
+  final double incomeRate;
   final int rarity;
   final String imagePath;
   final String spritePath;

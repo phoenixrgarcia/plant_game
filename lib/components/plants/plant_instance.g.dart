@@ -18,7 +18,7 @@ class PlantInstanceAdapter extends TypeAdapter<PlantInstance> {
     };
     return PlantInstance(
       plantDataName: fields[0] as String,
-      currentAge: fields[1] as int,
+      currentAge: fields[1] as double,
       tier: fields[2] as int,
     );
   }

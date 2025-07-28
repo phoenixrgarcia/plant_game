@@ -84,7 +84,7 @@ class GameStateManager extends ChangeNotifier {
     notifyListeners(); // Notify listeners of state change // comment this out? 
   }
 
-  /// Example mutator for planting in a pot
+  /// Mutator for planting in a pot
   void plantInPot(int row, int col, PlantInstance plant) {
     if (row < 0 || col < 0 || row >= _currentState.pots.length || col >= _currentState.pots[row].length) {
       throw Exception("Invalid pot coordinates: ($row, $col)");
@@ -96,6 +96,19 @@ class GameStateManager extends ChangeNotifier {
     }
 
     pot.currentPlant = plant;
+    save(); // Save state after mutating
+    notifyListeners(); // Notify listeners of state change
+  }
+
+  /// Harvests a plant from a specific pot
+  void harvestPlant(int row, int col) {
+    final pot = _currentState.pots[col][row];
+    if (pot.currentPlant == null) {
+      throw Exception("No plant to harvest in pot at ($row, $col).");
+    }
+    mutateMoney(pot.currentPlant!.plantData.sellPrice);
+    pot.currentPlant = null; // Remove the plant from the pot
+    
     save(); // Save state after mutating
     notifyListeners(); // Notify listeners of state change
   }

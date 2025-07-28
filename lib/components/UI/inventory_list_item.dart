@@ -11,6 +11,7 @@ class InventoryListItem extends ConsumerWidget {
   final bool canPlant;
   final int? potCol;
   final int? potRow;
+  final VoidCallback? onClose;
 
   const InventoryListItem({
     super.key,
@@ -18,6 +19,7 @@ class InventoryListItem extends ConsumerWidget {
     required this.canPlant,
     this.potCol,
     this.potRow,
+    this.onClose,
   });
 
   @override
@@ -38,8 +40,10 @@ class InventoryListItem extends ConsumerWidget {
                   plantDataName: entry.plantDataName,
                   tier: entry.tier,
                 );
+
                 manager.plantInPot(potRow!, potCol!, plantInstance);
                 manager.removeFromInventory(entry);
+                onClose?.call(); // Close the inventory screen if needed
               },
               child: const Text('Plant'),
             )

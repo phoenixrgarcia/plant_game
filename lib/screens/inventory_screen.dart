@@ -74,6 +74,7 @@ class InventoryScreen extends ConsumerWidget {
                               canPlant: canPlant,
                               potRow: selectedPot?.potState.row,
                               potCol: selectedPot?.potState.col,
+                              onClose: onClose,
                             );
                           },
                         );

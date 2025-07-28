@@ -11,7 +11,7 @@ class PlantInstance extends HiveObject{
   final String plantDataName;
 
   @HiveField(1)
-  int currentAge;
+  double currentAge;
 
   @HiveField(2)
   int tier;
@@ -25,7 +25,7 @@ class PlantInstance extends HiveObject{
   bool get isFullyGrown => currentAge >= PlantData.getById(plantDataName)!.growthTime;
 
   void incrementAge() {
-    currentAge++;
+    currentAge += 1;
   }
 
   void mutateMultValues(List<List<double>> multValues, List<List<PotState>> potStates) {
