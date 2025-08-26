@@ -112,9 +112,8 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     final double potSize = gameRef.potSize.x;
     final double spacing = (screenSize.x - (3 * potSize)) / (3 + 1);
 
-    final double x = col * (potSize + spacing) + spacing;
-    final double y =
-        row * (potSize + spacing) + (screenSize.y * 0.5) - (potSize / 2);
+    final double x = col * (potSize + spacing) + (screenSize.x * 0.5) - (potSize / 2);
+    final double y = row * (potSize + spacing) + (screenSize.y * 0.5) - (potSize / 2);
 
     return Vector2(x, y);
   }
