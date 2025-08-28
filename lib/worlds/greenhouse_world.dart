@@ -103,7 +103,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     if (deltaMoney != 0) {
       gameStateManager.mutateMoney(deltaMoney);
     }
-
+    gameStateManager.notify(); // Notify listeners of state change
   }
 
   //Helper function to calculate the position of a pot based on its row and column
@@ -132,4 +132,14 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     // - Update pot sprites if pots changed
     // - Update UI overlays if money changed
   }
+
+  void addPurchasablePots
+    
+}
+
+class PurchasablePot{
+  final int row;
+  final int col;
+
+  PurchasablePot({required this.row, required this.col});
 }

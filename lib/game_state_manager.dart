@@ -126,4 +126,8 @@ class GameStateManager extends ChangeNotifier {
       throw Exception("Entry not found in inventory: ${entry.plantDataName}");
     }
   }
+
+  void notify() {
+    notifyListeners();
+  }
 }
