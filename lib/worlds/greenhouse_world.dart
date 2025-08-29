@@ -8,7 +8,8 @@ import 'package:plant_game/plant_game.dart';
 import 'package:hive/hive.dart';
 
 import '../components/plants/data/inventory_entry.dart';
-import '../components/pot_sprite.dart';
+import '../components/sprites/pot_sprite.dart';
+import '../components/sprites/purchasable_pot_sprite.dart';
 
 // This file containst he game logic for the greenhouse world. It loads the state and populates the pots.
 
@@ -23,12 +24,16 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
   GreenhouseWorld({required this.gameStateManager});
 
+  late Vector2 potSize;
+
   @override
   Future<void> onLoad() async {
     // Load the saved game state
     gameStateManager.addListener(_onGameStateChanged);
+    potSize = gameRef.potSize;
 
     setGardenPots();
+
   }
 
   // Add pots from saved state
@@ -41,13 +46,16 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
       for (var pot in potRow) {
         final potSprite = PotSprite(
           potState: pot,
-          size: Vector2(80, 80),
+          size: potSize,
           position: calculatePotPosition(pot.row, pot.col)
         );
         add(potSprite);
         gardenPots[gardenPots.length - 1].add(potSprite);
       }
     }
+
+    //FIXME remove this later
+    add(PurchasablePot(row: 0, col: 0, size: potSize, position: calculatePotPosition(1,1)));
   }
 
   void selectPot(PotSprite pot) {
@@ -118,6 +126,28 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     return Vector2(x, y);
   }
 
+  void purchasePot(int row, int col){
+    final potCost = gameStateManager.state.potCost;
+    if(gameStateManager.state.money >= potCost){
+      // Deduct money
+      gameStateManager.mutateMoney(-potCost);
+
+      // Add new pot to the game state
+      final newPot = PotState(row: row, col: col);
+      gameStateManager.state.pots[col][row] = newPot;
+
+      // Add new pot sprite to the world
+      final potSprite = PotSprite(
+        potState: newPot,
+        size: potSize,
+        position: calculatePotPosition(row, col)
+      );
+      add(potSprite);
+      gardenPots[col][row] = potSprite;
+      gameStateManager.incrementPotPrice();
+    } 
+  }
+
   void _onGameStateChanged() {
     // Update the game state based on changes in the GameStateManager
     for (var potRow in gardenPots) {
@@ -133,13 +163,8 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     // - Update UI overlays if money changed
   }
 
-  void addPurchasablePots
+  void addPurchasablePots(){
+
+  }
     
-}
-
-class PurchasablePot{
-  final int row;
-  final int col;
-
-  PurchasablePot({required this.row, required this.col});
 }

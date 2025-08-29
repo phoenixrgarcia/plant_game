@@ -34,7 +34,7 @@ class GameStateManager extends ChangeNotifier {
     // Load current state or initialize default
     _currentState = _box!.get(_key) ??
         GameState(
-          money: 0,
+          money: 0.0,
           pots: [[PotState(row: 0, col: 0)]],
           plantInventory: [
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 1),
@@ -48,6 +48,7 @@ class GameStateManager extends ChangeNotifier {
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 9),
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 10),
           ],
+          potCost: 25.0,
         );
   }
 
@@ -125,6 +126,11 @@ class GameStateManager extends ChangeNotifier {
     } else {
       throw Exception("Entry not found in inventory: ${entry.plantDataName}");
     }
+  }
+
+  void incrementPotPrice(){
+    _currentState.potCost *= 1.15;
+    save();
   }
 
   void notify() {

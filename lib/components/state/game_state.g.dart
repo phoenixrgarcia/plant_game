@@ -22,19 +22,22 @@ class GameStateAdapter extends TypeAdapter<GameState> {
           .map((dynamic e) => (e as List).cast<PotState>())
           .toList(),
       plantInventory: (fields[2] as List).cast<InventoryEntry>(),
+      potCost: fields[3] as double,
     );
   }
 
   @override
   void write(BinaryWriter writer, GameState obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.money)
       ..writeByte(1)
       ..write(obj.pots)
       ..writeByte(2)
-      ..write(obj.plantInventory);
+      ..write(obj.plantInventory)
+      ..writeByte(3)
+      ..write(obj.potCost);
   }
 
   @override

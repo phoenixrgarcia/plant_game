@@ -2,9 +2,8 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_game/components/plants/data/plant_data.dart';
-import 'package:plant_game/components/plants/data/inventory_entry.dart';
 import 'package:plant_game/components/state/pot_state.dart';
-import '../plant_game.dart';
+import '../../plant_game.dart';
 
 class PotSprite extends SpriteComponent
     with HasGameRef<PlantGame>, TapCallbacks {
@@ -13,11 +12,6 @@ class PotSprite extends SpriteComponent
   Sprite? plantSprite;
   String? currentSpritePath;
 
-  //Here we are using Offset to store a fraction value for x and y coordinates.
-  Map<String, Offset> targetPotPositions = {
-    'top': const Offset(.5, .3),
-    'bottom': const Offset(.5, .75),
-  };
 
   PotSprite(
       {required this.potState,
@@ -45,6 +39,12 @@ class PotSprite extends SpriteComponent
 
     return true; // Event handled
   }
+  
+  //Here we are using Offset to store a fraction value for x and y coordinates.
+  Map<String, Offset> targetPotPositions = {
+    'top': const Offset(.5, .3),
+    'bottom': const Offset(.5, .75),
+  };
 
   void moveCameraToPot(String targetPosition) {
     final camera = gameRef.camera;
