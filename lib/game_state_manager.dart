@@ -34,7 +34,7 @@ class GameStateManager extends ChangeNotifier {
     // Load current state or initialize default
     _currentState = _box!.get(_key) ??
         GameState(
-          money: 0.0,
+          money: 100.0,
           pots: [[PotState(row: 0, col: 0)]],
           plantInventory: [
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 1),

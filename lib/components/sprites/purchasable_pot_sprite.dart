@@ -28,7 +28,7 @@ class PurchasablePot extends SpriteComponent with HasGameRef<PlantGame>, TapCall
   Future<void> onLoad() async {
     // Load the initial pot sprite (this would be a generic pot image)
     sprite = await gameRef.loadSprite('sample_pot_grey.png');
-    plusSprite = await gameRef.loadSprite('plus_icon.png');
+    plusSprite = await gameRef.loadSprite('plus_icon.png', srcSize: Vector2(40, 40));
   }
 
   @override

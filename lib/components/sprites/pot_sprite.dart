@@ -11,6 +11,7 @@ class PotSprite extends SpriteComponent
 
   Sprite? plantSprite;
   String? currentSpritePath;
+  SpriteComponent plantSpriteComponent = SpriteComponent();
 
 
   PotSprite(
@@ -23,6 +24,7 @@ class PotSprite extends SpriteComponent
   Future<void> onLoad() async {
     // Load the initial pot sprite (this would be a generic pot image)
     sprite = await gameRef.loadSprite('sample_pot.webp');
+    add(plantSpriteComponent);
   }
 
   @override
@@ -74,9 +76,11 @@ class PotSprite extends SpriteComponent
 
     super.render(canvas);
 
-    if (plantSprite != null) {
-      plantSprite!.render(canvas, size: size);
-    }
+    // if (plantSprite != null) {
+    //   plantSprite!.render(canvas, size: size);
+    // } else {
+
+    // }
   }
 
   void renderSelectedPot(Canvas canvas) {
@@ -98,8 +102,13 @@ class PotSprite extends SpriteComponent
         plantSprite = Sprite(gameRef.images.fromCache(plantData.spritePath))
           ..srcPosition = Vector2(0, 0 /*gameRef.potSize.y * 50/ 2*/);
         currentSpritePath = plantData.spritePath;
+        plantSpriteComponent
+          ..sprite = plantSprite
+          ..size = Vector2(25, 25)
+          ..position = Vector2(0, 0);
       }
     } else {
+      plantSpriteComponent = SpriteComponent();
       plantSprite = null;
       currentSpritePath = null;
     }
