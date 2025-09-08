@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/widgets.dart';
+import 'package:pair/pair.dart';
 import 'package:plant_game/components/state/game_state.dart';
 import 'package:plant_game/components/state/pot_state.dart';
 import 'package:plant_game/game_state_manager.dart';
@@ -15,12 +16,13 @@ import '../components/sprites/purchasable_pot_sprite.dart';
 
 class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   final GameStateManager gameStateManager;
-  late final List<List<PotSprite>> gardenPots = [];
-  late List<List<PotState>> potStates = [];
+  late final Set<PotSprite> gardenPots = {};
+  late final Set<PurchasablePot> purchasablePots = {};
+  late final Set<String> purchasablePotCoordinates = {};
 
   ValueNotifier<PotSprite?> selectedPot = ValueNotifier(null);
 
-  List<List<PotSprite>> get pots => gardenPots;
+  Set<PotSprite> get pots => gardenPots;
 
   GreenhouseWorld({required this.gameStateManager});
 
@@ -33,29 +35,21 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     potSize = gameRef.potSize;
 
     setGardenPots();
-
+    addPurchasablePots();
   }
 
   // Add pots from saved state
   void setGardenPots() {
-    potStates = gameStateManager.state.pots;
     gardenPots.clear();
 
-    for (var potRow in gameStateManager.state.pots) {
-      gardenPots.add([]);
-      for (var pot in potRow) {
-        final potSprite = PotSprite(
+    for (var pot in gameStateManager.state.pots) {
+      final potSprite = PotSprite(
           potState: pot,
           size: potSize,
-          position: calculatePotPosition(pot.row, pot.col)
-        );
-        add(potSprite);
-        gardenPots[gardenPots.length - 1].add(potSprite);
-      }
+          position: calculatePotPosition(pot.row, pot.col));
+      add(potSprite);
+      gardenPots.add(potSprite);
     }
-
-    //FIXME remove this later
-    add(PurchasablePot(row: 0, col: 0, size: potSize, position: calculatePotPosition(1,1)));
   }
 
   void selectPot(PotSprite pot) {
@@ -72,37 +66,32 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     // Iterate through all pots and call their tick method
     // Doing this in this order to follow PEMDAS logic
     //a list to store the multiplication values for each pot, that is NxM the same size as gardenPots
-    List<List<double>> multValues = List.generate(
-        gardenPots.length, (i) => List.filled(gardenPots[i].length, 1.0));
+    // List<List<double>> multValues = List.generate(
+    //     gardenPots.length, (i) => List.filled(gardenPots[i].length, 1.0));
 
     double deltaMoney = 0; // Reset delta money for this tick
 
-    for (var potRow in pots) {
-      for (var pot in potRow) {
-        if (pot.potState.currentPlant != null) {
-          // Call the tick method on the plant instance
-          pot.potState.currentPlant!.incrementAge();
-        }
+    for (var pot in pots) {
+      if (pot.potState.currentPlant != null) {
+        // Call the tick method on the plant instance
+        pot.potState.currentPlant!.incrementAge();
       }
     }
 
     // Iterate through each pot and apply the multimutation values
-    for(var potRow in potStates) {
-      for (var pot in potRow) {
-        if (pot.currentPlant != null) {
-          pot.currentPlant!.mutateMultValues(multValues, potStates);
-        }
-      }
-    }
+    // for(var pot in potStates) {
+    //     if (pot.currentPlant != null) {
+    //       pot.currentPlant!.mutateMultValues(multValues, potStates);
+    //     }
+    // }
 
-    for(var potRow in gardenPots) {
-      for (var pot in potRow) {
-        if (pot.potState.currentPlant != null) {
-          // If the plant is fully grown, we can harvest it
-          if (pot.potState.currentPlant!.isFullyGrown) {
-            // Add money for harvesting
-            deltaMoney += pot.potState.currentPlant!.plantData.incomeRate * multValues[pot.potState.col][pot.potState.row];
-          }
+    for (var pot in gardenPots) {
+      if (pot.potState.currentPlant != null) {
+        // If the plant is fully grown, we can harvest it
+        if (pot.potState.currentPlant!.isFullyGrown) {
+          // Add money for harvesting
+          deltaMoney += pot.potState.currentPlant!.plantData.incomeRate *
+              1; //TODO multValues[pot.potState.col][pot.potState.row];
         }
       }
     }
@@ -120,51 +109,82 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     final double potSize = gameRef.potSize.x;
     final double spacing = (screenSize.x - (3 * potSize)) / (3 + 1);
 
-    final double x = col * (potSize + spacing) + (screenSize.x * 0.5) - (potSize / 2);
-    final double y = row * (potSize + spacing) + (screenSize.y * 0.5) - (potSize / 2);
+    final double x =
+        col * (potSize + spacing) + (screenSize.x * 0.5) - (potSize / 2);
+    final double y =
+        row * (potSize + spacing) + (screenSize.y * 0.5) - (potSize / 2);
 
     return Vector2(x, y);
   }
 
-  void purchasePot(int row, int col){
+  void purchasePot(int row, int col) {
     final potCost = gameStateManager.state.potCost;
-    if(gameStateManager.state.money >= potCost){
+    if (gameStateManager.state.money >= potCost) {
       // Deduct money
       gameStateManager.mutateMoney(-potCost);
 
       // Add new pot to the game state
       final newPot = PotState(row: row, col: col);
-      gameStateManager.state.pots[col][row] = newPot;
+      gameStateManager.state.pots.add(newPot);
+      gameStateManager.save();
 
       // Add new pot sprite to the world
       final potSprite = PotSprite(
-        potState: newPot,
-        size: potSize,
-        position: calculatePotPosition(row, col)
-      );
+          potState: newPot,
+          size: potSize,
+          position: calculatePotPosition(row, col));
+
+      remove(purchasablePots.firstWhere((p) => p.row == row && p.col == col));
+      purchasablePotCoordinates.remove('$row,$col');
+      purchasablePots.removeWhere((p) => p.row == row && p.col == col);
       add(potSprite);
-      gardenPots[col][row] = potSprite;
+      gardenPots.add(potSprite);
       gameStateManager.incrementPotPrice();
-    } 
+      addPurchasablePots();
+    }
   }
 
   void _onGameStateChanged() {
     // Update the game state based on changes in the GameStateManager
-    for (var potRow in gardenPots) {
-      for (var pot in potRow) {
-        // Update each pot's state if needed
-        final savedPot = gameStateManager.state.pots[pot.potState.col][pot.potState.row];
-        pot.potState = savedPot;
-        pot.updatePlantSprite(); // Update the sprite if the plant has changed
-      }
+    for (var pot in gardenPots) {
+      // Update each pot's state if needed
+      final savedPot = gameStateManager.state.pots
+          .where((p) => p.row == pot.potState.row && p.col == pot.potState.col)
+          .first;
+      pot.potState = savedPot;
+      pot.updatePlantSprite(); // Update the sprite if the plant has changed
     }
     // Update your Flame components here, e.g.:
     // - Update pot sprites if pots changed
     // - Update UI overlays if money changed
   }
 
-  void addPurchasablePots(){
+  void addPurchasablePots() {
+    Set<String> existingPositions =
+        gameStateManager.state.pots.map((p) => '${p.row},${p.col}').toSet();
 
+    for (var pot in gameStateManager.state.pots) {
+      final positions = [
+        Pair(pot.row - 1, pot.col),
+        Pair(pot.row + 1, pot.col),
+        Pair(pot.row, pot.col - 1),
+        Pair(pot.row, pot.col + 1)
+      ];
+
+      for(Pair position in positions){
+        final key = '${position.key},${position.value}';
+        if(!existingPositions.contains(key) && !purchasablePotCoordinates.contains(key) && position.key >=0 && position.value >=0){
+          final purchasablePot = PurchasablePot(
+            size: potSize,
+            row: position.key,
+            col: position.value,
+            position: calculatePotPosition(position.key, position.value),
+          );
+          add(purchasablePot);
+          purchasablePotCoordinates.add(key);
+          purchasablePots.add(purchasablePot);
+        }
+      }
+    }
   }
-    
 }

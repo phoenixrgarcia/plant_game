@@ -32,7 +32,7 @@ class PurchasablePot extends SpriteComponent with HasGameRef<PlantGame>, TapCall
   }
 
   @override
-  bool onTapDown(TapDownEvent event) {
+  bool onTapUp(TapUpEvent event) {
     gameRef.greenhouseWorld.purchasePot(row, col);
     return true; 
   }
@@ -51,5 +51,11 @@ class PurchasablePot extends SpriteComponent with HasGameRef<PlantGame>, TapCall
       Vector2(size.x / 2 - 20, size.y + 5),
       anchor: Anchor.topLeft,
     );
+  }
+
+  @override
+  void removeFromParent() {
+    // Clean up resources if needed
+    super.removeFromParent();
   }
 }

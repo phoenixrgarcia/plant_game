@@ -2,16 +2,18 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_game/components/plants/data/plant_data.dart';
+import 'package:plant_game/components/state/game_state.dart';
 import 'package:plant_game/components/state/pot_state.dart';
+import 'package:plant_game/game_state_manager.dart';
 import '../../plant_game.dart';
 
 class PotSprite extends SpriteComponent
     with HasGameRef<PlantGame>, TapCallbacks {
   PotState potState; // Reference to the PotState
+  GameStateManager gameStateManager = GameStateManager();
 
   Sprite? plantSprite;
   String? currentSpritePath;
-  SpriteComponent plantSpriteComponent = SpriteComponent();
 
 
   PotSprite(
@@ -24,7 +26,7 @@ class PotSprite extends SpriteComponent
   Future<void> onLoad() async {
     // Load the initial pot sprite (this would be a generic pot image)
     sprite = await gameRef.loadSprite('sample_pot.webp');
-    add(plantSpriteComponent);
+    gameStateManager.addListener(_onGameStateChanged);
   }
 
   @override
@@ -76,11 +78,11 @@ class PotSprite extends SpriteComponent
 
     super.render(canvas);
 
-    // if (plantSprite != null) {
-    //   plantSprite!.render(canvas, size: size);
-    // } else {
+    if (plantSprite != null) {
+      plantSprite!.render(canvas, size: size);
+    } else {
 
-    // }
+    }
   }
 
   void renderSelectedPot(Canvas canvas) {
@@ -102,15 +104,16 @@ class PotSprite extends SpriteComponent
         plantSprite = Sprite(gameRef.images.fromCache(plantData.spritePath))
           ..srcPosition = Vector2(0, 0 /*gameRef.potSize.y * 50/ 2*/);
         currentSpritePath = plantData.spritePath;
-        plantSpriteComponent
-          ..sprite = plantSprite
-          ..size = Vector2(25, 25)
-          ..position = Vector2(0, 0);
       }
     } else {
-      plantSpriteComponent = SpriteComponent();
       plantSprite = null;
       currentSpritePath = null;
     }
+  }
+
+  void _onGameStateChanged() {
+    // Update the potState reference in case it was replaced
+    potState = gameStateManager.state.pots.where((p) => p.row == potState.row && p.col == potState.col).first;
+    updatePlantSprite(); // Update the plant sprite if needed
   }
 }

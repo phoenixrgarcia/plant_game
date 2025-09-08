@@ -86,15 +86,16 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
     final newPosition = camera.viewfinder.position - delta;
 
     final padding = 20;
+
     // Keep the camera within bounds (adjust world size as needed)
     final minX = -size.x / 2 +
             potSize.x * 2 -
-            greenhouseWorld.pots[0].length * potSize.x +
+            100 * potSize.x +
             padding,
         minY = -size.y / 2 + potSize.y * 2,
         maxX = size.x / 2 -
             potSize.x * 2 +
-            greenhouseWorld.pots[0].length * potSize.x -
+            100 * potSize.x -
             padding,
         maxY = size.y / 2 - potSize.y * 2;
     camera.viewfinder.position = Vector2(
