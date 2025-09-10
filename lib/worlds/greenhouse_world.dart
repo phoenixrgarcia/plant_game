@@ -28,6 +28,9 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
   late Vector2 potSize;
 
+  late int? pendingPotRow;
+  late int? pendingPotCol;
+
   @override
   Future<void> onLoad() async {
     // Load the saved game state

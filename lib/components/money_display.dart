@@ -12,7 +12,7 @@ class MoneyDisplay extends ConsumerWidget {
     );
 
     return Text(
-      'Money: $money',
+      'Money: ${money.toStringAsFixed(2)}',
       style: const TextStyle(
         fontSize: 24,
         color: Colors.white,

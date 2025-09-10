@@ -110,6 +110,7 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
     greenhouseWorld.deselectPot();
     overlays.remove('inventory');
     overlays.remove('plant_info');
+    overlays.remove('purchase_pot_dialog');
   }
 
   

@@ -33,7 +33,9 @@ class PurchasablePot extends SpriteComponent with HasGameRef<PlantGame>, TapCall
 
   @override
   bool onTapUp(TapUpEvent event) {
-    gameRef.greenhouseWorld.purchasePot(row, col);
+    gameRef.greenhouseWorld.pendingPotRow = row;
+    gameRef.greenhouseWorld.pendingPotCol = col;
+    gameRef.overlays.add('purchase_pot_dialog');
     return true; 
   }
 

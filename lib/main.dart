@@ -8,6 +8,7 @@ import 'package:plant_game/game_state_manager.dart';
 import 'package:plant_game/game_state_provider.dart';
 import 'package:plant_game/screens/inventory_screen.dart';
 import 'package:plant_game/screens/plant_info_screen.dart';
+import 'components/UI/purchase_pot_dialog.dart';
 import 'plant_game.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -64,6 +65,18 @@ void main() async {
                         game.overlays.remove('plant_info');
                       },
                       selectedPotNotifier: game.greenhouseWorld.selectedPot,
+                    ),
+                'purchase_pot_dialog': (_, __) => PurchasePotDialog(
+                      onConfirm: () {
+                        game.overlays.remove('purchase_pot_dialog');
+                        game.greenhouseWorld.purchasePot(
+                            game.greenhouseWorld.pendingPotRow!,
+                            game.greenhouseWorld.pendingPotCol!);
+                      },
+                      onCancel: () {
+                        game.overlays.remove('purchase_pot_dialog');
+                      },
+                      cost: gameStateManager.state.potCost,
                     ),
               },
             ),
