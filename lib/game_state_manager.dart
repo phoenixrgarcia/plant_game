@@ -34,8 +34,8 @@ class GameStateManager extends ChangeNotifier {
     // Load current state or initialize default
     _currentState = _box!.get(_key) ??
         GameState(
-          money: 0,
-          pots: [[PotState(row: 0, col: 0)]],
+          money: 100.0,
+          pots: [PotState(row: 0, col: 0)],
           plantInventory: [
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 1),
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 2),
@@ -48,6 +48,7 @@ class GameStateManager extends ChangeNotifier {
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 9),
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 10),
           ],
+          potCost: 25.0,
         );
   }
 
@@ -72,7 +73,7 @@ class GameStateManager extends ChangeNotifier {
     await _box?.delete(_key);
     _currentState = GameState(
       money: 0,
-      pots: [[]],
+      pots: [],
       plantInventory: [],
     );
   }
@@ -86,23 +87,20 @@ class GameStateManager extends ChangeNotifier {
 
   /// Mutator for planting in a pot
   void plantInPot(int row, int col, PlantInstance plant) {
-    if (row < 0 || col < 0 || row >= _currentState.pots.length || col >= _currentState.pots[row].length) {
-      throw Exception("Invalid pot coordinates: ($row, $col)");
-    }
-
-    final pot = _currentState.pots[col][row];
+   final pot = _currentState.pots.where((p) => p.row == row && p.col == col).first;
     if (pot.isOccupied) {
       throw Exception("Pot at ($row, $col) is occupied.");
     }
 
     pot.currentPlant = plant;
+    print("Planted ${plant.plantDataName} in pot at ($row, $col)");
     save(); // Save state after mutating
     notifyListeners(); // Notify listeners of state change
   }
 
   /// Harvests a plant from a specific pot
   void harvestPlant(int row, int col) {
-    final pot = _currentState.pots[col][row];
+    final pot = _currentState.pots.where((p) => p.row == row && p.col == col).first;
     if (pot.currentPlant == null) {
       throw Exception("No plant to harvest in pot at ($row, $col).");
     }
@@ -125,5 +123,14 @@ class GameStateManager extends ChangeNotifier {
     } else {
       throw Exception("Entry not found in inventory: ${entry.plantDataName}");
     }
+  }
+
+  void incrementPotPrice(){
+    _currentState.potCost *= 1.15;
+    save();
+  }
+
+  void notify() {
+    notifyListeners();
   }
 }

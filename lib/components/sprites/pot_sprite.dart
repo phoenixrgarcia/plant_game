@@ -2,22 +2,19 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_game/components/plants/data/plant_data.dart';
-import 'package:plant_game/components/plants/data/inventory_entry.dart';
+import 'package:plant_game/components/state/game_state.dart';
 import 'package:plant_game/components/state/pot_state.dart';
-import '../plant_game.dart';
+import 'package:plant_game/game_state_manager.dart';
+import '../../plant_game.dart';
 
 class PotSprite extends SpriteComponent
     with HasGameRef<PlantGame>, TapCallbacks {
   PotState potState; // Reference to the PotState
+  GameStateManager gameStateManager = GameStateManager();
 
   Sprite? plantSprite;
   String? currentSpritePath;
 
-  //Here we are using Offset to store a fraction value for x and y coordinates.
-  Map<String, Offset> targetPotPositions = {
-    'top': const Offset(.5, .3),
-    'bottom': const Offset(.5, .75),
-  };
 
   PotSprite(
       {required this.potState,
@@ -29,6 +26,7 @@ class PotSprite extends SpriteComponent
   Future<void> onLoad() async {
     // Load the initial pot sprite (this would be a generic pot image)
     sprite = await gameRef.loadSprite('sample_pot.webp');
+    gameStateManager.addListener(_onGameStateChanged);
   }
 
   @override
@@ -45,6 +43,12 @@ class PotSprite extends SpriteComponent
 
     return true; // Event handled
   }
+  
+  //Here we are using Offset to store a fraction value for x and y coordinates.
+  Map<String, Offset> targetPotPositions = {
+    'top': const Offset(.5, .3),
+    'bottom': const Offset(.5, .75),
+  };
 
   void moveCameraToPot(String targetPosition) {
     final camera = gameRef.camera;
@@ -76,6 +80,8 @@ class PotSprite extends SpriteComponent
 
     if (plantSprite != null) {
       plantSprite!.render(canvas, size: size);
+    } else {
+
     }
   }
 
@@ -103,5 +109,11 @@ class PotSprite extends SpriteComponent
       plantSprite = null;
       currentSpritePath = null;
     }
+  }
+
+  void _onGameStateChanged() {
+    // Update the potState reference in case it was replaced
+    potState = gameStateManager.state.pots.where((p) => p.row == potState.row && p.col == potState.col).first;
+    updatePlantSprite(); // Update the plant sprite if needed
   }
 }

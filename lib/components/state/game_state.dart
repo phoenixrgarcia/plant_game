@@ -10,10 +10,13 @@ class GameState extends HiveObject{
   double money;
 
   @HiveField(1)
-  List<List<PotState>> pots;
+  List<PotState> pots;
 
   @HiveField(2)
   List<InventoryEntry> plantInventory;
 
-  GameState({this.money = 0, required this.pots, required this.plantInventory});
+  @HiveField(3)
+  double potCost;
+
+  GameState({this.money = 0, required this.pots, required this.plantInventory, this.potCost = 25});
 }

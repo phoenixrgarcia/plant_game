@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:plant_game/components/plants/data/inventory_entry.dart';
 
 import '../components/UI/inventory_list_item.dart';
-import '../components/pot_sprite.dart';
+import '../components/sprites/pot_sprite.dart';
 import '../game_state_provider.dart';
 
 class InventoryScreen extends ConsumerWidget {

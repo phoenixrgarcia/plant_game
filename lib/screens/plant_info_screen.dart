@@ -4,7 +4,7 @@ import 'package:plant_game/components/plants/data/inventory_entry.dart';
 import 'package:plant_game/components/plants/data/plant_data.dart';
 
 import '../components/UI/inventory_list_item.dart';
-import '../components/pot_sprite.dart';
+import '../components/sprites/pot_sprite.dart';
 import '../game_state_provider.dart';
 
 class PlantInfoScreen extends ConsumerWidget {
