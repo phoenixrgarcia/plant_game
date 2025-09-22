@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 // It displays a shop with different categories of items.
 
 class ShopScreen extends StatelessWidget {
-  final void Function(String itemName, int price) onBuy;
 
-  const ShopScreen({super.key, required this.onBuy});
+  const ShopScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +24,9 @@ class ShopScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            ShopTab(category: "Crops", onBuy: onBuy,),
-            ShopTab(category: "Flowers", onBuy: onBuy,),
-            ShopTab(category: "Trees", onBuy: onBuy,),
+            ShopTab(category: "Crops"),
+            ShopTab(category: "Flowers"),
+            ShopTab(category: "Trees"),
           ],
         ),
       ),
@@ -37,9 +36,8 @@ class ShopScreen extends StatelessWidget {
 
 class ShopTab extends StatelessWidget {
   final String category;
-  final void Function(String itemName, int price) onBuy;
 
-  const ShopTab({super.key, required this.category, required this.onBuy});
+  const ShopTab({super.key, required this.category});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +55,7 @@ class ShopTab extends StatelessWidget {
             subtitle: Text("\$${item["price"]}"),
             trailing: ElevatedButton(
               onPressed: () {
-                onBuy(item["name"], item["price"]);
+                
               },
               child: const Text("Buy"),
             ),
@@ -74,19 +72,19 @@ List<Map<String, dynamic>> getItemsForCategory(String category) {
   switch (category) {
     case "Crops":
       return [
-        {"name": "Basic Crop Seed", "price": 10, "image": "assets/images/carrot.png"},
-        {"name": "Rare Crop Seed", "price": 15, "image": "assets/images/tomato.png"},
-        {"name": "Mythic Crop Seed", "price": 15, "image": "assets/images/tomato.png"},
+        {"name": "Basic Crop Seed", "price": 10, "image": "assets/images/flower-seed.png"},
+        {"name": "Rare Crop Seed", "price": 100, "image": "assets/images/flower-seed.png"},
+        {"name": "Mythic Crop Seed", "price": 500, "image": "assets/images/flower-seed.png"},
       ];
     case "Flowers":
       return [
-        {"name": "Basic Flower Seed", "price": 20, "image": "assets/images/rose.png"},
-        {"name": "Rare Flower Seed", "price": 25, "image": "assets/images/tulip.jpg"},
+        {"name": "Basic Flower Seed", "price": 20, "image": "assets/images/flower-seed.png"},
+        {"name": "Rare Flower Seed", "price": 200, "image": "assets/images/flower-seed.png"},
       ];
     case "Trees":
       return [
-        {"name": "Basic Tree Seed", "price": 50, "image": "assets/images/oak_tree.jpg"},
-        {"name": "Rare Tree Seed", "price": 60, "image": "assets/images/pine_tree.png"},
+        {"name": "Basic Tree Seed", "price": 50, "image": "assets/images/flower-seed.png"},
+        {"name": "Rare Tree Seed", "price": 500, "image": "assets/images/flower-seed.png"},
       ];
     default:
       return [];

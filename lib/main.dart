@@ -45,7 +45,6 @@ void main() async {
               game: game,
               overlayBuilderMap: {
                 'shop': (_, __) => ShopScreen(
-                      onBuy: handleShopBuy,
                     ),
                 'inventory': (_, __) => InventoryScreen(
                       onClose: () {
@@ -89,8 +88,4 @@ void main() async {
       ),
     ),
   );
-}
-
-void handleShopBuy(String itemName, int price) {
-  // TODO
 }
