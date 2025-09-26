@@ -25,8 +25,10 @@ class GameStateManager extends ChangeNotifier {
     // Register adapters once
     if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(GameStateAdapter());
     if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(PotStateAdapter());
-    if (!Hive.isAdapterRegistered(2)) Hive.registerAdapter(InventoryEntryAdapter());
-    if (!Hive.isAdapterRegistered(3)) Hive.registerAdapter(PlantInstanceAdapter());
+    if (!Hive.isAdapterRegistered(2))
+      Hive.registerAdapter(InventoryEntryAdapter());
+    if (!Hive.isAdapterRegistered(3))
+      Hive.registerAdapter(PlantInstanceAdapter());
 
     // Open the Hive box
     _box = await Hive.openBox<GameState>(_boxName);
@@ -40,20 +42,18 @@ class GameStateManager extends ChangeNotifier {
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 1),
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 2),
             InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 3),
-            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 4),
-            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 5),
-            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 6),
-            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 7),
-            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 8),
-            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 9),
-            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 10),
           ],
           potCost: 25.0,
+          nextSeeds: [
+            PlantInstance(plantDataName: 'tomato', tier: 1),
+            PlantInstance(plantDataName: 'tomato', tier: 2),
+            PlantInstance(plantDataName: 'tomato', tier: 3)
+          ],
         );
   }
 
   /// Saves the current state to Hive
-  /// Call when, planting plant, harvesting, or changing inventory. 
+  /// Call when, planting plant, harvesting, or changing inventory.
   Future<void> save() async {
     if (_box == null) {
       throw Exception("GameStateManager not initialized.");
@@ -75,19 +75,26 @@ class GameStateManager extends ChangeNotifier {
       money: 0,
       pots: [],
       plantInventory: [],
+      potCost: 25,
+      nextSeeds: [
+            PlantInstance(plantDataName: 'tomato', tier: 1),
+            PlantInstance(plantDataName: 'tomato', tier: 2),
+            PlantInstance(plantDataName: 'tomato', tier: 3)
+          ],  
     );
   }
 
   /// Example mutator for money
-  /// Probably dont actually use this, since money is frequently updated. 
+  /// Probably dont actually use this, since money is frequently updated.
   void mutateMoney(double amount) {
     _currentState.money += amount;
-    notifyListeners(); // Notify listeners of state change // comment this out? 
+    notifyListeners(); // Notify listeners of state change // comment this out?
   }
 
   /// Mutator for planting in a pot
   void plantInPot(int row, int col, PlantInstance plant) {
-   final pot = _currentState.pots.where((p) => p.row == row && p.col == col).first;
+    final pot =
+        _currentState.pots.where((p) => p.row == row && p.col == col).first;
     if (pot.isOccupied) {
       throw Exception("Pot at ($row, $col) is occupied.");
     }
@@ -100,19 +107,21 @@ class GameStateManager extends ChangeNotifier {
 
   /// Harvests a plant from a specific pot
   void harvestPlant(int row, int col) {
-    final pot = _currentState.pots.where((p) => p.row == row && p.col == col).first;
+    final pot =
+        _currentState.pots.where((p) => p.row == row && p.col == col).first;
     if (pot.currentPlant == null) {
       throw Exception("No plant to harvest in pot at ($row, $col).");
     }
     mutateMoney(pot.currentPlant!.plantData.sellPrice);
     pot.currentPlant = null; // Remove the plant from the pot
-    
+
     save(); // Save state after mutating
     notifyListeners(); // Notify listeners of state change
   }
 
   void removeFromInventory(InventoryEntry entry) {
-    final index = _currentState.plantInventory.indexWhere((e) => e.plantDataName == entry.plantDataName && e.tier == entry.tier);
+    final index = _currentState.plantInventory.indexWhere(
+        (e) => e.plantDataName == entry.plantDataName && e.tier == entry.tier);
     if (index != -1) {
       _currentState.plantInventory[index].quantity -= entry.quantity;
       if (_currentState.plantInventory[index].quantity <= 0) {
@@ -125,7 +134,7 @@ class GameStateManager extends ChangeNotifier {
     }
   }
 
-  void incrementPotPrice(){
+  void incrementPotPrice() {
     _currentState.potCost *= 1.15;
     save();
   }
@@ -133,4 +142,6 @@ class GameStateManager extends ChangeNotifier {
   void notify() {
     notifyListeners();
   }
+
+
 }

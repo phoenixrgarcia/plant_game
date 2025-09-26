@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:plant_game/components/plants/data/inventory_entry.dart';
+import 'package:plant_game/components/plants/plant_instance.dart';
 import 'package:plant_game/components/state/pot_state.dart';
 
 part 'game_state.g.dart';
@@ -18,5 +19,8 @@ class GameState extends HiveObject{
   @HiveField(3)
   double potCost;
 
-  GameState({this.money = 0, required this.pots, required this.plantInventory, this.potCost = 25});
+  @HiveField(4)
+  List<PlantInstance>? nextSeeds;
+
+  GameState({this.money = 0, required this.pots, required this.plantInventory, this.potCost = 25, List<PlantInstance>? nextSeeds}) : nextSeeds = nextSeeds ?? [PlantInstance(plantDataName: 'tomato', tier: 1), PlantInstance(plantDataName: 'tomato', tier: 2), PlantInstance(plantDataName: 'tomato', tier: 3)];
 }

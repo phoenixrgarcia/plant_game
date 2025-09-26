@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:plant_game/game_state_provider.dart';
 import 'seed_pick_overlay.dart';
 
 // This screen is a flutter widget instead of a flame component.
@@ -35,15 +37,15 @@ class ShopScreen extends StatelessWidget {
   }
 }
 
-class ShopTab extends StatefulWidget {
+class ShopTab extends ConsumerStatefulWidget {
   final String category;
   const ShopTab({super.key, required this.category});
 
   @override
-  State<ShopTab> createState() => _ShopTabState();
+  ConsumerState<ShopTab> createState() => _ShopTabState();
 }
 
-class _ShopTabState extends State<ShopTab> with SingleTickerProviderStateMixin {
+class _ShopTabState extends ConsumerState<ShopTab> with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
   late final Animation<double> _globalFade;
   final Duration _stagger = const Duration(milliseconds: 120);
@@ -69,6 +71,10 @@ class _ShopTabState extends State<ShopTab> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    // Watch the GameStateManager so the tab rebuilds when game state changes.
+    final manager = ref.watch(gameStateManagerProvider);
+    final gameState = manager.state;
+
     return Stack(
       children: [
         // Background image
@@ -114,27 +120,21 @@ class _ShopTabState extends State<ShopTab> with SingleTickerProviderStateMixin {
                     price: item['price'],
                     image: item['image'],
                     onBuy: () {
-                      // Construct three generated options (replace with your generator)
-                      final generated = [
-                        {
-                          'name': '${item['name']} A',
-                          'image': item['image'],
-                          'stats': {'growth': 3, 'yield': 1}
-                        },
-                        {
-                          'name': '${item['name']} B',
-                          'image': item['image'],
-                          'stats': {'growth': 2, 'yield': 2}
-                        },
-                        {
-                          'name': '${item['name']} C',
-                          'image': item['image'],
-                          'stats': {'growth': 1, 'yield': 3}
-                        },
-                      ];
+                      // Example: read a list from the game state and convert to overlay
+                      // options. Here we use `nextSeeds` (List<PlantInstance>) as an
+                      // example; replace with the list you actually want to check.
+                      final nextSeeds = gameState.nextSeeds ?? <dynamic>[];
+
+                      final generated = nextSeeds.take(3).map((p) {
+                        return {
+                          'name': p.plantDataName,
+                          'image': 'assets/images/flower-seed.png',
+                          'stats': {'tier': p.tier}
+                        };
+                      }).toList();
 
                       showSeedPickOverlay(context, options: generated, onSelected: (chosen) {
-                        // TODO: integrate with game_state_manager to apply purchase
+                        // TODO: apply chosen to game state via manager (e.g., add to inventory)
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Selected ${chosen['name']}')),
                         );
