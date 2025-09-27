@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_game/game_state_manager.dart';
 
 /// A simple, stylized dialog that shows up to three plant options for the
 /// player to pick from. Each option is a Map<String, dynamic> with keys:
@@ -134,7 +135,10 @@ class _SeedPickDialogState extends State<SeedPickDialog> {
                   onPressed: () {
                     final chosen = widget.options[_selected];
                     widget.onSelected(chosen);
+                    GameStateManager().randomShopSeed();
+                    GameStateManager().addToInventory(chosen);
                     Navigator.of(context).pop();
+
                   },
                   child: const Text('Choose'),
                 ),

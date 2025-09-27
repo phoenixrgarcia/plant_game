@@ -4,7 +4,7 @@ import 'dart:math';
 
 class PlantData{
   static final Map<String, Crop> _crops = {
-    'tomato': Crop(
+    'Tomato': Crop(
       name: 'Tomato',
       growthTime: 10,
       sellPrice: 15,
@@ -17,7 +17,7 @@ class PlantData{
       description: 'A juicy red fruit, perfect for salads and sauces.',
       specialProperties: "Does nothing special",
     ),
-    'carrot': Crop(
+    'Carrot': Crop(
       name: 'Carrot',
       growthTime: 15,
       sellPrice: 25,
@@ -36,18 +36,18 @@ class PlantData{
     _crops[id] = plant;
   }
 
-  static Plant getWeightedRandom() {
+  static String getWeightedRandom(int seed) {
     // Implement weighted random selection based on rarity
-    final random = Random();
+    final random = Random(seed);
     int totalRarity = _crops.values.fold(0, (sum, crop) => sum + crop.rarity);
-    int randomValue = (totalRarity * random.nextDouble()).toInt(); // Example: 50% chance
+    int randomValue = random.nextInt(totalRarity); 
     for (var crop in _crops.values) {
       if (randomValue < crop.rarity) {
-        return crop;
+        return crop.name;
       }
       randomValue -= crop.rarity;
     }
-    return _crops.values.first; // Fallback
+    return _crops.values.first.name; // Fallback
   }
 
   static List<Plant> get allCrops => _crops.values.toList();

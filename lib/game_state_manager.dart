@@ -39,16 +39,12 @@ class GameStateManager extends ChangeNotifier {
           money: 100.0,
           pots: [PotState(row: 0, col: 0)],
           plantInventory: [
-            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 1),
-            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 2),
-            InventoryEntry(plantDataName: 'tomato', quantity: 1, tier: 3),
+            InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 1),
+            InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 2),
+            InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 3),
           ],
           potCost: 25.0,
-          nextSeeds: [
-            PlantInstance(plantDataName: 'tomato', tier: 1),
-            PlantInstance(plantDataName: 'tomato', tier: 2),
-            PlantInstance(plantDataName: 'tomato', tier: 3)
-          ],
+          nextShopRandomSeed: 0,
         );
   }
 
@@ -76,11 +72,7 @@ class GameStateManager extends ChangeNotifier {
       pots: [],
       plantInventory: [],
       potCost: 25,
-      nextSeeds: [
-            PlantInstance(plantDataName: 'tomato', tier: 1),
-            PlantInstance(plantDataName: 'tomato', tier: 2),
-            PlantInstance(plantDataName: 'tomato', tier: 3)
-          ],  
+      nextShopRandomSeed: 0,  
     );
   }
 
@@ -134,6 +126,23 @@ class GameStateManager extends ChangeNotifier {
     }
   }
 
+  void addToInventory(Map<String, dynamic> entry) {
+    //Entry is a map with keys: name, image, stats{tier}
+    final index = _currentState.plantInventory.indexWhere(
+        (e) => e.plantDataName == entry['name'] && e.tier == entry['stats']['tier']);
+    if (index != -1) {
+      _currentState.plantInventory[index].quantity += 1;
+    } else {
+      _currentState.plantInventory.add(InventoryEntry(
+        plantDataName: entry['name'],
+        quantity: 1,
+        tier: entry['stats']['tier'],
+      ));
+    }
+    save(); // Save state after mutating
+    notifyListeners(); // Notify listeners of state change
+  }
+
   void incrementPotPrice() {
     _currentState.potCost *= 1.15;
     save();
@@ -143,5 +152,9 @@ class GameStateManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  void randomShopSeed() {
+    _currentState.nextShopRandomSeed = DateTime.now().millisecondsSinceEpoch % 10000;
+    save();
+  }
 
 }

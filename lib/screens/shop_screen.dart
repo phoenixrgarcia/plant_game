@@ -1,5 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:plant_game/components/plants/data/plant_data.dart';
+import 'package:plant_game/components/plants/plant.dart';
+import 'package:plant_game/components/plants/plant_instance.dart';
+import 'package:plant_game/components/state/game_state.dart';
+import 'package:plant_game/game_state_manager.dart';
 import 'package:plant_game/game_state_provider.dart';
 import 'seed_pick_overlay.dart';
 
@@ -123,13 +130,14 @@ class _ShopTabState extends ConsumerState<ShopTab> with SingleTickerProviderStat
                       // Example: read a list from the game state and convert to overlay
                       // options. Here we use `nextSeeds` (List<PlantInstance>) as an
                       // example; replace with the list you actually want to check.
-                      final nextSeeds = gameState.nextSeeds ?? <dynamic>[];
+                      final nextSeeds = getThreePlants(manager);
 
                       final generated = nextSeeds.take(3).map((p) {
                         return {
                           'name': p.plantDataName,
-                          'image': 'assets/images/flower-seed.png',
+                          'image': p.plantData.imagePath,
                           'stats': {'tier': p.tier}
+                          // eventually change this to plant data card when you tap on one? 
                         };
                       }).toList();
 
@@ -214,4 +222,27 @@ List<Map<String, dynamic>> getItemsForCategory(String category) {
     default:
       return [];
   }
+}
+
+List<PlantInstance> getThreePlants(GameStateManager gameStateManager) {
+  int seed = gameStateManager.state.nextShopRandomSeed;
+  PlantInstance p1 = PlantInstance(plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
+  seed++;
+  PlantInstance p2 = PlantInstance(plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
+  seed++;
+  PlantInstance p3 = PlantInstance(plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
+  return [p1, p2, p3];
+}
+
+int randomTier(int seed) {
+  final random = Random(seed);
+  int tier = 1;
+  int probability = 60;
+  int roll = random.nextInt(100);
+  while (roll < probability) {
+    tier++;
+    if(probability > 20) probability -= 20;
+    roll = random.nextInt(100);
+  }
+  return tier;
 }

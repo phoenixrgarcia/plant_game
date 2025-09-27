@@ -20,7 +20,7 @@ class GameState extends HiveObject{
   double potCost;
 
   @HiveField(4)
-  List<PlantInstance>? nextSeeds;
+  int nextShopRandomSeed;
 
-  GameState({this.money = 0, required this.pots, required this.plantInventory, this.potCost = 25, List<PlantInstance>? nextSeeds}) : nextSeeds = nextSeeds ?? [PlantInstance(plantDataName: 'tomato', tier: 1), PlantInstance(plantDataName: 'tomato', tier: 2), PlantInstance(plantDataName: 'tomato', tier: 3)];
+  GameState({this.money = 0, required this.pots, required this.plantInventory, this.potCost = 25, this.nextShopRandomSeed = 0});
 }
