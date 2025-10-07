@@ -16,8 +16,17 @@ class PlantInstance extends HiveObject{
   @HiveField(2)
   int tier;
 
+  @HiveField(3)
+  double addBonus;
+
+  @HiveField(4)
+  double multBonus;
+
+  @HiveField(5)
+  double flatBonus;
+
   PlantInstance({
-    required this.plantDataName, this.currentAge = 0, required this.tier,
+    required this.plantDataName, this.currentAge = 0, required this.tier, this.addBonus = 0, this.multBonus = 0, this.flatBonus = 0
   });
 
   Plant get plantData => PlantData.getById(plantDataName)!;

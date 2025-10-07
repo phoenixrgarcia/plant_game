@@ -75,9 +75,11 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     double deltaMoney = 0; // Reset delta money for this tick
 
     for (var pot in pots) {
-      if (pot.potState.currentPlant != null) {
+      var currentPlant = pot.potState.currentPlant;
+      if (currentPlant != null) {
         // Call the tick method on the plant instance
-        pot.potState.currentPlant!.incrementAge();
+        currentPlant.incrementAge();
+        currentPlant.plantData.onTick(pot.potState, gameStateManager);
       }
     }
 
@@ -89,12 +91,12 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     // }
 
     for (var pot in gardenPots) {
-      if (pot.potState.currentPlant != null) {
+      var currentPlant = pot.potState.currentPlant;
+      if (currentPlant != null) {
         // If the plant is fully grown, we can harvest it
-        if (pot.potState.currentPlant!.isFullyGrown) {
+        if (currentPlant.isFullyGrown) {
           // Add money for harvesting
-          deltaMoney += pot.potState.currentPlant!.plantData.incomeRate *
-              1; //TODO multValues[pot.potState.col][pot.potState.row];
+          deltaMoney += currentPlant.plantData.incomeRate * 1 + currentPlant.flatBonus; //TODO multValues[pot.potState.col][pot.potState.row];
         }
       }
     }

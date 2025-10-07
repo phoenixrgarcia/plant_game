@@ -40,6 +40,7 @@ class GameStateManager extends ChangeNotifier {
           pots: [PotState(row: 0, col: 0)],
           plantInventory: [
             InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 1),
+            InventoryEntry(plantDataName: 'Giving Tree', quantity: 1, tier: 1),
             InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 2),
             InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 3),
           ],
@@ -157,4 +158,11 @@ class GameStateManager extends ChangeNotifier {
     save();
   }
 
+  PotState? getPot(int row, int col) {
+    try{
+      return _currentState.pots.firstWhere((p) => p.row == row && p.col == col);
+    } catch (_) {
+      return null;
+    }
+  }
 }

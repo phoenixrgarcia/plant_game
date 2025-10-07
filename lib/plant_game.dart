@@ -36,6 +36,7 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
       'carrot.png',
       'rose.png',
       'oak_tree.jpg',
+      'giving_tree.png',
     ]);
 
     final backgroundSprite = await loadSprite('blue_background.jpg');

@@ -94,15 +94,18 @@ class PlantInfoScreen extends ConsumerWidget {
                               Text(
                                   "Income Rate: \$${plantData?.incomeRate ?? 'N/A'}/tick",
                                   style: const TextStyle(fontSize: 16)),
-                              if (true /*plantData?.specialProperties != null && plantData!.specialProperties.isNotEmpty*/)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Text(
-                                    "Special: ${plantData?.specialProperties ?? 'None'}",
-                                    style: const TextStyle(
-                                        fontSize: 15, color: Colors.deepPurple),
-                                  ),
+                              Text(
+                                "Flat Bonus: \$${plant.flatBonus}/tick",
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8),
+                                child: Text(
+                                  "Special: ${plantData?.specialProperties ?? 'None'}",
+                                  style: const TextStyle(
+                                      fontSize: 15, color: Colors.deepPurple),
                                 ),
+                              ),
                             ],
                           ),
                         ),
