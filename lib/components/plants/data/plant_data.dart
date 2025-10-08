@@ -4,7 +4,22 @@ import '../plant.dart';
 import 'dart:math';
 
 class PlantData {
-  static final List<List<int>> cardinalDirections = [[0, 1],[1, 0],[0, -1],[-1, 0]];
+  static final List<List<int>> cardinalDirections = [
+    [0, 1],
+    [1, 0],
+    [0, -1],
+    [-1, 0]
+  ];
+  static final List<List<int>> adjacentDirections = [
+    [0, 1],
+    [1, 0],
+    [0, -1],
+    [-1, 0],
+    [1, 1],
+    [-1, -1],
+    [1, -1],
+    [-1, 1]
+  ];
   static final Map<String, Plant> _plants = {
     //Debug crops
     'Tomato': Plant(
@@ -19,6 +34,7 @@ class PlantData {
       spritePath: 'tomato.png',
       onHarvest: () => print('Tomato harvested!'),
       onTick: (pot, gsm) => print('Tomato ticked!'),
+      onGrow: (pot, gsm) => print('Tomato grew!'),
       description: 'A juicy red fruit, perfect for salads and sauces.',
       specialProperties: "Does nothing special",
     ),
@@ -34,13 +50,14 @@ class PlantData {
       spritePath: 'carrot.png',
       onHarvest: () => print('Carrot harvested!'),
       onTick: (pot, gsm) => print('Carrot ticked!'),
+      onGrow: (pot, gsm) => print('Carrot grew!'),
     ),
 
     //Trees
     'Giving Tree': Plant(
       name: 'Giving Tree',
       type: 'Tree',
-      growthTime: 30,
+      growthTime: 60,
       sellPrice: 200,
       incomeRate: 20,
       tickRate: 30,
@@ -58,13 +75,38 @@ class PlantData {
           if (neighboringPot == null) continue;
           neighboringPot.currentPlant?.flatBonus += 0.1;
         }
+        
         gsm.save();
         gsm.notify();
       },
+      onGrow: (pot, gsm) => print('Apple Tree grew!'),
       description:
           'A mystical tree that generously gives to the plants around it',
       specialProperties:
           "Adds small income boost to cardinally adjacent plants",
+    ),
+    'Apple Tree': Plant(
+      name: 'Apple Tree',
+      type: 'Tree',
+      growthTime: 50,
+      sellPrice: 190,
+      incomeRate: 25,
+      tickRate: 20,
+      rarity: 5,
+      imagePath: 'assets/images/apple-tree.webp',
+      spritePath: 'apple_tree.png',
+      onHarvest: () => print('Apple Tree harvested!'),
+      onTick: (pot, gsm) => print('Apple Tree ticked!'),
+      onGrow: (pot, gsm) {
+        // Increases exponential income bonus of adjacent plants (fruits get a bigger bonus)
+        for (var dir in adjacentDirections) {
+        
+        }
+      },
+      description:
+          'A blossoming tree that inspires surrounding fruits to grow sweeter',
+      specialProperties:
+          "Exponentially increases income of adjacent plants (bonus for fruits)",
     ),
   };
 

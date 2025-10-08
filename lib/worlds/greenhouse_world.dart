@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/widgets.dart';
@@ -79,7 +81,6 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
       if (currentPlant != null) {
         // Call the tick method on the plant instance
         currentPlant.incrementAge();
-        currentPlant.plantData.onTick(pot.potState, gameStateManager);
       }
     }
 
@@ -96,7 +97,12 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
         // If the plant is fully grown, we can harvest it
         if (currentPlant.isFullyGrown) {
           // Add money for harvesting
-          deltaMoney += currentPlant.plantData.incomeRate * 1 + currentPlant.flatBonus; //TODO multValues[pot.potState.col][pot.potState.row];
+          num currIncome = (currentPlant.plantData.incomeRate + currentPlant.addBonus) * currentPlant.multBonus;
+          currIncome = pow(currIncome, 1 + currentPlant.exponentialBonus);
+          currIncome = currIncome + currentPlant.flatBonus;
+          deltaMoney += currIncome; 
+
+          currentPlant.plantData.onTick(pot.potState, gameStateManager);
         }
       }
     }

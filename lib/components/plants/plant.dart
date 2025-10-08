@@ -15,6 +15,7 @@ class Plant {
   final String spritePath;
   final void Function(PotState self, GameStateManager gameStateManager) onTick;
   final void Function() onHarvest;
+  final void Function(PotState self, GameStateManager gameStateManager) onGrow;
   final String? description;
   final String? specialProperties;
 
@@ -30,6 +31,7 @@ class Plant {
     required this.spritePath,
     required this.onTick,
     required this.onHarvest,
+    required this.onGrow,
     this.description,
     this.specialProperties,
   });
