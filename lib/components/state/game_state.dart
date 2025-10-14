@@ -22,5 +22,12 @@ class GameState extends HiveObject{
   @HiveField(4)
   int nextShopRandomSeed;
 
-  GameState({this.money = 0, required this.pots, required this.plantInventory, this.potCost = 25, this.nextShopRandomSeed = 0});
+  @HiveField(5)
+  List<List<double>> exponentialBonus = List.generate(10, (_) => List.filled(10, 0.0));
+
+  GameState({this.money = 0, required this.pots, required this.plantInventory, this.potCost = 25, this.nextShopRandomSeed = 0, List<List<double>>? exponentialBonus}){
+    if(exponentialBonus != null){
+      this.exponentialBonus = exponentialBonus;
+    }
+  }
 }

@@ -25,7 +25,7 @@ class PlantData {
     'Tomato': Plant(
       name: 'Tomato',
       type: 'Crop',
-      growthTime: 10,
+      growthTime: 3,
       sellPrice: 15,
       incomeRate: 2,
       tickRate: 2,
@@ -33,8 +33,8 @@ class PlantData {
       imagePath: 'assets/images/tomato.png',
       spritePath: 'tomato.png',
       onHarvest: () => print('Tomato harvested!'),
-      onTick: (pot, gsm) => print('Tomato ticked!'),
-      onGrow: (pot, gsm) => print('Tomato grew!'),
+      onTick: (pot, gsm) => print('Tomato in pot at (${pot.row}, ${pot.col}) ticked!'),
+      onGrow: (pot, gsm) => print('Tomato in pot at (${pot.row}, ${pot.col}) grew!'),
       description: 'A juicy red fruit, perfect for salads and sauces.',
       specialProperties: "Does nothing special",
     ),
@@ -88,19 +88,29 @@ class PlantData {
     'Apple Tree': Plant(
       name: 'Apple Tree',
       type: 'Tree',
-      growthTime: 50,
+      growthTime: 5,
       sellPrice: 190,
       incomeRate: 25,
       tickRate: 20,
       rarity: 5,
       imagePath: 'assets/images/apple-tree.webp',
-      spritePath: 'apple_tree.png',
+      spritePath: 'apple-tree.webp',
       onHarvest: () => print('Apple Tree harvested!'),
       onTick: (pot, gsm) => print('Apple Tree ticked!'),
       onGrow: (pot, gsm) {
+        print('Apple Tree grew!');
         // Increases exponential income bonus of adjacent plants (fruits get a bigger bonus)
         for (var dir in adjacentDirections) {
-        
+          var newRow = pot.row + dir[0];
+          var newCol = pot.col + dir[1];
+          gsm.updateExponentialBonus(newRow, newCol, .2);
+          print("Updated exponential bonus at ($newRow, $newCol)");
+          var neighboringPot = gsm.getPot(newRow, newCol);
+          if (neighboringPot == null) continue;
+          if (neighboringPot.currentPlant == null) continue;
+          if (neighboringPot.currentPlant!.plantData.type == "Fruit") {
+            neighboringPot.currentPlant!.exponentialBonus += 0.3;
+          } 
         }
       },
       description:

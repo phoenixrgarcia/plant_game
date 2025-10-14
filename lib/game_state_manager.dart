@@ -41,6 +41,7 @@ class GameStateManager extends ChangeNotifier {
           plantInventory: [
             InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 1),
             InventoryEntry(plantDataName: 'Giving Tree', quantity: 1, tier: 1),
+            InventoryEntry(plantDataName: 'Apple Tree', quantity: 1, tier: 1),
             InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 2),
             InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 3),
           ],
@@ -164,5 +165,14 @@ class GameStateManager extends ChangeNotifier {
     } catch (_) {
       return null;
     }
+  }
+
+  void updateExponentialBonus(int row, int col, double bonusDifference) {
+    if(row < 0 || col < 0 || row >= _currentState.exponentialBonus.length || col >= _currentState.exponentialBonus[0].length){
+      return;
+    }
+    _currentState.exponentialBonus[row][col] += bonusDifference;
+    save();
+    notifyListeners();
   }
 }

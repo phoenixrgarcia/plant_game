@@ -22,6 +22,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   late final Set<PurchasablePot> purchasablePots = {};
   late final Set<String> purchasablePotCoordinates = {};
 
+
   ValueNotifier<PotSprite?> selectedPot = ValueNotifier(null);
 
   Set<PotSprite> get pots => gardenPots;
@@ -81,6 +82,9 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
       if (currentPlant != null) {
         // Call the tick method on the plant instance
         currentPlant.incrementAge();
+        if(currentPlant.currentAge == currentPlant.plantData.growthTime){
+          currentPlant.plantData.onGrow(pot.potState, gameStateManager);
+        }
       }
     }
 
@@ -96,13 +100,15 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
       if (currentPlant != null) {
         // If the plant is fully grown, we can harvest it
         if (currentPlant.isFullyGrown) {
-          // Add money for harvesting
-          num currIncome = (currentPlant.plantData.incomeRate + currentPlant.addBonus) * currentPlant.multBonus;
-          currIncome = pow(currIncome, 1 + currentPlant.exponentialBonus);
+          currentPlant.plantData.onTick(pot.potState, gameStateManager);
+
+          // Add money for tick
+          num currIncome = currentPlant.plantData.incomeRate + currentPlant.addBonus;
+          currIncome = currIncome * (1 + currentPlant.multBonus);
+          currIncome = pow(currIncome, 1 + currentPlant.exponentialBonus + gameStateManager.state.exponentialBonus[pot.potState.row][pot.potState.col]);
           currIncome = currIncome + currentPlant.flatBonus;
           deltaMoney += currIncome; 
 
-          currentPlant.plantData.onTick(pot.potState, gameStateManager);
         }
       }
     }
@@ -184,7 +190,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
       for(Pair position in positions){
         final key = '${position.key},${position.value}';
-        if(!existingPositions.contains(key) && !purchasablePotCoordinates.contains(key) && position.key >=0 && position.value >=0){
+        if(!existingPositions.contains(key) && !purchasablePotCoordinates.contains(key) && position.key >=0 && position.value >=0 && position.key < 10 && position.value < 10){
           final purchasablePot = PurchasablePot(
             size: potSize,
             row: position.key,
@@ -199,3 +205,5 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     }
   }
 }
+
+
