@@ -14,6 +14,9 @@ import '../components/plants/data/inventory_entry.dart';
 import '../components/sprites/pot_sprite.dart';
 import '../components/sprites/purchasable_pot_sprite.dart';
 
+import 'package:plant_game/components/plants/plant_aoe_map.dart';
+
+
 // This file containst he game logic for the greenhouse world. It loads the state and populates the pots.
 
 class GreenhouseWorld extends World with HasGameRef<PlantGame> {
@@ -70,30 +73,45 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
   void tick() {
     // Iterate through all pots and call their tick method
-    // Doing this in this order to follow PEMDAS logic
-    //a list to store the multiplication values for each pot, that is NxM the same size as gardenPots
-    // List<List<double>> multValues = List.generate(
-    //     gardenPots.length, (i) => List.filled(gardenPots[i].length, 1.0));
 
     double deltaMoney = 0; // Reset delta money for this tick
 
     for (var pot in pots) {
       var currentPlant = pot.potState.currentPlant;
       if (currentPlant != null) {
-        // Call the tick method on the plant instance
         currentPlant.incrementAge();
         if(currentPlant.currentAge == currentPlant.plantData.growthTime){
-          currentPlant.plantData.onGrow(pot.potState, gameStateManager);
+          // Trigger persistent effect on growth completion
+          for (var dir in PlantAoeMap[currentPlant.plantData.plantAOE]!) {
+            var newRow = pot.potState.row + dir[0];
+            var newCol = pot.potState.col + dir[1];
+            var neighboringPot = gameStateManager.getPot(newRow, newCol);
+            if (neighboringPot == null) continue;
+            if (neighboringPot.currentPlant == null) continue;
+            if (neighboringPot.currentPlant!.plantData.persistentEffect != null) {
+              neighboringPot.currentPlant!.plantData.persistentEffect!(neighboringPot, gameStateManager);
+            }
+          }
+
+          //check for other plants with aoe effects that might affect this plant on growth
+          for (var otherPot in pots) {
+            var otherPlant = otherPot.potState.currentPlant;
+            if (otherPlant == null) continue;
+            if (!otherPlant.isFullyGrown) continue;
+            if (otherPlant.plantData.plantAOE == 'none') continue;
+
+            for (var dir in PlantAoeMap[otherPlant.plantData.plantAOE]!) {
+              var affectedRow = otherPot.potState.row + dir[0];
+              var affectedCol = otherPot.potState.col + dir[1];
+              if (affectedRow == pot.potState.row && affectedCol == pot.potState.col && otherPlant.plantData.persistentEffect != null) {
+                // This plant is affected by the other plant's AOE effect
+                otherPlant.plantData.persistentEffect!(pot.potState, gameStateManager);
+              }
+            }
+          }
         }
       }
     }
-
-    // Iterate through each pot and apply the multimutation values
-    // for(var pot in potStates) {
-    //     if (pot.currentPlant != null) {
-    //       pot.currentPlant!.mutateMultValues(multValues, potStates);
-    //     }
-    // }
 
     for (var pot in gardenPots) {
       var currentPlant = pot.potState.currentPlant;
@@ -107,6 +125,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
           currIncome = currIncome * (1 + currentPlant.multBonus);
           currIncome = pow(currIncome, 1 + currentPlant.exponentialBonus + gameStateManager.state.exponentialBonus[pot.potState.row][pot.potState.col]);
           currIncome = currIncome + currentPlant.flatBonus;
+          print("Plant at (${pot.potState.row}, ${pot.potState.col}) generated income: $currIncome \n exponentialBonus: ${gameStateManager.state.exponentialBonus[pot.potState.row][pot.potState.col]}");
           deltaMoney += currIncome; 
 
         }

@@ -2,24 +2,9 @@ import 'dart:ffi';
 
 import '../plant.dart';
 import 'dart:math';
+import 'package:plant_game/components/plants/plant_aoe_map.dart';
 
 class PlantData {
-  static final List<List<int>> cardinalDirections = [
-    [0, 1],
-    [1, 0],
-    [0, -1],
-    [-1, 0]
-  ];
-  static final List<List<int>> adjacentDirections = [
-    [0, 1],
-    [1, 0],
-    [0, -1],
-    [-1, 0],
-    [1, 1],
-    [-1, -1],
-    [1, -1],
-    [-1, 1]
-  ];
   static final Map<String, Plant> _plants = {
     //Debug crops
     'Tomato': Plant(
@@ -34,7 +19,7 @@ class PlantData {
       spritePath: 'tomato.png',
       onHarvest: () => print('Tomato harvested!'),
       onTick: (pot, gsm) => print('Tomato in pot at (${pot.row}, ${pot.col}) ticked!'),
-      onGrow: (pot, gsm) => print('Tomato in pot at (${pot.row}, ${pot.col}) grew!'),
+      persistentEffect: (pot, gsm) => print('Tomato in pot at (${pot.row}, ${pot.col}) grew!'),
       description: 'A juicy red fruit, perfect for salads and sauces.',
       specialProperties: "Does nothing special",
     ),
@@ -50,7 +35,7 @@ class PlantData {
       spritePath: 'carrot.png',
       onHarvest: () => print('Carrot harvested!'),
       onTick: (pot, gsm) => print('Carrot ticked!'),
-      onGrow: (pot, gsm) => print('Carrot grew!'),
+      persistentEffect: (pot, gsm) => print('Carrot grew!'),
     ),
 
     //Trees
@@ -68,22 +53,24 @@ class PlantData {
       onTick: (self, gsm) {
         // Gives a flat income boost to cardinally adjacent plants
 
-        for (var dir in cardinalDirections) {
+        for (var dir in PlantAoeMap['cardinal']!) {
           var newRow = self.row + dir[0];
           var newCol = self.col + dir[1];
           var neighboringPot = gsm.getPot(newRow, newCol);
           if (neighboringPot == null) continue;
+          if (!neighboringPot.currentPlant!.isFullyGrown) continue;
           neighboringPot.currentPlant?.flatBonus += 0.1;
         }
         
         gsm.save();
         gsm.notify();
       },
-      onGrow: (pot, gsm) => print('Apple Tree grew!'),
+      persistentEffect: (pot, gsm) => print('Apple Tree grew!'),
       description:
           'A mystical tree that generously gives to the plants around it',
       specialProperties:
           "Adds small income boost to cardinally adjacent plants",
+      plantAOE: 'cardinal',
     ),
     'Apple Tree': Plant(
       name: 'Apple Tree',
@@ -97,26 +84,37 @@ class PlantData {
       spritePath: 'apple-tree.webp',
       onHarvest: () => print('Apple Tree harvested!'),
       onTick: (pot, gsm) => print('Apple Tree ticked!'),
-      onGrow: (pot, gsm) {
+      persistentEffect: (pot, gsm) {
         print('Apple Tree grew!');
         // Increases exponential income bonus of adjacent plants (fruits get a bigger bonus)
-        for (var dir in adjacentDirections) {
-          var newRow = pot.row + dir[0];
-          var newCol = pot.col + dir[1];
-          gsm.updateExponentialBonus(newRow, newCol, .2);
-          print("Updated exponential bonus at ($newRow, $newCol)");
-          var neighboringPot = gsm.getPot(newRow, newCol);
-          if (neighboringPot == null) continue;
-          if (neighboringPot.currentPlant == null) continue;
-          if (neighboringPot.currentPlant!.plantData.type == "Fruit") {
-            neighboringPot.currentPlant!.exponentialBonus += 0.3;
-          } 
-        }
+
+        gsm.updateExponentialBonus(pot.row, pot.col, .2);
+        print("Updated exponential bonus at ($pot.row, $pot.col)");
+        if (pot.currentPlant!.plantData.type == "Fruit") {
+          pot.currentPlant!.exponentialBonus += 0.3;
+        } 
       },
       description:
           'A blossoming tree that inspires surrounding fruits to grow sweeter',
       specialProperties:
           "Exponentially increases income of adjacent plants (bonus for fruits)",
+      plantAOE: 'adjacent',
+    ),
+    'Sakura Tree': Plant(
+      name: 'Sakura Tree',
+      type: 'Tree',
+      growthTime: 10,
+      sellPrice: 300,
+      incomeRate: 30,
+      tickRate: 15,
+      rarity: 30,
+      imagePath: 'assets/images/sakura_tree.png',
+      spritePath: 'sakura_tree.png',
+      onHarvest: () => print('Sakura Tree harvested!'),
+      onTick: (pot, gsm) => print('Sakura Tree ticked!'),
+      description: 'A beautiful cherry blossom tree that enchants the garden.',
+      specialProperties: "Procs the tick effect of cardinally adjacent plants",
+      plantAOE: 'cardinal',
     ),
   };
 

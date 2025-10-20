@@ -40,12 +40,4 @@ class PlantInstance extends HiveObject{
     currentAge += 1;
   }
 
-  void mutateMultValues(List<List<double>> multValues, List<List<PotState>> potStates) {
-    final plantData = PlantData.getById(plantDataName);
-    if (plantData != null) {
-      // TODO, extend plant class to have a mutateMultValues method
-      //plantData.mutateMultValues(multValues, potStates, tier);
-    }
-  }
-
 }
