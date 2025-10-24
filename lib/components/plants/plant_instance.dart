@@ -6,7 +6,7 @@ import 'package:plant_game/components/state/pot_state.dart';
 part 'plant_instance.g.dart';
 
 @HiveType(typeId: 3)
-class PlantInstance extends HiveObject{
+class PlantInstance extends HiveObject {
   @HiveField(0)
   final String plantDataName;
 
@@ -28,16 +28,30 @@ class PlantInstance extends HiveObject{
   @HiveField(6)
   double exponentialBonus;
 
+  @HiveField(7)
+  double tickRateFlat;
+
+  @HiveField(8)
+  double tickRateMult;
+
   PlantInstance({
-    required this.plantDataName, this.currentAge = 0, required this.tier, this.addBonus = 0, this.multBonus = 0, this.flatBonus = 0, this.exponentialBonus = 0
+    required this.plantDataName,
+    this.currentAge = 0,
+    required this.tier,
+    this.addBonus = 0,
+    this.multBonus = 0,
+    this.flatBonus = 0,
+    this.exponentialBonus = 0,
+    this.tickRateFlat = 0,
+    this.tickRateMult = 0,
   });
 
   Plant get plantData => PlantData.getById(plantDataName)!;
 
-  bool get isFullyGrown => currentAge >= PlantData.getById(plantDataName)!.growthTime;
+  bool get isFullyGrown =>
+      currentAge >= PlantData.getById(plantDataName)!.growthTime;
 
   void incrementAge() {
     currentAge += 1;
   }
-
 }

@@ -15,11 +15,11 @@ class Plant {
   final String spritePath;
   final void Function(PotState self, GameStateManager gameStateManager) onTick;
   final void Function() onHarvest;
-  final void Function(PotState self, GameStateManager gameStateManager)? persistentEffect;
+  final void Function(PotState otherPlant, GameStateManager gameStateManager)? persistentEffect;
   final String? description;
   final String? specialProperties;
-  final void Function()? cleanUp;
-  final String plantAOE;
+  final void Function(PotState self, GameStateManager gameStateManager)? cleanUp;
+  final String persistentEffectAOE;
 
   Plant({
     required this.name,
@@ -37,7 +37,7 @@ class Plant {
     this.description,
     this.specialProperties,
     this.cleanUp,
-    this.plantAOE = 'none',
+    this.persistentEffectAOE = 'none',
   });
 
 

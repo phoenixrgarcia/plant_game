@@ -167,12 +167,12 @@ class GameStateManager extends ChangeNotifier {
     }
   }
 
-  void updateExponentialBonus(int row, int col, double bonusDifference) {
-    if(row < 0 || col < 0 || row >= _currentState.exponentialBonus.length || col >= _currentState.exponentialBonus[0].length){
-      return;
-    }
-    _currentState.exponentialBonus[row][col] += bonusDifference;
-    save();
-    notifyListeners();
-  }
+  // void updateExponentialBonus(int row, int col, double bonusDifference) {
+  //   if(row < 0 || col < 0 || row >= _currentState.exponentialBonus.length || col >= _currentState.exponentialBonus[0].length){
+  //     return;
+  //   }
+  //   _currentState.exponentialBonus[row][col] += bonusDifference;
+  //   save();
+  //   notifyListeners();
+  // }
 }

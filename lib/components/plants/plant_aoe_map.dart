@@ -26,6 +26,10 @@ final Map<String, List<List<int>>> PlantAoeMap = {
     [-1, 0],
     [-1, 1],
   ],
+  'up2': const <List<int>>[
+    [0, 1],
+    [0, 2],
+  ],
   // alias keys for convenience
   'cross': const <List<int>>[
     [0, 1],
@@ -38,5 +42,9 @@ final Map<String, List<List<int>>> PlantAoeMap = {
     [1, 0],
     [0, -1],
     [-1, 0],
+    [1, 1],
+    [1, -1],
+    [-1, 1],
+    [-1, -1],
   ],
 };

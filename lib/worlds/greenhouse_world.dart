@@ -82,14 +82,14 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
         currentPlant.incrementAge();
         if(currentPlant.currentAge == currentPlant.plantData.growthTime){
           // Trigger persistent effect on growth completion
-          for (var dir in PlantAoeMap[currentPlant.plantData.plantAOE]!) {
-            var newRow = pot.potState.row + dir[0];
-            var newCol = pot.potState.col + dir[1];
-            var neighboringPot = gameStateManager.getPot(newRow, newCol);
-            if (neighboringPot == null) continue;
-            if (neighboringPot.currentPlant == null) continue;
-            if (neighboringPot.currentPlant!.plantData.persistentEffect != null) {
-              neighboringPot.currentPlant!.plantData.persistentEffect!(neighboringPot, gameStateManager);
+          if(currentPlant.plantData.persistentEffect != null){
+            for (var dir in PlantAoeMap[currentPlant.plantData.persistentEffectAOE]!) {
+              var newRow = pot.potState.row + dir[0];
+              var newCol = pot.potState.col + dir[1];
+              var neighboringPot = gameStateManager.getPot(newRow, newCol);
+              if (neighboringPot == null) continue;
+              if (neighboringPot.currentPlant == null) continue;
+              currentPlant.plantData.persistentEffect!(neighboringPot, gameStateManager);
             }
           }
 
@@ -98,9 +98,9 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
             var otherPlant = otherPot.potState.currentPlant;
             if (otherPlant == null) continue;
             if (!otherPlant.isFullyGrown) continue;
-            if (otherPlant.plantData.plantAOE == 'none') continue;
+            if (otherPlant.plantData.persistentEffectAOE == 'none') continue;
 
-            for (var dir in PlantAoeMap[otherPlant.plantData.plantAOE]!) {
+            for (var dir in PlantAoeMap[otherPlant.plantData.persistentEffectAOE]!) {
               var affectedRow = otherPot.potState.row + dir[0];
               var affectedCol = otherPot.potState.col + dir[1];
               if (affectedRow == pot.potState.row && affectedCol == pot.potState.col && otherPlant.plantData.persistentEffect != null) {
@@ -123,9 +123,9 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
           // Add money for tick
           num currIncome = currentPlant.plantData.incomeRate + currentPlant.addBonus;
           currIncome = currIncome * (1 + currentPlant.multBonus);
-          currIncome = pow(currIncome, 1 + currentPlant.exponentialBonus + gameStateManager.state.exponentialBonus[pot.potState.row][pot.potState.col]);
+          currIncome = pow(currIncome, 1 + currentPlant.exponentialBonus);
           currIncome = currIncome + currentPlant.flatBonus;
-          print("Plant at (${pot.potState.row}, ${pot.potState.col}) generated income: $currIncome \n exponentialBonus: ${gameStateManager.state.exponentialBonus[pot.potState.row][pot.potState.col]}");
+          print("Plant at (${pot.potState.row}, ${pot.potState.col}) generated income: $currIncome}");
           deltaMoney += currIncome; 
 
         }

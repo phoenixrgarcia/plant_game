@@ -18,8 +18,10 @@ class PlantData {
       imagePath: 'assets/images/tomato.png',
       spritePath: 'tomato.png',
       onHarvest: () => print('Tomato harvested!'),
-      onTick: (pot, gsm) => print('Tomato in pot at (${pot.row}, ${pot.col}) ticked!'),
-      persistentEffect: (pot, gsm) => print('Tomato in pot at (${pot.row}, ${pot.col}) grew!'),
+      onTick: (pot, gsm) =>
+          print('Tomato in pot at (${pot.row}, ${pot.col}) ticked!'),
+      persistentEffect: (pot, gsm) =>
+          print('Tomato in pot at (${pot.row}, ${pot.col}) grew!'),
       description: 'A juicy red fruit, perfect for salads and sauces.',
       specialProperties: "Does nothing special",
     ),
@@ -39,6 +41,7 @@ class PlantData {
     ),
 
     //Trees
+    //Legendary Trees
     'Giving Tree': Plant(
       name: 'Giving Tree',
       type: 'Tree',
@@ -61,7 +64,7 @@ class PlantData {
           if (!neighboringPot.currentPlant!.isFullyGrown) continue;
           neighboringPot.currentPlant?.flatBonus += 0.1;
         }
-        
+
         gsm.save();
         gsm.notify();
       },
@@ -70,7 +73,7 @@ class PlantData {
           'A mystical tree that generously gives to the plants around it',
       specialProperties:
           "Adds small income boost to cardinally adjacent plants",
-      plantAOE: 'cardinal',
+      persistentEffectAOE: 'none',
     ),
     'Apple Tree': Plant(
       name: 'Apple Tree',
@@ -84,38 +87,221 @@ class PlantData {
       spritePath: 'apple-tree.webp',
       onHarvest: () => print('Apple Tree harvested!'),
       onTick: (pot, gsm) => print('Apple Tree ticked!'),
-      persistentEffect: (pot, gsm) {
+      persistentEffect: (otherPot, gsm) {
         print('Apple Tree grew!');
         // Increases exponential income bonus of adjacent plants (fruits get a bigger bonus)
-
-        gsm.updateExponentialBonus(pot.row, pot.col, .2);
-        print("Updated exponential bonus at ($pot.row, $pot.col)");
-        if (pot.currentPlant!.plantData.type == "Fruit") {
-          pot.currentPlant!.exponentialBonus += 0.3;
-        } 
+        if (otherPot.currentPlant!.plantData.type == "Fruit") {
+          otherPot.currentPlant!.exponentialBonus += 0.4;
+        } else {
+          otherPot.currentPlant!.exponentialBonus += 0.2;
+        }
       },
       description:
           'A blossoming tree that inspires surrounding fruits to grow sweeter',
       specialProperties:
           "Exponentially increases income of adjacent plants (bonus for fruits)",
-      plantAOE: 'adjacent',
+      persistentEffectAOE: 'adjacent',
+      cleanUp: (selfPot, gsm) {
+        print('Apple Tree removed!');
+        for (var dir in PlantAoeMap['adjacent']!) {
+          var newRow = selfPot.row + dir[0];
+          var newCol = selfPot.col + dir[1];
+          var neighboringPot = gsm.getPot(newRow, newCol);
+          if (neighboringPot == null) continue;
+          if (neighboringPot.currentPlant == null) continue;
+          if (!neighboringPot.currentPlant!.isFullyGrown) continue;
+          // Revert the exponential bonus when the plant is removed
+          if (neighboringPot.currentPlant!.plantData.type == "Fruit") {
+            neighboringPot.currentPlant!.exponentialBonus -= 0.4;
+          } else {
+            neighboringPot.currentPlant!.exponentialBonus -= 0.2;
+          }
+        }
+      },
     ),
+
+    //Epic Trees
     'Sakura Tree': Plant(
       name: 'Sakura Tree',
       type: 'Tree',
-      growthTime: 10,
+      growthTime: 32,
       sellPrice: 300,
       incomeRate: 30,
       tickRate: 15,
-      rarity: 30,
+      rarity: 20,
       imagePath: 'assets/images/sakura_tree.png',
       spritePath: 'sakura_tree.png',
       onHarvest: () => print('Sakura Tree harvested!'),
-      onTick: (pot, gsm) => print('Sakura Tree ticked!'),
+      onTick: (pot, gsm) {
+        print('Sakura Tree ticked!');
+        // Procs the tick effect of cardinally adjacent plants every 16 ticks
+        if (pot.currentPlant!.currentAge % 16 == 0) {
+          for (var dir in PlantAoeMap['cardinal']!) {
+            var newRow = pot.row + dir[0];
+            var newCol = pot.col + dir[1];
+            var neighboringPot = gsm.getPot(newRow, newCol);
+            if (neighboringPot == null) continue;
+            if (neighboringPot.currentPlant == null) continue;
+            neighboringPot.currentPlant!.plantData.onTick(neighboringPot, gsm);
+          }
+        }
+      },
       description: 'A beautiful cherry blossom tree that enchants the garden.',
-      specialProperties: "Procs the tick effect of cardinally adjacent plants",
-      plantAOE: 'cardinal',
+      specialProperties:
+          "Procs the tick effect of cardinally adjacent plants every 16 ticks",
+      persistentEffectAOE: 'cardinal',
     ),
+
+    'Redwood Tree': Plant(
+      name: 'Redwood Tree',
+      type: 'Tree',
+      growthTime: 60,
+      sellPrice: 800,
+      incomeRate: 600,
+      tickRate: 60,
+      rarity: 20,
+      imagePath: 'assets/images/redwood_tree.png',
+      spritePath: 'redwood_tree.png',
+      onHarvest: () => print('Redwood Tree harvested!'),
+      onTick: (pot, gsm) => print('Redwood Tree ticked!'),
+      description:
+          'A towering tree that stands as a testament to time and nature.',
+      specialProperties: "Slowly generates massive income",
+      persistentEffectAOE: 'none',
+    ),
+
+    'Ironbark Tree': Plant(
+      name: 'Ironbark Tree',
+      type: 'Tree',
+      growthTime: 30,
+      sellPrice: 400,
+      incomeRate: 20,
+      tickRate: 20,
+      rarity: 20,
+      imagePath: 'assets/images/ironbark_tree.png',
+      spritePath: 'ironbark_tree.png',
+      onHarvest: () => print('Ironbark Tree harvested!'),
+      onTick: (pot, gsm) => print('Ironbark Tree ticked!'),
+      description:
+          'A sturdy tree with bark as hard as iron, protecting its garden.',
+      specialProperties:
+          "Gives a 2x mult to adjacent plants, but reduces tickrate by 8s",
+      persistentEffect: (otherPot, gsm) {
+        print('Ironbark Tree grew!');
+        // Increases income multiplier of adjacent plants but slows their tickrate
+        otherPot.currentPlant!.multBonus += 2.0;
+        otherPot.currentPlant!.tickRateFlat += 8;
+      },
+      persistentEffectAOE: 'square',
+      cleanUp: (selfPot, gsm) {
+        print('Ironbark Tree removed!');
+        for (var dir in PlantAoeMap['square']!) {
+          var newRow = selfPot.row + dir[0];
+          var newCol = selfPot.col + dir[1];
+          var neighboringPot = gsm.getPot(newRow, newCol);
+          if (neighboringPot == null) continue;
+          if (neighboringPot.currentPlant == null) continue;
+          if (!neighboringPot.currentPlant!.isFullyGrown) continue;
+          // Revert the bonuses when the plant is removed
+          neighboringPot.currentPlant!.multBonus -= 2.0;
+          neighboringPot.currentPlant!.tickRateFlat -= 8;
+        }
+      },
+    ),
+
+    //Rare Trees
+    'Pine Tree': Plant(
+      name: 'Pine Tree',
+      type: 'Tree',
+      growthTime: 15,
+      sellPrice: 120,
+      incomeRate: 10,
+      tickRate: 10,
+      rarity: 40,
+      imagePath: 'assets/images/pine_tree.png',
+      spritePath: 'pine_tree.png',
+      onHarvest: () => print('Pine Tree harvested!'),
+      onTick: (pot, gsm) => print('Pine Tree ticked!'),
+      description: 'A tall tree whos cones support other plants.',
+      specialProperties:
+          "Gives a 15 flat income boost to the two plants above it",
+      persistentEffect: (otherPlant, gameStateManager) {
+        print('Pine Tree grew!');
+        if (otherPlant.currentPlant == null) return;
+        otherPlant.currentPlant!.addBonus += 15;
+      },
+      persistentEffectAOE: 'up2',
+      cleanUp: (self, gameStateManager) {
+        print('Pine Tree removed!');
+        for (var dir in PlantAoeMap['up2']!) {
+          var newRow = self.row + dir[0];
+          var newCol = self.col + dir[1];
+          var neighboringPot = gameStateManager.getPot(newRow, newCol);
+          if (neighboringPot == null) continue;
+          if (neighboringPot.currentPlant == null) continue;
+          if (!neighboringPot.currentPlant!.isFullyGrown) continue;
+          // Revert the add bonus when the plant is removed
+          neighboringPot.currentPlant!.addBonus -= 15;
+        }
+      },
+    ),
+
+    'Palm Tree': Plant(
+      name: 'Palm Tree',
+      type: 'Tree',
+      growthTime: 12,
+      sellPrice: 100,
+      incomeRate: 8,
+      tickRate: 8,
+      rarity: 40,
+      imagePath: 'assets/images/palm_tree.png',
+      spritePath: 'palm_tree.png',
+      onHarvest: () => print('Palm Tree harvested!'),
+      onTick: (pot, gsm) => print('Palm Tree ticked!'),
+      description: 'A tropical tree that brings a relaxing vibe to the garden.',
+      specialProperties: "Makes plants diagonally adjacent tick 1.2x faster",
+      persistentEffect: (otherPot, gsm) {
+        print('Palm Tree grew!');
+        otherPot.currentPlant!.tickRateMult += 0.2;
+      },
+      persistentEffectAOE: 'diagonal',
+      cleanUp: (selfPot, gsm) {
+        print('Palm Tree removed!');
+        for (var dir in PlantAoeMap['diagonal']!) {
+          var newRow = selfPot.row + dir[0];
+          var newCol = selfPot.col + dir[1];
+          var neighboringPot = gsm.getPot(newRow, newCol);
+          if (neighboringPot == null) continue;
+          if (neighboringPot.currentPlant == null) continue;
+          if (!neighboringPot.currentPlant!.isFullyGrown) continue;
+          // Revert the tick rate multiplier when the plant is removed
+          neighboringPot.currentPlant!.tickRateMult -= 0.2;
+        }
+      },
+    ),
+
+    'Oak Tree': Plant(
+      name: 'Oak Tree',
+      type: 'Tree',
+      growthTime: 30,
+      sellPrice: 150,
+      incomeRate: 20,
+      tickRate: 12,
+      rarity: 40,
+      imagePath: 'assets/images/oak_tree.jpg',
+      spritePath: 'oak_tree.jpg',
+      onHarvest: () => print('Oak Tree harvested!'),
+      onTick: (self, gsm) {
+        print('Oak Tree ticked!');
+        if((self.currentPlant!.currentAge - 30) % 64  == 0){
+          // earns 100x value every 64 ticks
+          gsm.mutateMoney(self.currentPlant!.plantData.incomeRate * 100);
+        }
+      },
+      description: 'A sturdy tree that symbolizes strength and endurance.',
+      specialProperties: "Earns 100x income every 64 ticks after fully grown",
+      persistentEffectAOE: 'none',
+    ), 
   };
 
   static Plant? getById(String id) => _plants[id];
