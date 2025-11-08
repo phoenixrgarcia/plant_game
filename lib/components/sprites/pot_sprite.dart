@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
+import 'package:plant_game/components/UI/tick_timer.dart';
 import 'package:plant_game/components/plants/data/plant_data.dart';
 import 'package:plant_game/components/state/game_state.dart';
 import 'package:plant_game/components/state/pot_state.dart';
@@ -11,6 +12,7 @@ class PotSprite extends SpriteComponent
     with HasGameRef<PlantGame>, TapCallbacks {
   PotState potState; // Reference to the PotState
   GameStateManager gameStateManager = GameStateManager();
+  late TickTimer tickTimer;
 
   Sprite? plantSprite;
   String? currentSpritePath;
@@ -79,7 +81,7 @@ class PotSprite extends SpriteComponent
     super.render(canvas);
 
     if (plantSprite != null) {
-      plantSprite!.render(canvas, size: size);
+      plantSprite!.render(canvas, size: size, position: Vector2(0, -size.y * 0.4));
     } else {
 
     }
@@ -101,8 +103,7 @@ class PotSprite extends SpriteComponent
 
       // Check if spritePath changed (e.g. due to growth)
       if (plantData.spritePath != currentSpritePath) {
-        plantSprite = Sprite(gameRef.images.fromCache(plantData.spritePath))
-          ..srcPosition = Vector2(0, 0 /*gameRef.potSize.y * 50/ 2*/);
+        plantSprite = Sprite(gameRef.images.fromCache(plantData.spritePath));
         currentSpritePath = plantData.spritePath;
       }
     } else {

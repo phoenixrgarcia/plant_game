@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:plant_game/plant_game.dart';
 
 class TickTimer extends PositionComponent with HasGameRef<PlantGame> {
-  double progress = 0.0; // Current progress (0.0 to 1.0)
+  double progress = 0.0; // Current progress in seconds
   double tickRate; // Time (in seconds) for a full tick
-  int ticks = 0; // Tick counter
 
   final Paint borderPaint;
   final Paint fillPaint;
@@ -29,7 +28,8 @@ class TickTimer extends PositionComponent with HasGameRef<PlantGame> {
     canvas.drawRRect(rrect, borderPaint);
 
     // Draw the filled progress bar
-    final fillWidth = progress * size.x; // Calculate width based on progress
+    final tickFraction = progress / tickRate;
+    final fillWidth = tickFraction * size.x; // Calculate width based on progress
     final fillRect = Rect.fromLTWH(0, 0, fillWidth, size.y);
     final fillRRect =
         RRect.fromRectAndRadius(fillRect, Radius.circular(size.y / 2));
@@ -45,9 +45,8 @@ class TickTimer extends PositionComponent with HasGameRef<PlantGame> {
 
     if (progress >= 1.0) {
       // Trigger a tick when the bar is full
-      ticks++;
       onTick();
-      progress = 0.0; // Reset progress
+      progress -= 1.0; // Reset progress
     }
   }
 

@@ -34,6 +34,9 @@ class PlantInstance extends HiveObject {
   @HiveField(8)
   double tickRateMult;
 
+  @HiveField(9)
+  double tickProgress;
+
   PlantInstance({
     required this.plantDataName,
     this.currentAge = 0,
@@ -44,6 +47,7 @@ class PlantInstance extends HiveObject {
     this.exponentialBonus = 0,
     this.tickRateFlat = 0,
     this.tickRateMult = 0,
+    this.tickProgress = 0,
   });
 
   Plant get plantData => PlantData.getById(plantDataName)!;
