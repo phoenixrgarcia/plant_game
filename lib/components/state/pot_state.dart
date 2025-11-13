@@ -23,10 +23,10 @@ class PotState extends HiveObject {
     this.currentPlant,  
   });
 
-  // Logic to plant a specific type of plant in the pot
-  void plant(InventoryEntry plantEntry) {
-    currentPlant = PlantInstance(plantDataName: plantEntry.plantDataName, tier: plantEntry.tier);
-  }
+  // // Logic to plant a specific type of plant in the pot
+  // void plant(InventoryEntry plantEntry) {
+  //   currentPlant = PlantInstance(plantDataName: plantEntry.plantDataName, tier: plantEntry.tier);
+  // }
 
   // Logic to remove the plant from the pot
   void removePlant() {

@@ -70,12 +70,12 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
     // tick timer that represents when ticks happen
     // part of header bar
     // TODO make this size depend on header bar
-    tickTimer = TickTimer(tickRate: 5.0)
-      ..size = Vector2(size.x * 0.3, size.y * 0.05)
-      ..position = Vector2(size.x * 0.05, size.y * 0.09)
-      ..anchor = Anchor.centerLeft
-      ..priority = 100;
-    camera.viewport.add(tickTimer);
+    // tickTimer = TickTimer(tickRate: 5.0)
+    //   ..size = Vector2(size.x * 0.3, size.y * 0.05)
+    //   ..position = Vector2(size.x * 0.05, size.y * 0.09)
+    //   ..anchor = Anchor.centerLeft
+    //   ..priority = 100;
+    // camera.viewport.add(tickTimer);
 
     overlays.add('money');
   }

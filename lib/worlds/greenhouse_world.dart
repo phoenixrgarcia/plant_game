@@ -139,6 +139,12 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     gameStateManager.notify(); // Notify listeners of state change
   }
 
+  void newTick(PotState potState) {
+    double deltaMoney = 0; // Reset delta money for this tick
+
+    
+  }
+
   //Helper function to calculate the position of a pot based on its row and column
   Vector2 calculatePotPosition(int row, int col) {
     final Vector2 screenSize = gameRef.size;
@@ -181,15 +187,8 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   }
 
   void _onGameStateChanged() {
-    // Update the game state based on changes in the GameStateManager
-    for (var pot in gardenPots) {
-      // Update each pot's state if needed
-      final savedPot = gameStateManager.state.pots
-          .where((p) => p.row == pot.potState.row && p.col == pot.potState.col)
-          .first;
-      pot.potState = savedPot;
-      pot.updatePlantSprite(); // Update the sprite if the plant has changed
-    }
+    //Update the game state based on changes in the GameStateManager
+  
     // Update your Flame components here, e.g.:
     // - Update pot sprites if pots changed
     // - Update UI overlays if money changed

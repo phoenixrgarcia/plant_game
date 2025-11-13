@@ -17,7 +17,6 @@ class PotSprite extends SpriteComponent
   Sprite? plantSprite;
   String? currentSpritePath;
 
-
   PotSprite(
       {required this.potState,
       required Vector2 size,
@@ -29,6 +28,10 @@ class PotSprite extends SpriteComponent
     // Load the initial pot sprite (this would be a generic pot image)
     sprite = await gameRef.loadSprite('sample_pot.webp');
     gameStateManager.addListener(_onGameStateChanged);
+    tickTimer = TickTimer(tickRate: 1.0)
+      ..size = Vector2(size.x * 0.8, size.y * 0.1)
+      ..position = Vector2(size.x * .5, size.y * 0.9)
+      ..anchor = Anchor.center;
   }
 
   @override
@@ -45,7 +48,7 @@ class PotSprite extends SpriteComponent
 
     return true; // Event handled
   }
-  
+
   //Here we are using Offset to store a fraction value for x and y coordinates.
   Map<String, Offset> targetPotPositions = {
     'top': const Offset(.5, .3),
@@ -81,10 +84,9 @@ class PotSprite extends SpriteComponent
     super.render(canvas);
 
     if (plantSprite != null) {
-      plantSprite!.render(canvas, size: size, position: Vector2(0, -size.y * 0.4));
-    } else {
-
-    }
+      plantSprite!
+          .render(canvas, size: size, position: Vector2(0, -size.y * 0.4));
+    } else {}
   }
 
   void renderSelectedPot(Canvas canvas) {
@@ -112,9 +114,41 @@ class PotSprite extends SpriteComponent
     }
   }
 
+  Future<void> updateTickTimer() async {
+    if (potState.isOccupied && !children.contains(tickTimer) && !potState.currentPlant!.isFullyGrown) {
+      final plantData =
+          PlantData.getById(potState.currentPlant!.plantDataName)!;
+      tickTimer.tickRate =
+          plantData.growthTime; // Adjust tick rate based on growth time
+      tickTimer.progress = 0;
+      tickTimer.onTickCallback = () {
+        potState.currentPlant!.isFullyGrown = true;
+        updateTickTimer();
+      };
+      add(tickTimer);
+    } else if(potState.isOccupied && potState.currentPlant!.isFullyGrown){
+      final plantData = PlantData.getById(potState.currentPlant!.plantDataName)!;
+      tickTimer.tickRate = plantData.tickRate;
+      //tickTimer.progress = 0; //was causing issues with making progress negative
+      tickTimer.onTickCallback = onTickCallback;
+    }
+    else {
+      if (children.contains(tickTimer)) {
+        remove(tickTimer);
+      }
+    }
+  }
+
+  void onTickCallback(){
+    if (potState.isOccupied){
+      gameRef.greenhouseWorld.newTick(potState);
+    }
+  }
+
   void _onGameStateChanged() {
     // Update the potState reference in case it was replaced
-    potState = gameStateManager.state.pots.where((p) => p.row == potState.row && p.col == potState.col).first;
+    // potState = gameStateManager.state.pots.where((p) => p.row == potState.row && p.col == potState.col).first;
     updatePlantSprite(); // Update the plant sprite if needed
+    updateTickTimer(); // Update the plant sprite if needed
   }
 }

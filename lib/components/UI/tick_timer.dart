@@ -8,6 +8,7 @@ class TickTimer extends PositionComponent with HasGameRef<PlantGame> {
 
   final Paint borderPaint;
   final Paint fillPaint;
+  late Function onTickCallback;
 
   TickTimer({this.tickRate = 5.0}) // Default tick rate: 5 seconds
       : borderPaint = Paint()
@@ -28,7 +29,7 @@ class TickTimer extends PositionComponent with HasGameRef<PlantGame> {
     canvas.drawRRect(rrect, borderPaint);
 
     // Draw the filled progress bar
-    final tickFraction = progress / tickRate;
+    final tickFraction = progress.clamp(0.0, 1.0); // Ensure progress is between 0 and 1
     final fillWidth = tickFraction * size.x; // Calculate width based on progress
     final fillRect = Rect.fromLTWH(0, 0, fillWidth, size.y);
     final fillRRect =
@@ -45,12 +46,12 @@ class TickTimer extends PositionComponent with HasGameRef<PlantGame> {
 
     if (progress >= 1.0) {
       // Trigger a tick when the bar is full
-      onTick();
+      onTickCallback();
       progress -= 1.0; // Reset progress
     }
   }
 
-  void onTick() {
-    gameRef.greenhouseWorld.tick();
-  }
+  // void onTick() {
+  //   gameRef.greenhouseWorld.tick();
+  // }
 }

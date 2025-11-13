@@ -61,6 +61,7 @@ class PlantData {
           var newCol = self.col + dir[1];
           var neighboringPot = gsm.getPot(newRow, newCol);
           if (neighboringPot == null) continue;
+          if (neighboringPot.currentPlant == null) continue;
           if (!neighboringPot.currentPlant!.isFullyGrown) continue;
           neighboringPot.currentPlant?.flatBonus += 0.1;
         }

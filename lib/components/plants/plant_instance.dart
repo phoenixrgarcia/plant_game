@@ -37,6 +37,9 @@ class PlantInstance extends HiveObject {
   @HiveField(9)
   double tickProgress;
 
+  @HiveField(10)
+  bool isFullyGrown;
+
   PlantInstance({
     required this.plantDataName,
     this.currentAge = 0,
@@ -48,12 +51,11 @@ class PlantInstance extends HiveObject {
     this.tickRateFlat = 0,
     this.tickRateMult = 0,
     this.tickProgress = 0,
+    this.isFullyGrown = false,
   });
 
   Plant get plantData => PlantData.getById(plantDataName)!;
 
-  bool get isFullyGrown =>
-      currentAge >= PlantData.getById(plantDataName)!.growthTime;
 
   void incrementAge() {
     currentAge += 1;
