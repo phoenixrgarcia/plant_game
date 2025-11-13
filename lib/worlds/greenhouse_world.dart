@@ -16,7 +16,6 @@ import '../components/sprites/purchasable_pot_sprite.dart';
 
 import 'package:plant_game/components/plants/plant_aoe_map.dart';
 
-
 // This file containst he game logic for the greenhouse world. It loads the state and populates the pots.
 
 class GreenhouseWorld extends World with HasGameRef<PlantGame> {
@@ -24,7 +23,6 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   late final Set<PotSprite> gardenPots = {};
   late final Set<PurchasablePot> purchasablePots = {};
   late final Set<String> purchasablePotCoordinates = {};
-
 
   ValueNotifier<PotSprite?> selectedPot = ValueNotifier(null);
 
@@ -71,78 +69,147 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     // Additional logic for deselecting a pot
   }
 
-  void tick() {
-    // Iterate through all pots and call their tick method
+  // void tick() {
+  //   // Iterate through all pots and call their tick method
 
+  //   double deltaMoney = 0; // Reset delta money for this tick
+
+  //   for (var pot in pots) {
+  //     var currentPlant = pot.potState.currentPlant;
+  //     if (currentPlant != null) {
+  //       currentPlant.incrementAge();
+  //       if (currentPlant.currentAge == currentPlant.plantData.growthTime) {
+  //         // Trigger persistent effect on growth completion
+  //         if (currentPlant.plantData.persistentEffect != null) {
+  //           for (var dir
+  //               in PlantAoeMap[currentPlant.plantData.persistentEffectAOE]!) {
+  //             var newRow = pot.potState.row + dir[0];
+  //             var newCol = pot.potState.col + dir[1];
+  //             var neighboringPot = gameStateManager.getPot(newRow, newCol);
+  //             if (neighboringPot == null) continue;
+  //             if (neighboringPot.currentPlant == null) continue;
+  //             currentPlant.plantData.persistentEffect!(
+  //                 neighboringPot, gameStateManager);
+  //           }
+  //         }
+
+  //         //check for other plants with aoe effects that might affect this plant on growth
+  //         for (var otherPot in pots) {
+  //           var otherPlant = otherPot.potState.currentPlant;
+  //           if (otherPlant == null) continue;
+  //           if (!otherPlant.isFullyGrown) continue;
+  //           if (otherPlant.plantData.persistentEffectAOE == 'none') continue;
+
+  //           for (var dir
+  //               in PlantAoeMap[otherPlant.plantData.persistentEffectAOE]!) {
+  //             var affectedRow = otherPot.potState.row + dir[0];
+  //             var affectedCol = otherPot.potState.col + dir[1];
+  //             if (affectedRow == pot.potState.row &&
+  //                 affectedCol == pot.potState.col &&
+  //                 otherPlant.plantData.persistentEffect != null) {
+  //               // This plant is affected by the other plant's AOE effect
+  //               otherPlant.plantData.persistentEffect!(
+  //                   pot.potState, gameStateManager);
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   for (var pot in gardenPots) {
+  //     var currentPlant = pot.potState.currentPlant;
+  //     if (currentPlant != null) {
+  //       // If the plant is fully grown
+  //       if (currentPlant.isFullyGrown) {
+  //         currentPlant.plantData.onTick(pot.potState, gameStateManager);
+
+  //         // Add money for tick
+  //         num currIncome =
+  //             currentPlant.plantData.incomeRate + currentPlant.addBonus;
+  //         currIncome = currIncome * (1 + currentPlant.multBonus);
+  //         currIncome = pow(currIncome, 1 + currentPlant.exponentialBonus);
+  //         currIncome = currIncome + currentPlant.flatBonus;
+  //         print(
+  //             "Plant at (${pot.potState.row}, ${pot.potState.col}) generated income: $currIncome}");
+  //         deltaMoney += currIncome;
+  //       }
+  //     }
+  //   }
+
+  //   // Update the game state with the new money value
+  //   if (deltaMoney != 0) {
+  //     gameStateManager.mutateMoney(deltaMoney);
+  //   }
+  //   gameStateManager.notify(); // Notify listeners of state change
+  // }
+
+  void tickPot(PotState potState) {
     double deltaMoney = 0; // Reset delta money for this tick
 
-    for (var pot in pots) {
-      var currentPlant = pot.potState.currentPlant;
-      if (currentPlant != null) {
-        currentPlant.incrementAge();
-        if(currentPlant.currentAge == currentPlant.plantData.growthTime){
-          // Trigger persistent effect on growth completion
-          if(currentPlant.plantData.persistentEffect != null){
-            for (var dir in PlantAoeMap[currentPlant.plantData.persistentEffectAOE]!) {
-              var newRow = pot.potState.row + dir[0];
-              var newCol = pot.potState.col + dir[1];
-              var neighboringPot = gameStateManager.getPot(newRow, newCol);
-              if (neighboringPot == null) continue;
-              if (neighboringPot.currentPlant == null) continue;
-              currentPlant.plantData.persistentEffect!(neighboringPot, gameStateManager);
-            }
-          }
+    if (potState.currentPlant == null) return;
 
-          //check for other plants with aoe effects that might affect this plant on growth
-          for (var otherPot in pots) {
-            var otherPlant = otherPot.potState.currentPlant;
-            if (otherPlant == null) continue;
-            if (!otherPlant.isFullyGrown) continue;
-            if (otherPlant.plantData.persistentEffectAOE == 'none') continue;
+    if (potState.currentPlant!.currentAge == 0) {
+      //trigger this plant's persistent effect on other plants
+      //extract method?
+      if (potState.currentPlant!.plantData.persistentEffect != null) {
+        for (var dir in PlantAoeMap[
+            potState.currentPlant!.plantData.persistentEffectAOE]!) {
+          var newRow = potState.row + dir[0];
+          var newCol = potState.col + dir[1];
+          var neighboringPot = gameStateManager.getPot(newRow, newCol);
+          if (neighboringPot == null) continue;
+          if (neighboringPot.currentPlant == null) continue;
+          potState.currentPlant!.plantData.persistentEffect!(neighboringPot,
+              gameStateManager); //applies this plant effect to other plant
+        }
+      }
 
-            for (var dir in PlantAoeMap[otherPlant.plantData.persistentEffectAOE]!) {
-              var affectedRow = otherPot.potState.row + dir[0];
-              var affectedCol = otherPot.potState.col + dir[1];
-              if (affectedRow == pot.potState.row && affectedCol == pot.potState.col && otherPlant.plantData.persistentEffect != null) {
-                // This plant is affected by the other plant's AOE effect
-                otherPlant.plantData.persistentEffect!(pot.potState, gameStateManager);
-              }
-            }
+      //trigger other persistent effects on this plant
+      //extract method?
+      for (var otherPot in pots) {
+        var otherPlant = otherPot.potState.currentPlant;
+        if (otherPlant == null) continue;
+        if (!otherPlant.isFullyGrown) continue;
+        if (otherPlant.plantData.persistentEffectAOE == 'none') continue;
+
+        for (var dir
+            in PlantAoeMap[otherPlant.plantData.persistentEffectAOE]!) {
+          var affectedRow = otherPot.potState.row + dir[0];
+          var affectedCol = otherPot.potState.col + dir[1];
+          if (affectedRow == potState.row &&
+              affectedCol == potState.col &&
+              otherPlant.plantData.persistentEffect != null) {
+            // This plant is affected by the other plant's AOE effect
+            otherPlant.plantData.persistentEffect!(
+                potState, gameStateManager);
           }
         }
       }
     }
 
-    for (var pot in gardenPots) {
-      var currentPlant = pot.potState.currentPlant;
-      if (currentPlant != null) {
-        // If the plant is fully grown, we can harvest it
-        if (currentPlant.isFullyGrown) {
-          currentPlant.plantData.onTick(pot.potState, gameStateManager);
+    potState.currentPlant!.incrementAge();
 
-          // Add money for tick
-          num currIncome = currentPlant.plantData.incomeRate + currentPlant.addBonus;
-          currIncome = currIncome * (1 + currentPlant.multBonus);
-          currIncome = pow(currIncome, 1 + currentPlant.exponentialBonus);
-          currIncome = currIncome + currentPlant.flatBonus;
-          print("Plant at (${pot.potState.row}, ${pot.potState.col}) generated income: $currIncome}");
-          deltaMoney += currIncome; 
+    //if plant is fully grown
+    if(potState.currentPlant!.isFullyGrown) {
+    //trigger tick effect
+      potState.currentPlant!.plantData.onTick(potState, gameStateManager);
 
-        }
-      }
+      // Add money for tick
+      num currIncome = potState.currentPlant!.plantData.incomeRate +
+          potState.currentPlant!.addBonus;
+      currIncome = currIncome * (1 + potState.currentPlant!.multBonus);
+      currIncome = pow(currIncome, 1 + potState.currentPlant!.exponentialBonus);
+      currIncome = currIncome + potState.currentPlant!.flatBonus;
+      print(
+          "Plant at (${potState.row}, ${potState.col}) generated income: $currIncome}");
+      deltaMoney += currIncome;
     }
 
-    // Update the game state with the new money value
+    //update money
     if (deltaMoney != 0) {
       gameStateManager.mutateMoney(deltaMoney);
     }
-    gameStateManager.notify(); // Notify listeners of state change
-  }
-
-  void newTick(PotState potState) {
-    double deltaMoney = 0; // Reset delta money for this tick
-
-    
   }
 
   //Helper function to calculate the position of a pot based on its row and column
@@ -188,7 +255,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
   void _onGameStateChanged() {
     //Update the game state based on changes in the GameStateManager
-  
+
     // Update your Flame components here, e.g.:
     // - Update pot sprites if pots changed
     // - Update UI overlays if money changed
@@ -206,9 +273,14 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
         Pair(pot.row, pot.col + 1)
       ];
 
-      for(Pair position in positions){
+      for (Pair position in positions) {
         final key = '${position.key},${position.value}';
-        if(!existingPositions.contains(key) && !purchasablePotCoordinates.contains(key) && position.key >=0 && position.value >=0 && position.key < 10 && position.value < 10){
+        if (!existingPositions.contains(key) &&
+            !purchasablePotCoordinates.contains(key) &&
+            position.key >= 0 &&
+            position.value >= 0 &&
+            position.key < 10 &&
+            position.value < 10) {
           final purchasablePot = PurchasablePot(
             size: potSize,
             row: position.key,
@@ -223,5 +295,3 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     }
   }
 }
-
-

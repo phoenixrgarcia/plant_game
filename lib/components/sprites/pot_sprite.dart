@@ -104,7 +104,9 @@ class PotSprite extends SpriteComponent
           PlantData.getById(potState.currentPlant!.plantDataName)!;
 
       // Check if spritePath changed (e.g. due to growth)
-      if (plantData.spritePath != currentSpritePath) {
+      if(!potState.currentPlant!.isFullyGrown){
+        plantSprite = Sprite(gameRef.images.fromCache("sprout.png"));
+      } else if (plantData.spritePath != currentSpritePath) {
         plantSprite = Sprite(gameRef.images.fromCache(plantData.spritePath));
         currentSpritePath = plantData.spritePath;
       }
@@ -115,6 +117,8 @@ class PotSprite extends SpriteComponent
   }
 
   Future<void> updateTickTimer() async {
+    //if the pot is newly planted, it needs a timer and the timer is set to the growth time
+    //When the timer elapses, the plant grows
     if (potState.isOccupied && !children.contains(tickTimer) && !potState.currentPlant!.isFullyGrown) {
       final plantData =
           PlantData.getById(potState.currentPlant!.plantDataName)!;
@@ -124,15 +128,19 @@ class PotSprite extends SpriteComponent
       tickTimer.onTickCallback = () {
         potState.currentPlant!.isFullyGrown = true;
         updateTickTimer();
+        updatePlantSprite();
       };
       add(tickTimer);
-    } else if(potState.isOccupied && potState.currentPlant!.isFullyGrown){
+      print("checking children: ${children.contains(tickTimer)}");
+    } 
+    //when the plant fully grows, the timer is adjusted to the tick rate time
+    else if(potState.isOccupied && potState.currentPlant!.isFullyGrown){
       final plantData = PlantData.getById(potState.currentPlant!.plantDataName)!;
       tickTimer.tickRate = plantData.tickRate;
-      //tickTimer.progress = 0; //was causing issues with making progress negative
       tickTimer.onTickCallback = onTickCallback;
     }
-    else {
+    //when the plant is harvested, or the pot is unplanted, the timer is removed
+    else if (!potState.isOccupied){
       if (children.contains(tickTimer)) {
         remove(tickTimer);
       }
@@ -141,7 +149,7 @@ class PotSprite extends SpriteComponent
 
   void onTickCallback(){
     if (potState.isOccupied){
-      gameRef.greenhouseWorld.newTick(potState);
+      gameRef.greenhouseWorld.tickPot(potState);
     }
   }
 

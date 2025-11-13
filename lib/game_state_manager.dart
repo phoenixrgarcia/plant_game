@@ -82,7 +82,7 @@ class GameStateManager extends ChangeNotifier {
   /// Probably dont actually use this, since money is frequently updated.
   void mutateMoney(double amount) {
     _currentState.money += amount;
-    //notifyListeners(); // Notify listeners of state change // comment this out?
+    notifyListeners(); // Notify listeners of state change // comment this out?
   }
 
   /// Mutator for planting in a pot
