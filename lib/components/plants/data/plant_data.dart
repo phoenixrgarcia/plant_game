@@ -39,6 +39,20 @@ class PlantData {
       onTick: (pot, gsm) => print('Carrot ticked!'),
       persistentEffect: (pot, gsm) => print('Carrot grew!'),
     ),
+    'Tupil': Plant(
+      name: 'Tulip',
+      type: 'Flower',
+      growthTime: 10,
+      sellPrice: 20,
+      incomeRate: 1,
+      tickRate: 1,
+      rarity: 30,
+      imagePath: 'assets/images/tulip.jpg',
+      spritePath: 'tulip.jpg',
+      onHarvest: () => print('Tulip harvested!'),
+      onTick: (pot, gsm) => print('Tulip ticked!'),
+      persistentEffect: (pot, gsm) => print('Tulip grew!'),
+    ),
 
     //Trees
     //Legendary Trees
@@ -305,6 +319,8 @@ class PlantData {
     ), 
   };
 
+  static final Set<String> plantTypes = _plants.values.map((plant) => plant.type).toSet(); 
+
   static Plant? getById(String id) => _plants[id];
 
   //not planned to be used, might get removed
@@ -312,12 +328,12 @@ class PlantData {
     _plants[id] = plant;
   }
 
-  static String getWeightedRandom(int seed, {String? classType}) {
+  static String getWeightedRandom(int seed, {String? plantType}) {
     // Implement weighted random selection based on rarity
     final random = Random(seed);
     var plantList = _plants.values.toList();
-    if (classType != null) {
-      plantList = plantList.where((plant) => plant.type == classType).toList();
+    if (plantType != null) {
+      plantList = plantList.where((plant) => plant.type == plantType).toList();
       if (plantList.isEmpty) {
         plantList =
             _plants.values.toList(); // Fallback to all plants if none match

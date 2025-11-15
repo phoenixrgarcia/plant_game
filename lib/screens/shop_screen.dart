@@ -17,6 +17,8 @@ class ShopScreen extends StatelessWidget {
 
   const ShopScreen({super.key});
 
+  static final Set<String> plantTypes = PlantData.plantTypes;
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -24,20 +26,13 @@ class ShopScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Shop"),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: "Crops"),
-              Tab(text: "Flowers"),
-              Tab(text: "Trees"),
-            ],
+          bottom: TabBar(
+            isScrollable: true,
+            tabs: plantTypes.map((type) => Tab(text: type)).toList(),
           ),
         ),
         body: TabBarView(
-          children: [
-            ShopTab(category: "Crops"),
-            ShopTab(category: "Flowers"),
-            ShopTab(category: "Trees"),
-          ],
+          children: plantTypes.map((type) => ShopTab(category: type)).toList(),
         ),
       ),
     );
@@ -200,21 +195,20 @@ class _ShopItemCard extends StatelessWidget {
   }
 }
 
-// Copy your getItemsForCategory into this file or import it.
 List<Map<String, dynamic>> getItemsForCategory(String category) {
   switch (category) {
-    case "Crops":
+    case "Crop":
       return [
         {"name": "Basic Crop Seed", "price": 10, "image": "assets/images/flower-seed.png"},
         {"name": "Rare Crop Seed", "price": 100, "image": "assets/images/flower-seed.png"},
         {"name": "Mythic Crop Seed", "price": 500, "image": "assets/images/flower-seed.png"},
       ];
-    case "Flowers":
+    case "Flower":
       return [
         {"name": "Basic Flower Seed", "price": 20, "image": "assets/images/flower-seed.png"},
         {"name": "Rare Flower Seed", "price": 200, "image": "assets/images/flower-seed.png"},
       ];
-    case "Trees":
+    case "Tree":
       return [
         {"name": "Basic Tree Seed", "price": 50, "image": "assets/images/flower-seed.png"},
         {"name": "Rare Tree Seed", "price": 500, "image": "assets/images/flower-seed.png"},

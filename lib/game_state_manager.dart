@@ -5,6 +5,7 @@ import 'package:plant_game/components/plants/plant_instance.dart';
 import 'package:plant_game/components/state/game_state.dart';
 import 'package:plant_game/components/state/pot_state.dart';
 import 'package:flutter/foundation.dart';
+import 'package:plant_game/components/state/shop_state.dart';
 
 class GameStateManager extends ChangeNotifier {
   // Singleton boilerplate
@@ -25,10 +26,9 @@ class GameStateManager extends ChangeNotifier {
     // Register adapters once
     if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(GameStateAdapter());
     if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(PotStateAdapter());
-    if (!Hive.isAdapterRegistered(2))
-      Hive.registerAdapter(InventoryEntryAdapter());
-    if (!Hive.isAdapterRegistered(3))
-      Hive.registerAdapter(PlantInstanceAdapter());
+    if (!Hive.isAdapterRegistered(2)) Hive.registerAdapter(InventoryEntryAdapter());
+    if (!Hive.isAdapterRegistered(3)) Hive.registerAdapter(PlantInstanceAdapter());
+    if (!Hive.isAdapterRegistered(4)) Hive.registerAdapter(ShopStateAdapter());
 
     // Open the Hive box
     _box = await Hive.openBox<GameState>(_boxName);
@@ -47,6 +47,7 @@ class GameStateManager extends ChangeNotifier {
           ],
           potCost: 25.0,
           nextShopRandomSeed: 0,
+          shopState: ShopState(),
         );
   }
 
@@ -74,7 +75,8 @@ class GameStateManager extends ChangeNotifier {
       pots: [],
       plantInventory: [],
       potCost: 25,
-      nextShopRandomSeed: 0,  
+      nextShopRandomSeed: 0,
+      shopState: ShopState(),  
     );
   }
 

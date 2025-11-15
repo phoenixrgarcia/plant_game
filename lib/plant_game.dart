@@ -39,6 +39,12 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
       'giving_tree.png',
       'apple-tree.webp',
       'sprout.png',
+      'ironbark_tree.png',
+      'palm_tree.png',
+      'pine_tree.png',
+      'redwood_tree.png',
+      'sakura_tree.png',
+      'tulip.jpg',
     ]);
 
     final backgroundSprite = await loadSprite('blue_background.jpg');
@@ -67,16 +73,6 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
       paint: Paint()..color = const Color.fromARGB(255, 151, 151, 158),
     );
     camera.viewport.add(headerBar);
-
-    // tick timer that represents when ticks happen
-    // part of header bar
-    // TODO make this size depend on header bar
-    // tickTimer = TickTimer(tickRate: 5.0)
-    //   ..size = Vector2(size.x * 0.3, size.y * 0.05)
-    //   ..position = Vector2(size.x * 0.05, size.y * 0.09)
-    //   ..anchor = Anchor.centerLeft
-    //   ..priority = 100;
-    // camera.viewport.add(tickTimer);
 
     overlays.add('money');
   }

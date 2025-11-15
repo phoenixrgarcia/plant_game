@@ -21,21 +21,27 @@ class GameStateAdapter extends TypeAdapter<GameState> {
       pots: (fields[1] as List).cast<PotState>(),
       plantInventory: (fields[2] as List).cast<InventoryEntry>(),
       potCost: fields[3] as double,
+      nextShopRandomSeed: fields[4] as int,
+      shopState: fields[5] as ShopState,
     );
   }
 
   @override
   void write(BinaryWriter writer, GameState obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.money)
       ..writeByte(1)
-      ..write(obj.pots.toList())
+      ..write(obj.pots)
       ..writeByte(2)
       ..write(obj.plantInventory)
       ..writeByte(3)
-      ..write(obj.potCost);
+      ..write(obj.potCost)
+      ..writeByte(4)
+      ..write(obj.nextShopRandomSeed)
+      ..writeByte(5)
+      ..write(obj.shopState);
   }
 
   @override

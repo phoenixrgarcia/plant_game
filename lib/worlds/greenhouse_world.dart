@@ -69,81 +69,6 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     // Additional logic for deselecting a pot
   }
 
-  // void tick() {
-  //   // Iterate through all pots and call their tick method
-
-  //   double deltaMoney = 0; // Reset delta money for this tick
-
-  //   for (var pot in pots) {
-  //     var currentPlant = pot.potState.currentPlant;
-  //     if (currentPlant != null) {
-  //       currentPlant.incrementAge();
-  //       if (currentPlant.currentAge == currentPlant.plantData.growthTime) {
-  //         // Trigger persistent effect on growth completion
-  //         if (currentPlant.plantData.persistentEffect != null) {
-  //           for (var dir
-  //               in PlantAoeMap[currentPlant.plantData.persistentEffectAOE]!) {
-  //             var newRow = pot.potState.row + dir[0];
-  //             var newCol = pot.potState.col + dir[1];
-  //             var neighboringPot = gameStateManager.getPot(newRow, newCol);
-  //             if (neighboringPot == null) continue;
-  //             if (neighboringPot.currentPlant == null) continue;
-  //             currentPlant.plantData.persistentEffect!(
-  //                 neighboringPot, gameStateManager);
-  //           }
-  //         }
-
-  //         //check for other plants with aoe effects that might affect this plant on growth
-  //         for (var otherPot in pots) {
-  //           var otherPlant = otherPot.potState.currentPlant;
-  //           if (otherPlant == null) continue;
-  //           if (!otherPlant.isFullyGrown) continue;
-  //           if (otherPlant.plantData.persistentEffectAOE == 'none') continue;
-
-  //           for (var dir
-  //               in PlantAoeMap[otherPlant.plantData.persistentEffectAOE]!) {
-  //             var affectedRow = otherPot.potState.row + dir[0];
-  //             var affectedCol = otherPot.potState.col + dir[1];
-  //             if (affectedRow == pot.potState.row &&
-  //                 affectedCol == pot.potState.col &&
-  //                 otherPlant.plantData.persistentEffect != null) {
-  //               // This plant is affected by the other plant's AOE effect
-  //               otherPlant.plantData.persistentEffect!(
-  //                   pot.potState, gameStateManager);
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-
-  //   for (var pot in gardenPots) {
-  //     var currentPlant = pot.potState.currentPlant;
-  //     if (currentPlant != null) {
-  //       // If the plant is fully grown
-  //       if (currentPlant.isFullyGrown) {
-  //         currentPlant.plantData.onTick(pot.potState, gameStateManager);
-
-  //         // Add money for tick
-  //         num currIncome =
-  //             currentPlant.plantData.incomeRate + currentPlant.addBonus;
-  //         currIncome = currIncome * (1 + currentPlant.multBonus);
-  //         currIncome = pow(currIncome, 1 + currentPlant.exponentialBonus);
-  //         currIncome = currIncome + currentPlant.flatBonus;
-  //         print(
-  //             "Plant at (${pot.potState.row}, ${pot.potState.col}) generated income: $currIncome}");
-  //         deltaMoney += currIncome;
-  //       }
-  //     }
-  //   }
-
-  //   // Update the game state with the new money value
-  //   if (deltaMoney != 0) {
-  //     gameStateManager.mutateMoney(deltaMoney);
-  //   }
-  //   gameStateManager.notify(); // Notify listeners of state change
-  // }
-
   void tickPot(PotState potState) {
     double deltaMoney = 0; // Reset delta money for this tick
 
@@ -201,8 +126,8 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
       currIncome = currIncome * (1 + potState.currentPlant!.multBonus);
       currIncome = pow(currIncome, 1 + potState.currentPlant!.exponentialBonus);
       currIncome = currIncome + potState.currentPlant!.flatBonus;
-      print(
-          "Plant at (${potState.row}, ${potState.col}) generated income: $currIncome}");
+      currIncome = currIncome * (1 + 0.1 * (potState.currentPlant!.tier - 1));
+      print('Income for ${potState.currentPlant!.plantData.name}: $currIncome');
       deltaMoney += currIncome;
     }
 
