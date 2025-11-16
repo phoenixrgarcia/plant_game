@@ -17,16 +17,17 @@ class ShopScreen extends StatelessWidget {
 
   const ShopScreen({super.key});
 
-  static final Set<String> plantTypes = PlantData.plantTypes;
+  static final Set<String> plantTypes = PlantData.plantTypes; //{"Crop", "Flower", "Tree", "Summer", "Winter", "Space", "Weapon"}
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, // Number of tabs
+      length: plantTypes.length, // Number of tabs
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Shop"),
           bottom: TabBar(
+            tabAlignment: TabAlignment.start,
             isScrollable: true,
             tabs: plantTypes.map((type) => Tab(text: type)).toList(),
           ),
@@ -136,12 +137,7 @@ class _ShopTabState extends ConsumerState<ShopTab> with SingleTickerProviderStat
                         };
                       }).toList();
 
-                      showSeedPickOverlay(context, options: generated, onSelected: (chosen) {
-                        // TODO: apply chosen to game state via manager (e.g., add to inventory)
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Selected ${chosen['name']}')),
-                        );
-                      });
+                      showSeedPickOverlay(context, options: generated, onSelected: (chosen) {});
                     },
                   ),
                 ),
@@ -196,26 +192,22 @@ class _ShopItemCard extends StatelessWidget {
 }
 
 List<Map<String, dynamic>> getItemsForCategory(String category) {
-  switch (category) {
-    case "Crop":
-      return [
-        {"name": "Basic Crop Seed", "price": 10, "image": "assets/images/flower-seed.png"},
-        {"name": "Rare Crop Seed", "price": 100, "image": "assets/images/flower-seed.png"},
-        {"name": "Mythic Crop Seed", "price": 500, "image": "assets/images/flower-seed.png"},
-      ];
-    case "Flower":
-      return [
-        {"name": "Basic Flower Seed", "price": 20, "image": "assets/images/flower-seed.png"},
-        {"name": "Rare Flower Seed", "price": 200, "image": "assets/images/flower-seed.png"},
-      ];
-    case "Tree":
-      return [
-        {"name": "Basic Tree Seed", "price": 50, "image": "assets/images/flower-seed.png"},
-        {"name": "Rare Tree Seed", "price": 500, "image": "assets/images/flower-seed.png"},
-      ];
-    default:
-      return [];
+  bool isUnlocked = GameStateManager().state.shopState.unlockedPlantTypes[category] ?? false;
+  int numberUnlocked = GameStateManager().state.shopState.seedTierUpgradeLevel[category]!;
+  List<int> seedCosts = GameStateManager().state.shopState.seedCostMap[category]!;
+
+  List<Map<String, dynamic>> items = [];
+  List<String> rarityNames = ["Basic", "Rare", "Epic", "Legendary", "Mythic", ];
+
+  if (!isUnlocked){
+    return [];
   }
+
+  for (int i = 0; i < numberUnlocked; i++) {
+    items.add({"name": "${rarityNames[i]} $category Seed", "price": seedCosts[i], "image": "assets/images/flower-seed.png"});
+  }
+  
+  return items;
 }
 
 List<PlantInstance> getThreePlants(GameStateManager gameStateManager) {
