@@ -14,10 +14,10 @@ import 'seed_pick_overlay.dart';
 // It displays a shop with different categories of items.
 
 class ShopScreen extends StatelessWidget {
-
   const ShopScreen({super.key});
 
-  static final Set<String> plantTypes = PlantData.plantTypes; //{"Crop", "Flower", "Tree", "Summer", "Winter", "Space", "Weapon"}
+  static final Set<String> plantTypes = PlantData
+      .plantTypes; //{"Crop", "Flower", "Tree", "Summer", "Winter", "Space", "Weapon"}
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +48,14 @@ class ShopTab extends ConsumerStatefulWidget {
   ConsumerState<ShopTab> createState() => _ShopTabState();
 }
 
-class _ShopTabState extends ConsumerState<ShopTab> with SingleTickerProviderStateMixin {
+class _ShopTabState extends ConsumerState<ShopTab>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
   late final Animation<double> _globalFade;
   final Duration _stagger = const Duration(milliseconds: 120);
 
-  final items = <Map<String, dynamic>>[]; // fill in from your getItemsForCategory
+  final items =
+      <Map<String, dynamic>>[]; // fill in from your getItemsForCategory
 
   @override
   void initState() {
@@ -61,7 +63,9 @@ class _ShopTabState extends ConsumerState<ShopTab> with SingleTickerProviderStat
     // copy items from your getItemsForCategory(widget.category)
     items.addAll(getItemsForCategory(widget.category));
 
-    _ctrl = AnimationController(vsync: this, duration: Duration(milliseconds: 400 + items.length * 120));
+    _ctrl = AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: 400 + items.length * 120));
     _globalFade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
     _ctrl.forward();
   }
@@ -77,74 +81,106 @@ class _ShopTabState extends ConsumerState<ShopTab> with SingleTickerProviderStat
     // Watch the GameStateManager so the tab rebuilds when game state changes.
     final manager = ref.watch(gameStateManagerProvider);
     final gameState = manager.state;
+    final plants = PlantData.getPlantsByType(widget.category);
 
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Background image
-        Positioned.fill(
-          child: Image.asset(
-            'assets/images/blue_background.jpg', // pick a background you have
-            fit: BoxFit.cover,
-            color: Colors.black.withOpacity(0.25),
-            colorBlendMode: BlendMode.darken,
+        // Theme description and tappable plant pictures
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Theme description
+              Text(
+                'Discover the Mystical Plants!',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 8),
+              // Tappable pictures of plants sorted by rarity
+              SizedBox(
+                height: 100, // Adjust height as needed
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: plants.length, // Replace with your plant list
+                  itemBuilder: (context, index) {
+                    final plant = plants[index]; // Replace with your plant data
+                    return GestureDetector(
+                      onTap: () {
+                        // Handle tap on plant picture
+                        print('Tapped on ${plant.name}');
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              plant.imagePath, // Replace with your image path
+                              width: 60,
+                              height: 60,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              plant.name, // Replace with your plant name
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
-        FadeTransition(
-          opacity: _globalFade,
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            itemCount: items.length,
-            itemBuilder: (context, i) {
-              final item = items[i];
-              // create staggered animation intervals
-              final start = (i * _stagger.inMilliseconds) / _ctrl.duration!.inMilliseconds;
-              final end = ((i * _stagger.inMilliseconds) + 400) / _ctrl.duration!.inMilliseconds;
-              final animation = CurvedAnimation(
-                parent: _ctrl,
-                curve: Interval(start.clamp(0.0, 1.0), end.clamp(0.0, 1.0), curve: Curves.easeOut),
-              );
-
-              return AnimatedBuilder(
-                animation: animation,
-                builder: (context, child) {
-                  final t = animation.value;
-                  return Opacity(
-                    opacity: t,
-                    child: Transform.translate(
-                      offset: Offset(0, (1 - t) * 16),
-                      child: child,
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: _ShopItemCard(
-                    name: item['name'],
-                    price: item['price'],
-                    image: item['image'],
-                    onBuy: () {
-                      // Example: read a list from the game state and convert to overlay
-                      // options. Here we use `nextSeeds` (List<PlantInstance>) as an
-                      // example; replace with the list you actually want to check.
-                      final nextSeeds = getThreePlants(manager);
-
-                      final generated = nextSeeds.take(3).map((p) {
-                        return {
-                          'name': p.plantDataName,
-                          'image': p.plantData.imagePath,
-                          'stats': {'tier': p.tier}
-                          // eventually change this to plant data card when you tap on one? 
-                        };
-                      }).toList();
-
-                      showSeedPickOverlay(context, options: generated, onSelected: (chosen) {});
-                    },
-                  ),
+        // Existing shop item cards
+        ...List.generate(items.length, (index) {
+          final item = items[index];
+          final start = _stagger * index;
+          final end = start + Duration(milliseconds: 400);
+          final animation = CurvedAnimation(
+            parent: _globalFade,
+            curve: Interval(
+              start.inMilliseconds / _ctrl.duration!.inMilliseconds,
+              end.inMilliseconds / _ctrl.duration!.inMilliseconds,
+              curve: Curves.easeOut,
+            ),
+          );
+          return AnimatedBuilder(
+            animation: animation,
+            builder: (context, child) {
+              final t = animation.value;
+              return Opacity(
+                opacity: t,
+                child: Transform.translate(
+                  offset: Offset(0, (1 - t) * 16),
+                  child: child,
                 ),
               );
             },
-          ),
-        ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: _ShopItemCard(
+                name: item['name'],
+                price: item['price'],
+                image: item['image'],
+                onBuy: () {
+                  final nextSeeds = getThreePlants(manager);
+                  final generated = nextSeeds.take(3).map((p) {
+                    return {
+                      'name': p.plantDataName,
+                      'image': p.plantData.imagePath,
+                      'stats': {'tier': p.tier},
+                    };
+                  }).toList();
+                  // Handle buy action
+                },
+              ),
+            ),
+          );
+        }),
       ],
     );
   }
@@ -155,7 +191,11 @@ class _ShopItemCard extends StatelessWidget {
   final int price;
   final String image;
   final VoidCallback onBuy;
-  const _ShopItemCard({required this.name, required this.price, required this.image, required this.onBuy});
+  const _ShopItemCard(
+      {required this.name,
+      required this.price,
+      required this.image,
+      required this.onBuy});
 
   @override
   Widget build(BuildContext context) {
@@ -164,24 +204,30 @@ class _ShopItemCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [Colors.white, Colors.green.shade50]),
+          gradient:
+              LinearGradient(colors: [Colors.white, Colors.green.shade50]),
           borderRadius: BorderRadius.circular(16),
         ),
         child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           leading: Container(
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage(image), fit: BoxFit.contain),
+              image: DecorationImage(
+                  image: AssetImage(image), fit: BoxFit.contain),
               borderRadius: BorderRadius.circular(8),
               color: Colors.white.withOpacity(0.8),
             ),
           ),
-          title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text('\$${price}', style: const TextStyle(color: Colors.black54)),
+          title:
+              Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+          subtitle:
+              Text('\$${price}', style: const TextStyle(color: Colors.black54)),
           trailing: ElevatedButton(
-            style: ElevatedButton.styleFrom(shape: const StadiumBorder(), elevation: 2),
+            style: ElevatedButton.styleFrom(
+                shape: const StadiumBorder(), elevation: 2),
             onPressed: onBuy,
             child: const Text('Buy'),
           ),
@@ -192,31 +238,47 @@ class _ShopItemCard extends StatelessWidget {
 }
 
 List<Map<String, dynamic>> getItemsForCategory(String category) {
-  bool isUnlocked = GameStateManager().state.shopState.unlockedPlantTypes[category] ?? false;
-  int numberUnlocked = GameStateManager().state.shopState.seedTierUpgradeLevel[category]!;
-  List<int> seedCosts = GameStateManager().state.shopState.seedCostMap[category]!;
+  bool isUnlocked =
+      GameStateManager().state.shopState.unlockedPlantTypes[category] ?? false;
+  int numberUnlocked =
+      GameStateManager().state.shopState.seedTierUpgradeLevel[category]!;
+  List<int> seedCosts =
+      GameStateManager().state.shopState.seedCostMap[category]!;
 
   List<Map<String, dynamic>> items = [];
-  List<String> rarityNames = ["Basic", "Rare", "Epic", "Legendary", "Mythic", ];
+  List<String> rarityNames = [
+    "Basic",
+    "Rare",
+    "Epic",
+    "Legendary",
+    "Mythic",
+  ];
 
-  if (!isUnlocked){
+  if (!isUnlocked) {
     return [];
   }
 
   for (int i = 0; i < numberUnlocked; i++) {
-    items.add({"name": "${rarityNames[i]} $category Seed", "price": seedCosts[i], "image": "assets/images/flower-seed.png"});
+    items.add({
+      "name": "${rarityNames[i]} $category Seed",
+      "price": seedCosts[i],
+      "image": "assets/images/flower-seed.png"
+    });
   }
-  
+
   return items;
 }
 
 List<PlantInstance> getThreePlants(GameStateManager gameStateManager) {
   int seed = gameStateManager.state.nextShopRandomSeed;
-  PlantInstance p1 = PlantInstance(plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
+  PlantInstance p1 = PlantInstance(
+      plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
   seed++;
-  PlantInstance p2 = PlantInstance(plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
+  PlantInstance p2 = PlantInstance(
+      plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
   seed++;
-  PlantInstance p3 = PlantInstance(plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
+  PlantInstance p3 = PlantInstance(
+      plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
   return [p1, p2, p3];
 }
 
@@ -227,7 +289,7 @@ int randomTier(int seed) {
   int roll = random.nextInt(100);
   while (roll < probability) {
     tier++;
-    if(probability > 20) probability -= 20;
+    if (probability > 20) probability -= 20;
     roll = random.nextInt(100);
   }
   return tier;

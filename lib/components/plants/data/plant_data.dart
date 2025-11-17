@@ -351,4 +351,8 @@ class PlantData {
   }
 
   static List<Plant> get allPlants => _plants.values.toList();
+
+  static List<Plant> getPlantsByType(String type) {
+    return _plants.values.where((plant) => plant.type == type).toList();
+  }
 }
