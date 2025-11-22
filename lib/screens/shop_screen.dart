@@ -94,7 +94,7 @@ class _ShopTabState extends ConsumerState<ShopTab>
             children: [
               // Theme description
               Text(
-                'Discover the Mystical Plants!',
+                'Discover the ${widget.category} Plants!',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
@@ -167,7 +167,7 @@ class _ShopTabState extends ConsumerState<ShopTab>
                 price: item['price'],
                 image: item['image'],
                 onBuy: () {
-                  final nextSeeds = getThreePlants(manager);
+                  final nextSeeds = getThreePlants(manager, plantType: widget.category);
                   final generated = nextSeeds.take(3).map((p) {
                     return {
                       'name': p.plantDataName,
@@ -176,11 +176,13 @@ class _ShopTabState extends ConsumerState<ShopTab>
                     };
                   }).toList();
                   // Handle buy action
+                  showSeedPickOverlay(context, options: generated, onSelected: (chosen) {});
                 },
               ),
             ),
           );
         }),
+        ClassUpgradeCard(category: widget.category)
       ],
     );
   }
@@ -237,6 +239,44 @@ class _ShopItemCard extends StatelessWidget {
   }
 }
 
+class ClassUpgradeCard extends StatelessWidget{
+  final String category;
+  final String image = "assets/images/upgrade_icon.png";
+
+  ClassUpgradeCard({super.key, required this.category});
+
+  @override
+  Widget build(BuildContext context){
+    return Material(
+      elevation: 6,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient:
+              LinearGradient(colors: [Colors.white, Colors.green.shade50]),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: ListTile(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          leading: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(image), fit: BoxFit.contain),
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.white.withOpacity(0.8),
+            ),
+          ),
+          title:
+              Text("Unlock ${category} seeds in the upgrade menu", style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ),
+    );
+  }
+}
+
 List<Map<String, dynamic>> getItemsForCategory(String category) {
   bool isUnlocked =
       GameStateManager().state.shopState.unlockedPlantTypes[category] ?? false;
@@ -269,16 +309,16 @@ List<Map<String, dynamic>> getItemsForCategory(String category) {
   return items;
 }
 
-List<PlantInstance> getThreePlants(GameStateManager gameStateManager) {
+List<PlantInstance> getThreePlants(GameStateManager gameStateManager, {String? plantType}) {
   int seed = gameStateManager.state.nextShopRandomSeed;
   PlantInstance p1 = PlantInstance(
-      plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
+      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed));
   seed++;
   PlantInstance p2 = PlantInstance(
-      plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
+      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed));
   seed++;
   PlantInstance p3 = PlantInstance(
-      plantDataName: PlantData.getWeightedRandom(seed), tier: randomTier(seed));
+      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed));
   return [p1, p2, p3];
 }
 

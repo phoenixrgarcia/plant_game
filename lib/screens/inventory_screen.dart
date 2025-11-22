@@ -70,7 +70,7 @@ class InventoryScreen extends ConsumerWidget {
                           itemCount: plantInventory.length,
                           itemBuilder: (context, index) {
                             return InventoryListItem(
-                              entry: plantInventory[index],
+                              entry: plantInventory[plantInventory.length - 1 - index],
                               canPlant: canPlant,
                               potRow: selectedPot?.potState.row,
                               potCol: selectedPot?.potState.col,
