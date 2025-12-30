@@ -17,7 +17,7 @@ class ShopScreen extends StatelessWidget {
   const ShopScreen({super.key});
 
   static final Set<String> plantTypes = PlantData
-      .plantTypes; //{"Crop", "Flower", "Tree", "Summer", "Winter", "Space", "Weapon"}
+      .plantTypes; 
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +54,7 @@ class _ShopTabState extends ConsumerState<ShopTab>
   late final Animation<double> _globalFade;
   final Duration _stagger = const Duration(milliseconds: 120);
 
-  final items =
-      <Map<String, dynamic>>[]; // fill in from your getItemsForCategory
+  final items = <Map<String, dynamic>>[]; 
 
   @override
   void initState() {
@@ -167,7 +166,7 @@ class _ShopTabState extends ConsumerState<ShopTab>
                 price: item['price'],
                 image: item['image'],
                 onBuy: () {
-                  final nextSeeds = getThreePlants(manager, plantType: widget.category);
+                  final nextSeeds = getThreePlants(manager, plantType: widget.category, tierBonus: item['tierBonus']);
                   final generated = nextSeeds.take(3).map((p) {
                     return {
                       'name': p.plantDataName,
@@ -293,6 +292,7 @@ List<Map<String, dynamic>> getItemsForCategory(String category) {
     "Legendary",
     "Mythic",
   ];
+  List<int> tierBonuses = [0, 2, 5, 9, 14];
 
   if (!isUnlocked) {
     return [];
@@ -302,23 +302,24 @@ List<Map<String, dynamic>> getItemsForCategory(String category) {
     items.add({
       "name": "${rarityNames[i]} $category Seed",
       "price": seedCosts[i],
-      "image": "assets/images/flower-seed.png"
+      "image": "assets/images/flower-seed.png",
+      "tierBonus": tierBonuses[i],
     });
   }
 
   return items;
 }
 
-List<PlantInstance> getThreePlants(GameStateManager gameStateManager, {String? plantType}) {
+List<PlantInstance> getThreePlants(GameStateManager gameStateManager, {String? plantType, int?tierBonus}) {
   int seed = gameStateManager.state.nextShopRandomSeed;
   PlantInstance p1 = PlantInstance(
-      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed));
+      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed) + (tierBonus ?? 0));
   seed++;
   PlantInstance p2 = PlantInstance(
-      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed));
+      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed) + (tierBonus ?? 0));
   seed++;
   PlantInstance p3 = PlantInstance(
-      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed));
+      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed) + (tierBonus ?? 0));
   return [p1, p2, p3];
 }
 
