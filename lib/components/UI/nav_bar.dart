@@ -42,7 +42,10 @@ class NavBarWidget extends StatelessWidget {
       },
       {
         'icon': 'upgrade_icon.png',
-        'action': () => print("Upgrade button pressed")
+        'action': () {
+          gameRef.overlays.clear();
+          gameRef.overlays.add('upgrade');
+        }
       },
       {
         'icon': 'settings_icon.png',

@@ -8,6 +8,7 @@ import 'package:plant_game/game_state_manager.dart';
 import 'package:plant_game/game_state_provider.dart';
 import 'package:plant_game/screens/inventory_screen.dart';
 import 'package:plant_game/screens/plant_info_screen.dart';
+import 'package:plant_game/screens/upgrade_screen.dart';
 import 'components/UI/purchase_pot_dialog.dart';
 import 'plant_game.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -77,6 +78,7 @@ void main() async {
                       },
                       cost: gameStateManager.state.potCost,
                     ),
+                'upgrade': (_, __) => UpgradeScreen(),
               },
             ),
             Align(
