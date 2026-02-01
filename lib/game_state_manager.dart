@@ -173,12 +173,15 @@ class GameStateManager extends ChangeNotifier {
     }
   }
 
-  // void updateExponentialBonus(int row, int col, double bonusDifference) {
-  //   if(row < 0 || col < 0 || row >= _currentState.exponentialBonus.length || col >= _currentState.exponentialBonus[0].length){
-  //     return;
-  //   }
-  //   _currentState.exponentialBonus[row][col] += bonusDifference;
-  //   save();
-  //   notifyListeners();
-  // }
+  bool purchaseUpgrade(String category, String upgradeName) {
+    final cost = _currentState.upgradeState.upgradesCost[category]![upgradeName]!;
+    if (_currentState.money >= cost) {
+      _currentState.money -= cost;
+      _currentState.upgradeState.applyUpgrade(category, upgradeName);
+      save();
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
 }

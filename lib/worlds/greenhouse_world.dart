@@ -121,6 +121,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
       potState.currentPlant!.plantData.onTick(potState, gameStateManager);
 
       // Add money for tick
+      //TODO add plant upgrades that affect income here
       num currIncome = potState.currentPlant!.plantData.incomeRate +
           potState.currentPlant!.addBonus;
       currIncome = currIncome * (1 + potState.currentPlant!.multBonus);

@@ -19,15 +19,19 @@ class UpgradeStateAdapter extends TypeAdapter<UpgradeState> {
     return UpgradeState(
       upgradesPurchased: (fields[0] as Map?)?.map((dynamic k, dynamic v) =>
           MapEntry(k as String, (v as Map).cast<String, int>())),
+      upgradesCost: (fields[1] as Map?)?.map((dynamic k, dynamic v) =>
+          MapEntry(k as String, (v as Map).cast<String, int>())),
     );
   }
 
   @override
   void write(BinaryWriter writer, UpgradeState obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.upgradesPurchased);
+      ..write(obj.upgradesPurchased)
+      ..writeByte(1)
+      ..write(obj.upgradesCost);
   }
 
   @override
