@@ -1,3 +1,5 @@
+import 'dart:math' as Math;
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +138,8 @@ class PotSprite extends SpriteComponent
     //when the plant fully grows, the timer is adjusted to the tick rate time
     else if(potState.isOccupied && potState.currentPlant!.isFullyGrown){
       final plantData = PlantData.getById(potState.currentPlant!.plantDataName)!;
-      tickTimer.tickRate = plantData.tickRate;
+      tickTimer.tickRate = Math.max((plantData.tickRate + potState.currentPlant!.tickRateFlat) * potState.currentPlant!.tickRateMult, .1);
+      print('efficiency test');
       tickTimer.onTickCallback = onTickCallback;
     }
     //when the plant is harvested, or the pot is unplanted, the timer is removed

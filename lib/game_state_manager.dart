@@ -184,4 +184,26 @@ class GameStateManager extends ChangeNotifier {
     }
     return false;
   }
+
+  void applySpeedUpgrade(String category) {
+    for (var pot in _currentState.pots) {
+      if (pot.currentPlant != null && pot.currentPlant!.plantData.type == category) {
+        pot.currentPlant!.tickRateMult *= 0.9; // Example: reduce growth time by 10%
+      }
+    }
+  }
+
+  int getUpgradeLevel(String category, String upgradeName) {
+    return _currentState.upgradeState.upgradesPurchased[category]![upgradeName]!;
+  }
+
+  bool attemptPurchase(int cost){
+    if (_currentState.money >= cost) {
+      _currentState.money -= cost;
+      save();
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
 }

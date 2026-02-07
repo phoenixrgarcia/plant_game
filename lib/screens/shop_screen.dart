@@ -166,6 +166,16 @@ class _ShopTabState extends ConsumerState<ShopTab>
                 price: item['price'],
                 image: item['image'],
                 onBuy: () {
+                  final success = manager.attemptPurchase(item['price']);
+                  if (!success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Not enough money to purchase seed.'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
                   final nextSeeds = getThreePlants(manager, plantType: widget.category, tierBonus: item['tierBonus']);
                   final generated = nextSeeds.take(3).map((p) {
                     return {

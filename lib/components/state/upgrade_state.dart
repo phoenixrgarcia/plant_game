@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:hive/hive.dart';
+import 'package:plant_game/game_state_manager.dart';
 
 part 'upgrade_state.g.dart';
 
@@ -33,7 +34,11 @@ class UpgradeState extends HiveObject {
   void applyUpgrade(String category, String upgradeType) {
     if (upgradesPurchased.containsKey(category) && upgradesPurchased[category]!.containsKey(upgradeType)) {
       upgradesPurchased[category]![upgradeType] = upgradesPurchased[category]![upgradeType]! + 1;
+      upgradesCost[category]![upgradeType] = costFunctions[upgradeType]!(upgradesCost[category]![upgradeType]!);
 
+      if(upgradeType == 'speed') {
+        GameStateManager().applySpeedUpgrade(category);
+      }
     }
   }
 }

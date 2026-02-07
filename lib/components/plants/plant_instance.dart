@@ -28,9 +28,11 @@ class PlantInstance extends HiveObject {
   @HiveField(6)
   double exponentialBonus;
 
+  //This field is ADDED to the tick rate of the plant, and can be positive or negative
   @HiveField(7)
   double tickRateFlat;
 
+  //This field is MULTIPLIED to the tick rate of the plant, and can be positive or negative (e.g. 0.2 would make the tick rate 20% faster, -0.2 would make it 20% slower)
   @HiveField(8)
   double tickRateMult;
 
@@ -49,7 +51,7 @@ class PlantInstance extends HiveObject {
     this.flatBonus = 0,
     this.exponentialBonus = 0,
     this.tickRateFlat = 0,
-    this.tickRateMult = 0,
+    this.tickRateMult = 1,
     this.tickProgress = 0,
     this.isFullyGrown = false,
   });

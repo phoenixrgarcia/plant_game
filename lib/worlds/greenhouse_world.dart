@@ -127,7 +127,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
       currIncome = currIncome * (1 + potState.currentPlant!.multBonus);
       currIncome = pow(currIncome, 1 + potState.currentPlant!.exponentialBonus);
       currIncome = currIncome + potState.currentPlant!.flatBonus;
-      currIncome = currIncome * (1 + 0.1 * (potState.currentPlant!.tier - 1));
+      currIncome = currIncome * (1 + 0.1 * (potState.currentPlant!.tier + gameStateManager.getUpgradeLevel(potState.currentPlant!.plantData.type, 'tier') - 1));
       print('Income for ${potState.currentPlant!.plantData.name}: $currIncome');
       deltaMoney += currIncome;
     }
