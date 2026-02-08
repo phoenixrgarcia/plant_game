@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pair/pair.dart';
+import 'package:plant_game/components/UI/floating_text.dart';
 import 'package:plant_game/components/state/game_state.dart';
 import 'package:plant_game/components/state/pot_state.dart';
 import 'package:plant_game/game_state_manager.dart';
@@ -106,8 +107,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
               affectedCol == potState.col &&
               otherPlant.plantData.persistentEffect != null) {
             // This plant is affected by the other plant's AOE effect
-            otherPlant.plantData.persistentEffect!(
-                potState, gameStateManager);
+            otherPlant.plantData.persistentEffect!(potState, gameStateManager);
           }
         }
       }
@@ -116,8 +116,8 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     potState.currentPlant!.incrementAge();
 
     //if plant is fully grown
-    if(potState.currentPlant!.isFullyGrown) {
-    //trigger tick effect
+    if (potState.currentPlant!.isFullyGrown) {
+      //trigger tick effect
       potState.currentPlant!.plantData.onTick(potState, gameStateManager);
 
       // Add money for tick
@@ -127,7 +127,13 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
       currIncome = currIncome * (1 + potState.currentPlant!.multBonus);
       currIncome = pow(currIncome, 1 + potState.currentPlant!.exponentialBonus);
       currIncome = currIncome + potState.currentPlant!.flatBonus;
-      currIncome = currIncome * (1 + 0.1 * (potState.currentPlant!.tier + gameStateManager.getUpgradeLevel(potState.currentPlant!.plantData.type, 'tier') - 1));
+      currIncome = currIncome *
+          (1 +
+              0.1 *
+                  (potState.currentPlant!.tier +
+                      gameStateManager.getUpgradeLevel(
+                          potState.currentPlant!.plantData.type, 'tier') -
+                      1));
       print('Income for ${potState.currentPlant!.plantData.name}: $currIncome');
       deltaMoney += currIncome;
     }
@@ -135,6 +141,10 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     //update money
     if (deltaMoney != 0) {
       gameStateManager.mutateMoney(deltaMoney);
+      add(FloatingText(
+        position: calculatePotPosition(potState.row, potState.col),
+        text: '\$${deltaMoney.toStringAsFixed(2)}',
+      ));
     }
   }
 
