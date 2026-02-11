@@ -1,7 +1,10 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/input.dart';
+import 'package:flame/particles.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pair/pair.dart';
 import 'package:plant_game/components/UI/floating_text.dart';
@@ -120,8 +123,31 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
       //trigger tick effect
       potState.currentPlant!.plantData.onTick(potState, gameStateManager);
 
+      //add particle effect for tick effect
+      if (potState.currentPlant!.plantData.onTickAOE != 'none') {
+        for (var dir
+            in PlantAoeMap[potState.currentPlant!.plantData.onTickAOE]!) {
+          var newRow = potState.row + dir[0];
+          var newCol = potState.col + dir[1];
+          var otherPot = pots
+              .where(
+                  (p) => p.potState.row == newRow && p.potState.col == newCol)
+              .firstOrNull;
+          if (otherPot == null)
+            continue;
+          else if (!otherPot.potState.isOccupied) continue;
+          add(ParticleSystemComponent(
+            particle: SpriteParticle(
+              sprite: Sprite(gameRef.images.fromCache('star_particle.png')),
+              size: Vector2(200, 200),
+              lifespan: 2,
+              
+            ),
+          ));
+        }
+      }
+
       // Add money for tick
-      //TODO add plant upgrades that affect income here
       num currIncome = potState.currentPlant!.plantData.incomeRate +
           potState.currentPlant!.addBonus;
       currIncome = currIncome * (1 + potState.currentPlant!.multBonus);

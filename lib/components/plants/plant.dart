@@ -20,6 +20,7 @@ class Plant {
   final String? specialProperties;
   final void Function(PotState self, GameStateManager gameStateManager)? cleanUp;
   final String persistentEffectAOE;
+  final String onTickAOE;
 
   Plant({
     required this.name,
@@ -38,6 +39,7 @@ class Plant {
     this.specialProperties,
     this.cleanUp,
     this.persistentEffectAOE = 'none',
+    this.onTickAOE = 'none',
   });
 
 

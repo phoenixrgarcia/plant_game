@@ -59,10 +59,10 @@ class PlantData {
     'Giving Tree': Plant(
       name: 'Giving Tree',
       type: 'Tree',
-      growthTime: 60,
+      growthTime: 3, //60, //TODO fix debug number
       sellPrice: 200,
       incomeRate: 20,
-      tickRate: 30,
+      tickRate: 3, //30, //TODO fix debug number
       rarity: 5,
       imagePath: 'assets/images/giving_tree.png',
       spritePath: 'giving_tree.png',
@@ -88,7 +88,7 @@ class PlantData {
           'A mystical tree that generously gives to the plants around it',
       specialProperties:
           "Adds small income boost to cardinally adjacent plants",
-      persistentEffectAOE: 'none',
+      onTickAOE: 'cardinal',
     ),
     'Apple Tree': Plant(
       name: 'Apple Tree',
@@ -164,7 +164,7 @@ class PlantData {
       description: 'A beautiful cherry blossom tree that enchants the garden.',
       specialProperties:
           "Procs the tick effect of cardinally adjacent plants every 16 ticks",
-      persistentEffectAOE: 'cardinal',
+      onTickAOE: 'cardinal',
     ),
 
     'Redwood Tree': Plant(
@@ -202,7 +202,6 @@ class PlantData {
       specialProperties:
           "Gives a 2x mult to adjacent plants, but reduces tickrate by 8s",
       persistentEffect: (otherPot, gsm) {
-        print('Ironbark Tree grew!');
         // Increases income multiplier of adjacent plants but slows their tickrate
         otherPot.currentPlant!.multBonus += 2.0;
         otherPot.currentPlant!.tickRateFlat += 8;
