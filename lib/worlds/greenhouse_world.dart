@@ -75,6 +75,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
   void tickPot(PotState potState) {
     double deltaMoney = 0; // Reset delta money for this tick
+    var potSpritePosition = calculatePotPosition(potState.row, potState.col);
 
     if (potState.currentPlant == null) return;
 
@@ -136,14 +137,19 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
           if (otherPot == null)
             continue;
           else if (!otherPot.potState.isOccupied) continue;
-          add(ParticleSystemComponent(
-            particle: SpriteParticle(
-              sprite: Sprite(gameRef.images.fromCache('star_particle.png')),
-              size: Vector2(200, 200),
-              lifespan: 2,
-              
-            ),
-          ));
+          var particle = ParticleSystemComponent(
+              particle: MovingParticle(
+                  curve: Curves.linearToEaseOut,
+                  child: SpriteParticle(
+                    sprite: Sprite(
+                        gameRef.images.fromCache('red_star_particle.png')),
+                    size: Vector2(20, 20),
+                  ),
+                  to: Vector2(50, 50),
+                  lifespan: .4),
+              position: calculatePotPosition(newRow, newCol) +
+                  Vector2(potSize.x / 2, potSize.y / 2));
+          add(particle);
         }
       }
 
@@ -168,7 +174,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     if (deltaMoney != 0) {
       gameStateManager.mutateMoney(deltaMoney);
       add(FloatingText(
-        position: calculatePotPosition(potState.row, potState.col),
+        position: potSpritePosition,
         text: '\$${deltaMoney.toStringAsFixed(2)}',
       ));
     }
