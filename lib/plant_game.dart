@@ -1,6 +1,7 @@
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:plant_game/components/UI/tick_timer.dart';
@@ -46,6 +47,7 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
       'sakura_tree.png',
       'tulip.jpg',
       'red_star_particle.png',
+      'star_particle.png',
     ]);
 
     final backgroundSprite = await loadSprite('blue_background.jpg');

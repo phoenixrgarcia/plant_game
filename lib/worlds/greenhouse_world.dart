@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:flame/cache.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/input.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
@@ -39,11 +41,15 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   late int? pendingPotRow;
   late int? pendingPotCol;
 
+  late var red_star_particle;
+
   @override
   Future<void> onLoad() async {
     // Load the saved game state
     gameStateManager.addListener(_onGameStateChanged);
     potSize = gameRef.potSize;
+
+    red_star_particle = await gameRef.images.fromCache('red_star_particle.png').resize(Vector2(20, 20));
 
     setGardenPots();
     addPurchasablePots();
@@ -137,19 +143,34 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
           if (otherPot == null)
             continue;
           else if (!otherPot.potState.isOccupied) continue;
-          var particle = ParticleSystemComponent(
-              particle: MovingParticle(
-                  curve: Curves.linearToEaseOut,
-                  child: SpriteParticle(
-                    sprite: Sprite(
-                        gameRef.images.fromCache('red_star_particle.png')),
-                    size: Vector2(20, 20),
-                  ),
-                  to: Vector2(50, 50),
-                  lifespan: .4),
-              position: calculatePotPosition(newRow, newCol) +
-                  Vector2(potSize.x / 2, potSize.y / 2));
-          add(particle);
+
+          var particle = Particle.generate(
+              count: 4,
+              lifespan: 1,
+              generator: (i) {
+                final initialSpeed = (Vector2.random() + Vector2(-.5, -1)).scaled(400);
+                final deceleration = initialSpeed * -0.5;
+                final gravity = Vector2(0, 200);
+
+                return AcceleratedParticle(
+                    speed: initialSpeed,
+                    acceleration: deceleration + gravity,
+                    child: ComputedParticle(renderer: (canvas, particle) {
+                      canvas.drawImage(
+                          red_star_particle,
+                          Offset.zero,
+                          Paint()..color = Colors.red.withValues(alpha: 1 - particle.progress)
+                      );
+                    }));
+              });
+
+          var particleComponent = ParticleSystemComponent(
+            particle: particle,
+            position: calculatePotPosition(newRow, newCol) + Vector2(potSize.x / 2, potSize.y / 2),
+            priority: 0,
+          );
+
+          add(particleComponent);
         }
       }
 

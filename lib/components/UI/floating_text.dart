@@ -16,13 +16,16 @@ class FloatingText extends TextComponent {
     this.lifetime = 1.0,
   })  : velocity = velocity ?? Vector2(0, -50),
         super(
-            text: text,
-            position: position,
-            textRenderer: TextPaint(
-                style:
-                    TextStyle(color: const Color(0xFFFFFFFF), fontSize: 24, fontWeight: FontWeight.bold)),
-            anchor: Anchor.topLeft,
-            );
+          text: text,
+          position: position,
+          textRenderer: TextPaint(
+              style: TextStyle(
+                  color: const Color(0xFFFFFFFF),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold)),
+          anchor: Anchor.topLeft,
+          priority: 2,
+        );
 
   @override
   void update(double dt) {
@@ -34,7 +37,7 @@ class FloatingText extends TextComponent {
     textRenderer = TextPaint(
         style: TextStyle(
             color: const Color(0xFFFFFFFF)
-                .withValues(alpha: max(1 - (elapsedTime / lifetime), .1) ),
+                .withValues(alpha: max(1 - (elapsedTime / lifetime), .1)),
             fontSize: 24,
             fontWeight: FontWeight.bold));
 

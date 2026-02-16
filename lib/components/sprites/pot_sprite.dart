@@ -23,7 +23,7 @@ class PotSprite extends SpriteComponent
       {required this.potState,
       required Vector2 size,
       required Vector2 position})
-      : super(position: position, size: size);
+      : super(position: position, size: size, priority: 1);
 
   @override
   Future<void> onLoad() async {
