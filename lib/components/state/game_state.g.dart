@@ -24,13 +24,14 @@ class GameStateAdapter extends TypeAdapter<GameState> {
       nextShopRandomSeed: fields[4] as int,
       shopState: fields[5] as ShopState,
       upgradeState: fields[6] as UpgradeState,
+      investorState: fields[7] as InvestorState,
     );
   }
 
   @override
   void write(BinaryWriter writer, GameState obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.money)
       ..writeByte(1)
@@ -44,7 +45,9 @@ class GameStateAdapter extends TypeAdapter<GameState> {
       ..writeByte(5)
       ..write(obj.shopState)
       ..writeByte(6)
-      ..write(obj.upgradeState);
+      ..write(obj.upgradeState)
+      ..writeByte(7)
+      ..write(obj.investorState);
   }
 
   @override

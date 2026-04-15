@@ -1,9 +1,11 @@
 import 'package:hive/hive.dart';
 import 'package:plant_game/components/plants/data/inventory_entry.dart';
 import 'package:plant_game/components/plants/plant_instance.dart';
+import 'package:plant_game/components/state/investor_state.dart';
 import 'package:plant_game/components/state/pot_state.dart';
 import 'package:plant_game/components/state/shop_state.dart';
 import 'package:plant_game/components/state/upgrade_state.dart';
+
 
 part 'game_state.g.dart';
 
@@ -31,6 +33,9 @@ class GameState extends HiveObject {
   @HiveField(6)
   UpgradeState upgradeState;
 
+  @HiveField(7)
+  InvestorState investorState;
+
   GameState(
       {this.money = 0,
       required this.pots,
@@ -38,5 +43,6 @@ class GameState extends HiveObject {
       this.potCost = 25,
       this.nextShopRandomSeed = 0,
       required this.shopState,
-      required this.upgradeState});
+      required this.upgradeState,
+      required this.investorState});
 }

@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:plant_game/components/state/shop_state.dart';
 import 'package:plant_game/components/state/upgrade_state.dart';
 
+import 'components/state/investor_state.dart';
+
 class GameStateManager extends ChangeNotifier {
   // Singleton boilerplate
   static final GameStateManager _instance = GameStateManager._internal();
@@ -31,6 +33,7 @@ class GameStateManager extends ChangeNotifier {
     if (!Hive.isAdapterRegistered(3)) Hive.registerAdapter(PlantInstanceAdapter());
     if (!Hive.isAdapterRegistered(4)) Hive.registerAdapter(ShopStateAdapter());
     if (!Hive.isAdapterRegistered(5)) Hive.registerAdapter(UpgradeStateAdapter());
+    if (!Hive.isAdapterRegistered(6)) Hive.registerAdapter(InvestorStateAdapter());
 
     // Open the Hive box
     _box = await Hive.openBox<GameState>(_boxName);
@@ -51,6 +54,7 @@ class GameStateManager extends ChangeNotifier {
           nextShopRandomSeed: 0,
           shopState: ShopState(),
           upgradeState: UpgradeState(),
+          investorState: InvestorState(),
         );
   }
 
@@ -81,6 +85,7 @@ class GameStateManager extends ChangeNotifier {
       nextShopRandomSeed: 0,
       shopState: ShopState(),
       upgradeState: UpgradeState(),
+      investorState: InvestorState(),
     );
   }
 
