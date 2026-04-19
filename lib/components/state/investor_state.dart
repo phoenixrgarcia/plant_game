@@ -11,7 +11,7 @@ class InvestorState extends HiveObject {
   int investorsAttracted;
 
   final functions = {
-    'investorThreshold': (int currentInvestors) => currentInvestors * 2,
+    'investorThreshold': (int currentInvestors) => math.max(currentInvestors * 2, 50),
   };
 
   InvestorState({this.investorsAttracted = 0});

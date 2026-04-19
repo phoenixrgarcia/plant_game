@@ -6,6 +6,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:plant_game/components/UI/tick_timer.dart';
 import 'package:plant_game/components/money_display.dart';
+import 'package:plant_game/components/state/investor_state.dart';
 import 'package:plant_game/game_state_manager.dart';
 
 import 'worlds/greenhouse_world.dart';
@@ -18,9 +19,7 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
   final GameStateManager gameStateManager;
   late final RouterComponent router;
   late final TickTimer tickTimer;
-  late final MoneyDisplay moneyDisplay;
   late final GreenhouseWorld greenhouseWorld;
-  
 
   final Vector2 potSize = Vector2(80, 80);
   //@override bool get debugMode => true; // Enables debug mode
@@ -61,7 +60,8 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
       height: size.y,
     );
 
-    world = GreenhouseWorld(gameStateManager: gameStateManager); // Attach world to FlameGame
+    world = GreenhouseWorld(
+        gameStateManager: gameStateManager); // Attach world to FlameGame
     greenhouseWorld = world as GreenhouseWorld;
 
     camera.world = world; // Attach world to camera
@@ -70,14 +70,14 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
 
     // header bar, which is background for header bar components. Extract this to a component later?
     final headerBar = RectangleComponent(
-      size: Vector2(size.x, size.y * 0.13),
+      size: Vector2(size.x, size.y * 0.22),
       position: Vector2(0, 0),
       anchor: Anchor.topLeft,
       paint: Paint()..color = const Color.fromARGB(255, 151, 151, 158),
     );
     camera.viewport.add(headerBar);
 
-    overlays.add('money');
+    overlays.add('top_hud');
   }
 
   @override
@@ -90,15 +90,9 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
     final padding = 20;
 
     // Keep the camera within bounds (adjust world size as needed)
-    final minX = -size.x / 2 +
-            potSize.x * 2 -
-            100 * potSize.x +
-            padding,
+    final minX = -size.x / 2 + potSize.x * 2 - 100 * potSize.x + padding,
         minY = -size.y / 2 + potSize.y * 2,
-        maxX = size.x / 2 -
-            potSize.x * 2 +
-            100 * potSize.x -
-            padding,
+        maxX = size.x / 2 - potSize.x * 2 + 100 * potSize.x - padding,
         maxY = size.y / 2 - potSize.y * 2;
     camera.viewfinder.position = Vector2(
       newPosition.x.clamp(minX, maxX),
@@ -114,6 +108,4 @@ class PlantGame extends FlameGame with PanDetector, TapCallbacks {
     overlays.remove('plant_info');
     overlays.remove('purchase_pot_dialog');
   }
-
-  
 }

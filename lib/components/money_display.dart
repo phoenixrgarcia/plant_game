@@ -11,11 +11,21 @@ class MoneyDisplay extends ConsumerWidget {
       gameStateManagerProvider.select((manager) => manager.state.money),
     );
 
-    return Text(
-      'Money: ${money.toStringAsFixed(2)}',
-      style: const TextStyle(
-        fontSize: 24,
-        color: Colors.white,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.18),
+        ),
+      ),
+      child: Text(
+        'Money: ${money.toStringAsFixed(2)}',
+        style: const TextStyle(
+          fontSize: 18,
+          color: Colors.white,
+        ),
       ),
     );
   }

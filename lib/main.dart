@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:plant_game/components/UI/nav_bar.dart';
 import 'package:plant_game/components/money_display.dart';
+import 'package:plant_game/components/top_hud.dart';
 import 'package:plant_game/game_state_manager.dart';
 import 'package:plant_game/game_state_provider.dart';
 import 'package:plant_game/screens/inventory_screen.dart';
@@ -45,8 +46,7 @@ void main() async {
             GameWidget(
               game: game,
               overlayBuilderMap: {
-                'shop': (_, __) => ShopScreen(
-                    ),
+                'shop': (_, __) => ShopScreen(),
                 'inventory': (_, __) => InventoryScreen(
                       onClose: () {
                         game.greenhouseWorld.deselectPot();
@@ -54,11 +54,7 @@ void main() async {
                       },
                       selectedPotNotifier: game.greenhouseWorld.selectedPot,
                     ),
-                'money': (_, __) => const Positioned(
-                      top: 16,
-                      right: 24,
-                      child: MoneyDisplay(),
-                    ),
+                'top_hud': (_, __) => const TopHud(),
                 'plant_info': (_, __) => PlantInfoScreen(
                       onClose: () {
                         game.greenhouseWorld.deselectPot();

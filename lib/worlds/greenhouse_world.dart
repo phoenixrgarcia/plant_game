@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:math';
 
 import 'package:flame/cache.dart';
@@ -32,6 +33,9 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
   ValueNotifier<PotSprite?> selectedPot = ValueNotifier(null);
 
+  final incomeQueue = Queue<Pair<DateTime, double>>(); 
+  double incomeInLastMinute = 0;
+
   Set<PotSprite> get pots => gardenPots;
 
   GreenhouseWorld({required this.gameStateManager});
@@ -53,6 +57,19 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
     setGardenPots();
     addPurchasablePots();
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    // Remove income entries older than 1 minute
+    while (incomeQueue.isNotEmpty &&
+        DateTime.now().difference(incomeQueue.first.key) > Duration(minutes: 1)) {
+      incomeInLastMinute -= incomeQueue.first.value;
+      incomeQueue.removeFirst();
+    }
+    
   }
 
   // Add pots from saved state
@@ -193,6 +210,8 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
     //update money
     if (deltaMoney != 0) {
+      incomeQueue.add(Pair(DateTime.now(), deltaMoney));
+      incomeInLastMinute += deltaMoney;
       gameStateManager.mutateMoney(deltaMoney);
       add(FloatingText(
         position: potSpritePosition,
