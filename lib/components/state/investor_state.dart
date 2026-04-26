@@ -11,7 +11,8 @@ class InvestorState extends HiveObject {
   int investorsAttracted;
 
   final functions = {
-    'investorThreshold': (int currentInvestors) => math.max(currentInvestors * 2, 50),
+    'investorThreshold': (int currentInvestors) =>
+        50 * math.pow(2, currentInvestors),
   };
 
   InvestorState({this.investorsAttracted = 0});
@@ -20,7 +21,7 @@ class InvestorState extends HiveObject {
     investorsAttracted++;
   }
 
-  int nextInvestorThreshold() {
+  num nextInvestorThreshold() {
     return functions['investorThreshold']!(investorsAttracted);
-  } 
+  }
 }

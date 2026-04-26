@@ -33,7 +33,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
   ValueNotifier<PotSprite?> selectedPot = ValueNotifier(null);
 
-  final incomeQueue = Queue<Pair<DateTime, double>>(); 
+  final incomeQueue = Queue<Pair<DateTime, double>>();
   double incomeInLastMinute = 0;
 
   Set<PotSprite> get pots => gardenPots;
@@ -53,7 +53,9 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
     gameStateManager.addListener(_onGameStateChanged);
     potSize = gameRef.potSize;
 
-    red_star_particle = await gameRef.images.fromCache('red_star_particle.png').resize(Vector2(20, 20));
+    red_star_particle = await gameRef.images
+        .fromCache('red_star_particle.png')
+        .resize(Vector2(20, 20));
 
     setGardenPots();
     addPurchasablePots();
@@ -63,13 +65,7 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
   void update(double dt) {
     super.update(dt);
 
-    // Remove income entries older than 1 minute
-    while (incomeQueue.isNotEmpty &&
-        DateTime.now().difference(incomeQueue.first.key) > Duration(minutes: 1)) {
-      incomeInLastMinute -= incomeQueue.first.value;
-      incomeQueue.removeFirst();
-    }
-    
+    gameStateManager.tickRuntimeEconomy();
   }
 
   // Add pots from saved state
@@ -165,7 +161,8 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
               count: 4,
               lifespan: 1,
               generator: (i) {
-                final initialSpeed = (Vector2.random() + Vector2(-.5, -1)).scaled(400);
+                final initialSpeed =
+                    (Vector2.random() + Vector2(-.5, -1)).scaled(400);
                 final deceleration = initialSpeed * -0.5;
                 final gravity = Vector2(0, 200);
 
@@ -176,14 +173,16 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
                       canvas.drawImage(
                           red_star_particle,
                           Offset.zero,
-                          Paint()..color = Colors.red.withValues(alpha: 1 - particle.progress)
-                      );
+                          Paint()
+                            ..color = Colors.red
+                                .withValues(alpha: 1 - particle.progress));
                     }));
               });
 
           var particleComponent = ParticleSystemComponent(
             particle: particle,
-            position: calculatePotPosition(newRow, newCol) + Vector2(potSize.x / 2, potSize.y / 2),
+            position: calculatePotPosition(newRow, newCol) +
+                Vector2(potSize.x / 2, potSize.y / 2),
             priority: 0,
           );
 
@@ -210,8 +209,8 @@ class GreenhouseWorld extends World with HasGameRef<PlantGame> {
 
     //update money
     if (deltaMoney != 0) {
-      incomeQueue.add(Pair(DateTime.now(), deltaMoney));
-      incomeInLastMinute += deltaMoney;
+      gameStateManager.reportIncome(deltaMoney);
+
       gameStateManager.mutateMoney(deltaMoney);
       add(FloatingText(
         position: potSpritePosition,

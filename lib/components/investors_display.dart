@@ -1,22 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:plant_game/game_state_provider.dart';
 
-class InvestorsDisplay extends StatelessWidget {
+class InvestorsDisplay extends ConsumerWidget {
   final int investors;
-  final double incomePerMinute;
+  final double incomeInLastMinute;
   final double nextInvestorThreshold;
 
   const InvestorsDisplay({
     super.key,
     this.investors = 0,
-    this.incomePerMinute = 0,
+    this.incomeInLastMinute = 0,
     this.nextInvestorThreshold = 100,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final investors = ref.watch(
+      gameStateManagerProvider
+          .select((manager) => manager.state.investorState.investorsAttracted),
+    );
+    final nextInvestorThreshold = ref.watch(
+      gameStateManagerProvider.select(
+          (manager) => manager.state.investorState.nextInvestorThreshold()),
+    );
+    final incomeInLastMinute = ref.watch(gameStateManagerProvider
+        .select((manager) => manager.economyState.incomeInLastMinute));
+
     final progress = nextInvestorThreshold <= 0
         ? 0.0
-        : (incomePerMinute / nextInvestorThreshold).clamp(0.0, 1.0);
+        : (incomeInLastMinute / nextInvestorThreshold).clamp(0.0, 1.0);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -41,7 +54,7 @@ class InvestorsDisplay extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '\$${incomePerMinute.toStringAsFixed(0)} / min',
+            '\$${incomeInLastMinute.toStringAsFixed(0)} / min',
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
