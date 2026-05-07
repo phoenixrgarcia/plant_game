@@ -37,7 +37,7 @@ class NavBarWidget extends StatelessWidget {
         'icon': 'pot_icon.png',
         'action': () {
           gameRef.overlays.clear();
-          gameRef.overlays.add('money');
+          gameRef.overlays.add('top_hud');
         }
       },
       {
