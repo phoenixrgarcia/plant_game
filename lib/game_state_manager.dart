@@ -239,8 +239,8 @@ class GameStateManager extends ChangeNotifier {
   }
 
   bool attemptPurchase(int cost) {
-    if (_gameState.money >= cost) {
-      _gameState.money -= cost;
+    if (_gameState.investorState.currentInvestors >= cost) {
+      _gameState.investorState.currentInvestors -= cost;
       save();
       notifyListeners();
       return true;

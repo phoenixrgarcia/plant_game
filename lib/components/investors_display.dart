@@ -18,7 +18,7 @@ class InvestorsDisplay extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final investors = ref.watch(
       gameStateManagerProvider
-          .select((manager) => manager.state.investorState.investorsAttracted),
+          .select((manager) => manager.state.investorState.currentInvestors),
     );
     final nextInvestorThreshold = ref.watch(
       gameStateManagerProvider.select(

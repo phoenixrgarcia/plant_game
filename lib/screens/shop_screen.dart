@@ -13,11 +13,12 @@ import 'seed_pick_overlay.dart';
 // This screen is a flutter widget instead of a flame component.
 // It displays a shop with different categories of items.
 
+//TODO need to display wings on this screen so that people can see how much they have before buying.
+
 class ShopScreen extends StatelessWidget {
   const ShopScreen({super.key});
 
-  static final Set<String> plantTypes = PlantData
-      .plantTypes; 
+  static final Set<String> plantTypes = PlantData.plantTypes;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +55,7 @@ class _ShopTabState extends ConsumerState<ShopTab>
   late final Animation<double> _globalFade;
   final Duration _stagger = const Duration(milliseconds: 120);
 
-  final items = <Map<String, dynamic>>[]; 
+  final items = <Map<String, dynamic>>[];
 
   @override
   void initState() {
@@ -176,7 +177,8 @@ class _ShopTabState extends ConsumerState<ShopTab>
                     );
                     return;
                   }
-                  final nextSeeds = getThreePlants(manager, plantType: widget.category, tierBonus: item['tierBonus']);
+                  final nextSeeds = getThreePlants(manager,
+                      plantType: widget.category, tierBonus: item['tierBonus']);
                   final generated = nextSeeds.take(3).map((p) {
                     return {
                       'name': p.plantDataName,
@@ -185,7 +187,8 @@ class _ShopTabState extends ConsumerState<ShopTab>
                     };
                   }).toList();
                   // Handle buy action
-                  showSeedPickOverlay(context, options: generated, onSelected: (chosen) {});
+                  showSeedPickOverlay(context,
+                      options: generated, onSelected: (chosen) {});
                 },
               ),
             ),
@@ -234,8 +237,16 @@ class _ShopItemCard extends StatelessWidget {
           ),
           title:
               Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-          subtitle:
-              Text('\$${price}', style: const TextStyle(color: Colors.black54)),
+          subtitle: Row(
+            children: [
+              Image.asset(
+                'assets/images/wings.png',
+                width: 24,
+                height: 24,
+              ),
+              Text(' ${price}', style: const TextStyle(color: Colors.black54)),
+            ],
+          ),
           trailing: ElevatedButton(
             style: ElevatedButton.styleFrom(
                 shape: const StadiumBorder(), elevation: 2),
@@ -248,14 +259,14 @@ class _ShopItemCard extends StatelessWidget {
   }
 }
 
-class ClassUpgradeCard extends StatelessWidget{
+class ClassUpgradeCard extends StatelessWidget {
   final String category;
   final String image = "assets/images/upgrade_icon.png";
 
   ClassUpgradeCard({super.key, required this.category});
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Material(
       elevation: 6,
       borderRadius: BorderRadius.circular(16),
@@ -278,10 +289,10 @@ class ClassUpgradeCard extends StatelessWidget{
               color: Colors.white.withOpacity(0.8),
             ),
           ),
-          title:
-              Text("Unlock ${category} seeds in the upgrade menu", style: const TextStyle(fontWeight: FontWeight.bold)),
-          ),
+          title: Text("Unlock ${category} seeds in the upgrade menu",
+              style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
+      ),
     );
   }
 }
@@ -320,16 +331,20 @@ List<Map<String, dynamic>> getItemsForCategory(String category) {
   return items;
 }
 
-List<PlantInstance> getThreePlants(GameStateManager gameStateManager, {String? plantType, int?tierBonus}) {
+List<PlantInstance> getThreePlants(GameStateManager gameStateManager,
+    {String? plantType, int? tierBonus}) {
   int seed = gameStateManager.state.nextShopRandomSeed;
   PlantInstance p1 = PlantInstance(
-      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed) + (tierBonus ?? 0));
+      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType),
+      tier: randomTier(seed) + (tierBonus ?? 0));
   seed++;
   PlantInstance p2 = PlantInstance(
-      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed) + (tierBonus ?? 0));
+      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType),
+      tier: randomTier(seed) + (tierBonus ?? 0));
   seed++;
   PlantInstance p3 = PlantInstance(
-      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType), tier: randomTier(seed) + (tierBonus ?? 0));
+      plantDataName: PlantData.getWeightedRandom(seed, plantType: plantType),
+      tier: randomTier(seed) + (tierBonus ?? 0));
   return [p1, p2, p3];
 }
 

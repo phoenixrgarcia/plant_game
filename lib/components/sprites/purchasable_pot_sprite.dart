@@ -109,7 +109,7 @@ class PriceBadgeComponent extends PositionComponent with HasGameRef<PlantGame> {
     if (_cost == value) return;
     _cost = value;
     _costText.text = _label;
-    _relayout();
+    _reLayout();
   }
 
   String get _label => _cost.toStringAsFixed(0);
@@ -125,10 +125,10 @@ class PriceBadgeComponent extends PositionComponent with HasGameRef<PlantGame> {
     );
 
     add(_costText);
-    _relayout();
+    _reLayout();
   }
 
-  void _relayout() {
+  void _reLayout() {
     //TODO find a better way to resize the badge based on the number of chars in the number. Replace the 18 in the formula below.
     size =
         Vector2(_horizontalPadding * 2 + _iconSize + _gap + 18, _badgeHeight);

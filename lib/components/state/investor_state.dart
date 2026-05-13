@@ -10,6 +10,9 @@ class InvestorState extends HiveObject {
   @HiveField(0)
   int investorsAttracted;
 
+  @HiveField(1)
+  int currentInvestors = 0;
+
   final functions = {
     'investorThreshold': (int currentInvestors) =>
         50 * math.pow(2, currentInvestors),
@@ -19,9 +22,14 @@ class InvestorState extends HiveObject {
 
   void attractInvestor() {
     investorsAttracted++;
+    currentInvestors++;
   }
 
   num nextInvestorThreshold() {
     return functions['investorThreshold']!(investorsAttracted);
+  }
+
+  void resetInvestors() {
+    investorsAttracted = 0;
   }
 }

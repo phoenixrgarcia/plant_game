@@ -33,6 +33,7 @@ class PlantInstance extends HiveObject {
   double tickRateFlat;
 
   //This field is MULTIPLIED to the tick rate of the plant, and can be positive or negative (e.g. 0.2 would make the tick rate 20% faster, -0.2 would make it 20% slower)
+  //I think this comment is wrong
   @HiveField(8)
   double tickRateMult;
 
@@ -57,7 +58,6 @@ class PlantInstance extends HiveObject {
   });
 
   Plant get plantData => PlantData.getById(plantDataName)!;
-
 
   void incrementAge() {
     currentAge += 1;
