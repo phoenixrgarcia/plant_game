@@ -52,11 +52,11 @@ class GameStateManager extends ChangeNotifier {
           money: 100.0,
           pots: [PotState(row: 0, col: 0)],
           plantInventory: [
-            InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 1),
-            InventoryEntry(plantDataName: 'Giving Tree', quantity: 1, tier: 1),
-            InventoryEntry(plantDataName: 'Apple Tree', quantity: 1, tier: 1),
-            InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 2),
-            InventoryEntry(plantDataName: 'Tomato', quantity: 1, tier: 3),
+            InventoryEntry(plantDataName: 'Tomato', totalCopies: 1, tier: 2),
+            InventoryEntry(
+                plantDataName: 'Giving Tree', totalCopies: 1, tier: 1),
+            InventoryEntry(
+                plantDataName: 'Apple Tree', totalCopies: 1, tier: 1),
           ],
           potCost: 25.0,
           nextShopRandomSeed: 0,
@@ -150,6 +150,10 @@ class GameStateManager extends ChangeNotifier {
     if (pot.currentPlant == null) {
       throw Exception("No plant to harvest in pot at ($row, $col).");
     }
+    _gameState.plantInventory
+        .where((e) => e.plantDataName == pot.currentPlant!.plantDataName)
+        .first
+        .isPlanted = false;
     mutateMoney(pot.currentPlant!.plantData.sellPrice);
     pot.currentPlant = null; // Remove the plant from the pot
 
@@ -157,14 +161,11 @@ class GameStateManager extends ChangeNotifier {
     notifyListeners(); // Notify listeners of state change
   }
 
-  void removeFromInventory(InventoryEntry entry) {
-    final index = _gameState.plantInventory.indexWhere(
-        (e) => e.plantDataName == entry.plantDataName && e.tier == entry.tier);
+  void plantFromInventory(InventoryEntry entry) {
+    final index = _gameState.plantInventory
+        .indexWhere((e) => e.plantDataName == entry.plantDataName);
     if (index != -1) {
-      _gameState.plantInventory[index].quantity -= entry.quantity;
-      if (_gameState.plantInventory[index].quantity <= 0) {
-        _gameState.plantInventory.removeAt(index);
-      }
+      _gameState.plantInventory[index].isPlanted = true;
       save(); // Save state after mutating
       notifyListeners(); // Notify listeners of state change
     } else {
@@ -177,11 +178,11 @@ class GameStateManager extends ChangeNotifier {
     final index = _gameState.plantInventory.indexWhere((e) =>
         e.plantDataName == entry['name'] && e.tier == entry['stats']['tier']);
     if (index != -1) {
-      _gameState.plantInventory[index].quantity += 1;
+      _gameState.plantInventory[index].totalCopies += 1;
     } else {
       _gameState.plantInventory.add(InventoryEntry(
         plantDataName: entry['name'],
-        quantity: 1,
+        totalCopies: 1,
         tier: entry['stats']['tier'],
       ));
     }

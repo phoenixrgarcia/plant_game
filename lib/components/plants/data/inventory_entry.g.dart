@@ -18,21 +18,24 @@ class InventoryEntryAdapter extends TypeAdapter<InventoryEntry> {
     };
     return InventoryEntry(
       plantDataName: fields[0] as String,
-      quantity: fields[1] as int,
+      totalCopies: fields[1] as int,
       tier: fields[2] as int,
+      isPlanted: fields[3] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, InventoryEntry obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.plantDataName)
       ..writeByte(1)
-      ..write(obj.quantity)
+      ..write(obj.totalCopies)
       ..writeByte(2)
-      ..write(obj.tier);
+      ..write(obj.tier)
+      ..writeByte(3)
+      ..write(obj.isPlanted);
   }
 
   @override

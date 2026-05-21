@@ -18,15 +18,17 @@ class InvestorStateAdapter extends TypeAdapter<InvestorState> {
     };
     return InvestorState(
       investorsAttracted: fields[0] as int,
-    );
+    )..currentInvestors = fields[1] as int;
   }
 
   @override
   void write(BinaryWriter writer, InvestorState obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.investorsAttracted);
+      ..write(obj.investorsAttracted)
+      ..writeByte(1)
+      ..write(obj.currentInvestors);
   }
 
   @override

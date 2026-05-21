@@ -24,30 +24,38 @@ class InventoryListItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Widget? trailingWidget;
     final plantData = PlantData.getById(entry.plantDataName)!;
 
-    return ListTile(
-      leading: Image.asset(plantData.imagePath, width: 40),
-      title: Text("Tier ${entry.tier} ${plantData.name}"),
-      subtitle: Text('Quantity: ${entry.quantity}'),
-      trailing: canPlant && potCol != null && potRow != null
-          ? ElevatedButton(
-              onPressed: () {
-                // Access the GameStateManager directly via Riverpod
-                final manager = ref.read(gameStateManagerProvider);
-                // Create a PlantInstance from entry (adjust as needed)
-                final plantInstance = PlantInstance(
-                  plantDataName: entry.plantDataName,
-                  tier: entry.tier,
-                );
+    if (canPlant &&
+        potCol != null &&
+        potRow != null &&
+        entry.isPlanted == false) {
+      trailingWidget = ElevatedButton(
+        onPressed: () {
+          final manager = ref.read(gameStateManagerProvider);
+          final plantInstance = PlantInstance(
+            plantDataName: entry.plantDataName,
+            tier: entry.tier,
+          );
 
-                manager.plantInPot(potRow!, potCol!, plantInstance);
-                manager.removeFromInventory(entry);
-                onClose?.call(); // Close the inventory screen if needed
-              },
-              child: const Text('Plant'),
-            )
-          : null,
-    );
+          manager.plantInPot(potRow!, potCol!, plantInstance);
+          manager.plantFromInventory(entry);
+          onClose?.call();
+        },
+        child: const Text('Plant'),
+      );
+    } else if (entry.isPlanted == true) {
+      trailingWidget = const Text('Planted');
+    } else {
+      trailingWidget = null;
+    }
+
+    return ListTile(
+        leading: Image.asset(plantData.imagePath, width: 40),
+        title: Text("Tier ${entry.tier} ${plantData.name}"),
+        subtitle:
+            Text('Copies: ${entry.totalCopies} / ${entry.copiesToNextTier}'),
+        trailing: trailingWidget);
   }
 }
