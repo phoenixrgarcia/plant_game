@@ -25,13 +25,16 @@ class InventoryListItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Widget? trailingWidget;
+    Widget? plantedWidget;
+    Widget? tierWidget;
     final plantData = PlantData.getById(entry.plantDataName)!;
 
+    // Plant button widget, or planted text
     if (canPlant &&
         potCol != null &&
         potRow != null &&
         entry.isPlanted == false) {
-      trailingWidget = ElevatedButton(
+      plantedWidget = ElevatedButton(
         onPressed: () {
           final manager = ref.read(gameStateManagerProvider);
           final plantInstance = PlantInstance(
@@ -46,10 +49,29 @@ class InventoryListItem extends ConsumerWidget {
         child: const Text('Plant'),
       );
     } else if (entry.isPlanted == true) {
-      trailingWidget = const Text('Planted');
+      plantedWidget = const Text('Planted');
     } else {
-      trailingWidget = null;
+      plantedWidget = null;
     }
+
+    // Tier display and button
+    if (entry.canTierUp) {
+      tierWidget = ElevatedButton(
+        onPressed: () {
+          final manager = ref.read(gameStateManagerProvider);
+          entry.tierUp();
+          manager.save(); // Save state after mutating
+          manager.notifyListeners(); // Notify listeners of state change
+        },
+        child: const Text('Upgrade Tier'),
+      );
+    } else {
+      tierWidget = null;
+    }
+
+    trailingWidget = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [tierWidget ?? SizedBox.shrink(), plantedWidget!]);
 
     return ListTile(
         leading: Image.asset(plantData.imagePath, width: 40),

@@ -164,7 +164,6 @@ class PlantInfoScreen extends ConsumerWidget {
                                   gameStateManager.harvestPlant(
                                       selectedPot!.potState.row,
                                       selectedPot.potState.col);
-                                  gameStateManager.add
                                   onClose(); // Close the plant info screen
                                 }
                               },

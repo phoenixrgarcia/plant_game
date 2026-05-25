@@ -52,11 +52,11 @@ class GameStateManager extends ChangeNotifier {
           money: 100.0,
           pots: [PotState(row: 0, col: 0)],
           plantInventory: [
-            InventoryEntry(plantDataName: 'Tomato', totalCopies: 1, tier: 2),
+            InventoryEntry(plantDataName: 'Tomato', totalCopies: 6, tier: 2),
             InventoryEntry(
                 plantDataName: 'Giving Tree', totalCopies: 1, tier: 1),
             InventoryEntry(
-                plantDataName: 'Apple Tree', totalCopies: 1, tier: 1),
+                plantDataName: 'Apple Tree', totalCopies: 6, tier: 1),
           ],
           potCost: 25.0,
           nextShopRandomSeed: 0,

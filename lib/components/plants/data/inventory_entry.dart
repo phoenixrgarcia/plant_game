@@ -27,4 +27,15 @@ class InventoryEntry extends HiveObject {
   int get copiesToNextTier {
     return 2 + 2 * tier;
   }
+
+  bool get canTierUp {
+    return totalCopies >= copiesToNextTier;
+  }
+
+  void tierUp() {
+    if (canTierUp) {
+      totalCopies -= copiesToNextTier;
+      tier += 1;
+    }
+  }
 }
