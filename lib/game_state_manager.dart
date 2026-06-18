@@ -248,4 +248,13 @@ class GameStateManager extends ChangeNotifier {
     }
     return false;
   }
+
+  InventoryEntry? getInventoryEntry(String plantDataName) {
+    try {
+      return _gameState.plantInventory
+          .firstWhere((e) => e.plantDataName == plantDataName);
+    } catch (_) {
+      return null;
+    }
+  }
 }

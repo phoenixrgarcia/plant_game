@@ -307,7 +307,7 @@ class PlantData {
       onHarvest: () => print('Oak Tree harvested!'),
       onTick: (self, gsm) {
         print('Oak Tree ticked!');
-        if((self.currentPlant!.currentAge - 30) % 64  == 0){
+        if ((self.currentPlant!.currentAge - 30) % 64 == 0) {
           // earns 100x value every 64 ticks
           gsm.mutateMoney(self.currentPlant!.plantData.incomeRate * 100);
         }
@@ -315,10 +315,11 @@ class PlantData {
       description: 'A sturdy tree that symbolizes strength and endurance.',
       specialProperties: "Earns 100x income every 64 ticks after fully grown",
       persistentEffectAOE: 'none',
-    ), 
+    ),
   };
 
-  static final Set<String> plantTypes = _plants.values.map((plant) => plant.type).toSet(); 
+  static final Set<String> plantTypes =
+      _plants.values.map((plant) => plant.type).toSet();
 
   static Plant? getById(String id) => _plants[id];
 

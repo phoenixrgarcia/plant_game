@@ -36,10 +36,10 @@ class PlantInfoScreen extends ConsumerWidget {
           child: Material(
             color: Colors.transparent,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.55,
+              height: MediaQuery.of(context).size.height * 0.43,
               padding: EdgeInsetsDirectional.only(
                   top: MediaQuery.of(context).size.height *
-                      0.05 // Adjust this value to account for the game_ui height
+                      0.02 // Adjust this value to account for the game_ui height
                   ),
               decoration: const BoxDecoration(
                 color: Colors.white,
@@ -48,7 +48,7 @@ class PlantInfoScreen extends ConsumerWidget {
                 boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black26)],
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ValueListenableBuilder<PotSprite?>(
                     valueListenable: selectedPotNotifier,
@@ -89,19 +89,12 @@ class PlantInfoScreen extends ConsumerWidget {
                               Text("Age: ${plant.currentAge} ticks",
                                   style: const TextStyle(fontSize: 16)),
                               Text(
-                                  "Harvest Value: \$${plantData?.sellPrice ?? 'N/A'}",
-                                  style: const TextStyle(fontSize: 16)),
-                              Text(
                                   "Income Rate: \$${plantData?.incomeRate ?? 'N/A'}/tick",
                                   style: const TextStyle(fontSize: 16)),
-                              Text(
-                                "Flat Bonus: \$${plant.flatBonus}/tick",
-                                style: const TextStyle(fontSize: 16),
-                              ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 8),
                                 child: Text(
-                                  "Special: ${plantData?.specialProperties ?? 'None'}",
+                                  "Effect: ${plantData?.specialProperties ?? 'None'}",
                                   style: const TextStyle(
                                       fontSize: 15, color: Colors.deepPurple),
                                 ),
@@ -117,10 +110,32 @@ class PlantInfoScreen extends ConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          "Plant Data",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ValueListenableBuilder<PotSprite?>(
+                          valueListenable: selectedPotNotifier,
+                          builder: (context, selectedPot, _) {
+                            final plant = selectedPot?.potState.currentPlant;
+                            if (plant == null) {
+                              // No plant selected, return empty widget
+                              return const SizedBox.shrink();
+                            }
+                            final plantData =
+                                PlantData.getById(plant.plantDataName);
+                            return ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 7, vertical: 1),
+                              ),
+                              onPressed: () async {
+                                //TODO add logic for upgrading income
+                              },
+                              child: Text(
+                                  'Upgrade Income \$${plantData?.sellPrice ?? 'N/A'}'),
+                            );
+                          },
                         ),
                         ValueListenableBuilder<PotSprite?>(
                           valueListenable: selectedPotNotifier,
@@ -139,7 +154,42 @@ class PlantInfoScreen extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 12),
+                                    horizontal: 7, vertical: 1),
+                              ),
+                              onPressed: () async {
+                                //TODO: Add logic for upgrading tick rate
+                              },
+                              child: Text(
+                                  'Upgrade Tick Rate ${gameStateManager.getInventoryEntry(plantData!.name)?.totalCopies} / ${gameStateManager.getInventoryEntry(plantData.name)?.copiesToNextTier}'),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ValueListenableBuilder<PotSprite?>(
+                          valueListenable: selectedPotNotifier,
+                          builder: (context, selectedPot, _) {
+                            final plant = selectedPot?.potState.currentPlant;
+                            if (plant == null) {
+                              // No plant selected, return empty widget
+                              return const SizedBox.shrink();
+                            }
+                            final plantData =
+                                PlantData.getById(plant.plantDataName);
+                            return ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 7, vertical: 1),
                               ),
                               onPressed: () async {
                                 final confirmed = await showDialog<bool>(
@@ -169,6 +219,56 @@ class PlantInfoScreen extends ConsumerWidget {
                               },
                               child: Text(
                                   'Harvest \$${plantData?.sellPrice ?? 'N/A'}'),
+                            );
+                          },
+                        ),
+                        ValueListenableBuilder<PotSprite?>(
+                          valueListenable: selectedPotNotifier,
+                          builder: (context, selectedPot, _) {
+                            final plant = selectedPot?.potState.currentPlant;
+                            if (plant == null) {
+                              // No plant selected, return empty widget
+                              return const SizedBox.shrink();
+                            }
+                            final plantData =
+                                PlantData.getById(plant.plantDataName);
+                            return ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 7, vertical: 1),
+                              ),
+                              onPressed: () async {
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Harvest Plant?'),
+                                    content: Text(
+                                        'Harvest this plant for \$${plantData?.sellPrice ?? 'N/A'}?'),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, false),
+                                          child: const Text('Cancel')),
+                                      ElevatedButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, true),
+                                          child: const Text('Harvest')),
+                                    ],
+                                  ),
+                                );
+                                if (confirmed == true) {
+                                  gameStateManager.harvestPlant(
+                                      selectedPot!.potState.row,
+                                      selectedPot.potState.col);
+                                  onClose(); // Close the plant info screen
+                                }
+                              },
+                              child: Text(
+                                  'Upgrade Tier ${gameStateManager.getInventoryEntry(plantData!.name)?.totalCopies} / ${gameStateManager.getInventoryEntry(plantData.name)?.copiesToNextTier}'),
                             );
                           },
                         ),
