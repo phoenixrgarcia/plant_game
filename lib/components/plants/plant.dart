@@ -15,10 +15,12 @@ class Plant {
   final String spritePath;
   final void Function(PotState self, GameStateManager gameStateManager) onTick;
   final void Function() onHarvest;
-  final void Function(PotState otherPlant, GameStateManager gameStateManager)? persistentEffect;
+  final void Function(PotState otherPlant, GameStateManager gameStateManager)?
+      persistentEffect;
   final String? description;
   final String? specialProperties;
-  final void Function(PotState self, GameStateManager gameStateManager)? cleanUp;
+  final void Function(PotState self, GameStateManager gameStateManager)?
+      cleanUp;
   final String persistentEffectAOE;
   final String onTickAOE;
 
@@ -41,8 +43,6 @@ class Plant {
     this.persistentEffectAOE = 'none',
     this.onTickAOE = 'none',
   });
-
-
 
   Future<Sprite> loadSprite(Images images) async {
     return Sprite(images.fromCache(spritePath));

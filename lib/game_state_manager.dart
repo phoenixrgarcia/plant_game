@@ -62,7 +62,7 @@ class GameStateManager extends ChangeNotifier {
           nextShopRandomSeed: 0,
           shopState: ShopState(),
           upgradeState: UpgradeState(),
-          investorState: InvestorState(),
+          investorState: InvestorState(currentInvestors: 100),
         );
 
     _economyState = EconomyState();

@@ -14,7 +14,7 @@ class PlantData {
       sellPrice: 15,
       incomeRate: 2,
       tickRate: 2,
-      rarity: 50,
+      rarity: 1,
       imagePath: 'assets/images/tomato.png',
       spritePath: 'tomato.png',
       onHarvest: () => print('Tomato harvested!'),
@@ -32,7 +32,7 @@ class PlantData {
       sellPrice: 25,
       incomeRate: 3,
       tickRate: 1,
-      rarity: 20,
+      rarity: 2,
       imagePath: 'assets/images/carrot.png',
       spritePath: 'carrot.png',
       onHarvest: () => print('Carrot harvested!'),
@@ -46,7 +46,7 @@ class PlantData {
       sellPrice: 20,
       incomeRate: 1,
       tickRate: 1,
-      rarity: 30,
+      rarity: 3,
       imagePath: 'assets/images/tulip.jpg',
       spritePath: 'tulip.jpg',
       onHarvest: () => print('Tulip harvested!'),
@@ -63,7 +63,7 @@ class PlantData {
       sellPrice: 200,
       incomeRate: 20,
       tickRate: 3, //30, //TODO fix debug number
-      rarity: 5,
+      rarity: 3,
       imagePath: 'assets/images/giving_tree.png',
       spritePath: 'giving_tree.png',
       onHarvest: () => print('Giving Tree harvested!'),
@@ -97,7 +97,7 @@ class PlantData {
       sellPrice: 190,
       incomeRate: 25,
       tickRate: 20,
-      rarity: 5,
+      rarity: 3,
       imagePath: 'assets/images/apple-tree.webp',
       spritePath: 'apple-tree.webp',
       onHarvest: () => print('Apple Tree harvested!'),
@@ -143,7 +143,7 @@ class PlantData {
       sellPrice: 300,
       incomeRate: 30,
       tickRate: 15,
-      rarity: 20,
+      rarity: 2,
       imagePath: 'assets/images/sakura_tree.png',
       spritePath: 'sakura_tree.png',
       onHarvest: () => print('Sakura Tree harvested!'),
@@ -174,7 +174,7 @@ class PlantData {
       sellPrice: 800,
       incomeRate: 600,
       tickRate: 60,
-      rarity: 20,
+      rarity: 2,
       imagePath: 'assets/images/redwood_tree.png',
       spritePath: 'redwood_tree.png',
       onHarvest: () => print('Redwood Tree harvested!'),
@@ -192,7 +192,7 @@ class PlantData {
       sellPrice: 400,
       incomeRate: 20,
       tickRate: 20,
-      rarity: 20,
+      rarity: 2,
       imagePath: 'assets/images/ironbark_tree.png',
       spritePath: 'ironbark_tree.png',
       onHarvest: () => print('Ironbark Tree harvested!'),
@@ -231,7 +231,7 @@ class PlantData {
       sellPrice: 120,
       incomeRate: 10,
       tickRate: 10,
-      rarity: 40,
+      rarity: 1,
       imagePath: 'assets/images/pine_tree.png',
       spritePath: 'pine_tree.png',
       onHarvest: () => print('Pine Tree harvested!'),
@@ -267,7 +267,7 @@ class PlantData {
       sellPrice: 100,
       incomeRate: 8,
       tickRate: 8,
-      rarity: 40,
+      rarity: 1,
       imagePath: 'assets/images/palm_tree.png',
       spritePath: 'palm_tree.png',
       onHarvest: () => print('Palm Tree harvested!'),
@@ -301,7 +301,7 @@ class PlantData {
       sellPrice: 150,
       incomeRate: 20,
       tickRate: 12,
-      rarity: 40,
+      rarity: 1,
       imagePath: 'assets/images/oak_tree.jpg',
       spritePath: 'oak_tree.jpg',
       onHarvest: () => print('Oak Tree harvested!'),
@@ -328,6 +328,7 @@ class PlantData {
     _plants[id] = plant;
   }
 
+// Little bit of a deprecated method.
   static String getWeightedRandom(int seed, {String? plantType}) {
     // Implement weighted random selection based on rarity
     final random = Random(seed);
@@ -352,7 +353,11 @@ class PlantData {
 
   static List<Plant> get allPlants => _plants.values.toList();
 
+  //Can add 'Any' to get all plants
   static List<Plant> getPlantsByType(String type) {
+    if (type == 'Any') {
+      return _plants.values.toList();
+    }
     return _plants.values.where((plant) => plant.type == type).toList();
   }
 }

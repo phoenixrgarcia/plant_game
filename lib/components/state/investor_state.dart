@@ -11,14 +11,14 @@ class InvestorState extends HiveObject {
   int investorsAttracted;
 
   @HiveField(1)
-  int currentInvestors = 0;
+  int currentInvestors;
 
   final functions = {
-    'investorThreshold': (int currentInvestors) =>
-        50 * math.pow(2, currentInvestors),
+    'investorThreshold': (int investorsAttracted) =>
+        50 * math.pow(2, investorsAttracted),
   };
 
-  InvestorState({this.investorsAttracted = 0});
+  InvestorState({this.investorsAttracted = 0, this.currentInvestors = 0});
 
   void attractInvestor() {
     investorsAttracted++;

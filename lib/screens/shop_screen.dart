@@ -313,7 +313,6 @@ List<Map<String, dynamic>> getItemsForCategory(String category) {
     "Legendary",
     "Mythic",
   ];
-  List<int> tierBonuses = [0, 2, 5, 9, 14];
 
   if (!isUnlocked) {
     return [];
@@ -324,13 +323,48 @@ List<Map<String, dynamic>> getItemsForCategory(String category) {
       "name": "${rarityNames[i]} $category Seed",
       "price": seedCosts[i],
       "image": "assets/images/flower-seed.png",
-      "tierBonus": tierBonuses[i],
     });
   }
 
   return items;
 }
 
+//Returns name of selected plant
+String getOneRandomPlant(GameStateManager gameStateManager,
+    {String? plantType, int? seedPackTier}) {
+  int seed = gameStateManager.state.nextShopRandomSeed;
+
+  //Summation of rarities eligble for seed pack
+  int raritySum = 0;
+  for (int i = seedPackTier ?? 1; i < 5; i++) {
+    if (!gameStateManager.state.shopState.rarityChanceMap.containsKey(i)) {
+      break;
+    }
+    raritySum += gameStateManager.state.shopState.rarityChanceMap[i]!.value;
+  }
+
+  // Selection of rarity
+  int rarityRoll = Random(seed).nextInt(raritySum);
+  int selectedRarity = seedPackTier ?? 1;
+  while (rarityRoll >= 0) {
+    if (!gameStateManager.state.shopState.rarityChanceMap
+        .containsKey(selectedRarity)) {
+      break;
+    }
+    rarityRoll -=
+        gameStateManager.state.shopState.rarityChanceMap[selectedRarity]!.value;
+    if (rarityRoll >= 0) selectedRarity++;
+  }
+
+  // Selection of plant in rarity
+  List<Plant> eligiblePlants = PlantData.getPlantsByType(plantType ?? 'Any')
+      .where((p) => p.rarity == selectedRarity)
+      .toList();
+  int plantIndex = Random(seed + 1).nextInt(eligiblePlants.length);
+  return eligiblePlants[plantIndex].name;
+}
+
+//Deprecated method, for returning three random plants from a category.
 List<PlantInstance> getThreePlants(GameStateManager gameStateManager,
     {String? plantType, int? tierBonus}) {
   int seed = gameStateManager.state.nextShopRandomSeed;
@@ -348,6 +382,8 @@ List<PlantInstance> getThreePlants(GameStateManager gameStateManager,
   return [p1, p2, p3];
 }
 
+//Deprecated method, for returning what tier a seed should be.
+//Replaced with roll rarity
 int randomTier(int seed) {
   final random = Random(seed);
   int tier = 1;
@@ -359,4 +395,8 @@ int randomTier(int seed) {
     roll = random.nextInt(100);
   }
   return tier;
+}
+
+bool rollRarity(int seed) {
+  return true;
 }
