@@ -28,7 +28,7 @@ class PlantData {
     'Carrot': Plant(
       name: 'Carrot',
       type: 'Crop',
-      growthTime: 15,
+      growthTime: 3,
       sellPrice: 25,
       incomeRate: 3,
       tickRate: 1,
@@ -42,7 +42,7 @@ class PlantData {
     'Tupil': Plant(
       name: 'Tulip',
       type: 'Flower',
-      growthTime: 10,
+      growthTime: 3,
       sellPrice: 20,
       incomeRate: 1,
       tickRate: 1,
@@ -59,7 +59,7 @@ class PlantData {
     'Giving Tree': Plant(
       name: 'Giving Tree',
       type: 'Tree',
-      growthTime: 3, //60, //TODO fix debug number
+      growthTime: 3, //TODO fix debug number
       sellPrice: 200,
       incomeRate: 20,
       tickRate: 3, //30, //TODO fix debug number
@@ -93,7 +93,7 @@ class PlantData {
     'Apple Tree': Plant(
       name: 'Apple Tree',
       type: 'Tree',
-      growthTime: 5,
+      growthTime: 3,
       sellPrice: 190,
       incomeRate: 25,
       tickRate: 20,
@@ -139,7 +139,7 @@ class PlantData {
     'Sakura Tree': Plant(
       name: 'Sakura Tree',
       type: 'Tree',
-      growthTime: 32,
+      growthTime: 3,
       sellPrice: 300,
       incomeRate: 30,
       tickRate: 15,
@@ -170,7 +170,7 @@ class PlantData {
     'Redwood Tree': Plant(
       name: 'Redwood Tree',
       type: 'Tree',
-      growthTime: 60,
+      growthTime: 3,
       sellPrice: 800,
       incomeRate: 600,
       tickRate: 60,
@@ -188,7 +188,7 @@ class PlantData {
     'Ironbark Tree': Plant(
       name: 'Ironbark Tree',
       type: 'Tree',
-      growthTime: 30,
+      growthTime: 3,
       sellPrice: 400,
       incomeRate: 20,
       tickRate: 20,
@@ -227,7 +227,7 @@ class PlantData {
     'Pine Tree': Plant(
       name: 'Pine Tree',
       type: 'Tree',
-      growthTime: 15,
+      growthTime: 3,
       sellPrice: 120,
       incomeRate: 10,
       tickRate: 10,
@@ -263,7 +263,7 @@ class PlantData {
     'Palm Tree': Plant(
       name: 'Palm Tree',
       type: 'Tree',
-      growthTime: 12,
+      growthTime: 3,
       sellPrice: 100,
       incomeRate: 8,
       tickRate: 8,
@@ -297,7 +297,7 @@ class PlantData {
     'Oak Tree': Plant(
       name: 'Oak Tree',
       type: 'Tree',
-      growthTime: 30,
+      growthTime: 3,
       sellPrice: 150,
       incomeRate: 20,
       tickRate: 12,

@@ -169,6 +169,7 @@ class _ShopTabState extends ConsumerState<ShopTab>
                 onBuy: () {
                   final success = manager.attemptPurchase(item['price']);
                   if (!success) {
+                    //TODO check and fix this fail check
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Not enough money to purchase seed.'),
@@ -177,18 +178,15 @@ class _ShopTabState extends ConsumerState<ShopTab>
                     );
                     return;
                   }
-                  final nextSeeds = getThreePlants(manager,
-                      plantType: widget.category, tierBonus: item['tierBonus']);
-                  final generated = nextSeeds.take(3).map((p) {
-                    return {
-                      'name': p.plantDataName,
-                      'image': p.plantData.imagePath,
-                      'stats': {'tier': p.tier},
-                    };
-                  }).toList();
-                  // Handle buy action
-                  showSeedPickOverlay(context,
-                      options: generated, onSelected: (chosen) {});
+                  // TODO Add animation here? for hyping up the new plant
+                  // select the seed from the package
+                  final purchasedPlantName =
+                      getOneRandomPlant(manager, plantType: widget.category);
+
+                  // Add the seed to inventory
+                  manager.addToInventory(purchasedPlantName);
+                  // showSeedPickOverlay(context,
+                  //     options: generated, onSelected: (chosen) {});
                 },
               ),
             ),

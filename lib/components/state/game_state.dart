@@ -6,9 +6,7 @@ import 'package:plant_game/components/state/pot_state.dart';
 import 'package:plant_game/components/state/shop_state.dart';
 import 'package:plant_game/components/state/upgrade_state.dart';
 
-
 part 'game_state.g.dart';
-
 
 @HiveType(typeId: 0)
 class GameState extends HiveObject {

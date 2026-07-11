@@ -69,9 +69,10 @@ class InventoryListItem extends ConsumerWidget {
       tierWidget = null;
     }
 
-    trailingWidget = Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [tierWidget ?? SizedBox.shrink(), plantedWidget!]);
+    trailingWidget = Row(mainAxisSize: MainAxisSize.min, children: [
+      tierWidget ?? SizedBox.shrink(),
+      plantedWidget ?? SizedBox.shrink()
+    ]);
 
     return ListTile(
         leading: Image.asset(plantData.imagePath, width: 40),

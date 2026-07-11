@@ -173,17 +173,17 @@ class GameStateManager extends ChangeNotifier {
     }
   }
 
-  void addToInventory(Map<String, dynamic> entry) {
-    //Entry is a map with keys: name, image, stats{tier}
-    final index = _gameState.plantInventory.indexWhere((e) =>
-        e.plantDataName == entry['name'] && e.tier == entry['stats']['tier']);
+  ///Adds a plant to the game state plant inventory by plantName. Called by seed onBuy
+  void addToInventory(String plantName) {
+    final index = _gameState.plantInventory
+        .indexWhere((e) => e.plantDataName == plantName);
     if (index != -1) {
       _gameState.plantInventory[index].totalCopies += 1;
     } else {
       _gameState.plantInventory.add(InventoryEntry(
-        plantDataName: entry['name'],
+        plantDataName: plantName,
         totalCopies: 1,
-        tier: entry['stats']['tier'],
+        tier: 1,
       ));
     }
     save(); // Save state after mutating
